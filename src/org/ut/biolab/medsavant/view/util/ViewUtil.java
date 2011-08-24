@@ -314,7 +314,10 @@ public class ViewUtil {
 
     public static JPanel getMessagePanel(String string) {
         JPanel p = new JPanel();
-        p.add(new JLabel(string));
+        p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
+        p.add(Box.createVerticalGlue());
+        p.add(ViewUtil.getCenterAlignedComponent(new JLabel(string)));
+        p.add(Box.createVerticalGlue());
         return p;
     }
 

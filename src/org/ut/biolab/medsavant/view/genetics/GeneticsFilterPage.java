@@ -38,7 +38,7 @@ public class GeneticsFilterPage extends SubSectionView {
                 view = new JPanel();
                 view.setLayout(new BorderLayout());
                 view.add(new FilterPanel(),BorderLayout.CENTER);
-                view.add(new PeekingPanel("", BorderLayout.WEST, new FilterProgressPanel(), true), BorderLayout.EAST);
+                view.add(new PeekingPanel("History", BorderLayout.WEST, new FilterProgressPanel(), true), BorderLayout.EAST);
             } catch (NonFatalDatabaseException ex) {
                 view = ViewUtil.getMessagePanel("Error connecting to database");
                 ex.printStackTrace();

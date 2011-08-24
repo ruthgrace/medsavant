@@ -218,22 +218,28 @@ public class FilterPanel extends JPanel implements FiltersChangedListener {
         
         @Override
         protected Object doInBackground() throws Exception {
-            return getFilterViews();
+            
+            System.out.println("GETTING FILTER VIEWS");
+            Object o = getFilterViews();
+            System.out.println("DONE GETTING FILTER VIEWS");
+            return o;
         }
         
         protected void done() {
             try {
+                contentPlaceholder.removeAll();
                 
+                Object o = get();
+
                 filterContainer = new CollapsiblePanes();
                 filterContainer.setBackground(ViewUtil.getMenuColor());
 
                 JScrollPane p1 = new JScrollPane(filterContainer);
                 p1.setBorder(null);
-
-                contentPlaceholder.removeAll();
+                
                 contentPlaceholder.add(p1, BorderLayout.CENTER);
-                              
-                List<FilterView> views = (List<FilterView>) get();
+                
+                List<FilterView> views = (List<FilterView>) o;
                 addFilterViews(views);
                 filterContainer.addExpansion();
                 
@@ -253,9 +259,13 @@ public class FilterPanel extends JPanel implements FiltersChangedListener {
                 filterContainer.add(refreshPanel);
                 
                 contentPlaceholder.updateUI();
-                
+            } catch (Error ex) {
+                contentPlaceholder.add(ViewUtil.getMessagePanel("Problem getting filters"));
+                //ex.printStackTrace();
+                Logger.getLogger(FilterPanel.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                contentPlaceholder.add(ViewUtil.getMessagePanel("Problem getting filters"));
+                //ex.printStackTrace();
                 Logger.getLogger(FilterPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

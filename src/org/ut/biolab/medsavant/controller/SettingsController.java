@@ -135,7 +135,7 @@ public class SettingsController {
     private void readPersistenceMap() {
         File pFile = new File(PERSISTENCE_FILE_PATH);
         
-        System.out.println("Reading map file: " + pFile.getAbsolutePath());
+        //System.out.println("Reading map file: " + pFile.getAbsolutePath());
         
         if (!pFile.exists()) {
             resetPersistenceMap();
@@ -161,7 +161,7 @@ public class SettingsController {
                 resetPersistenceMap();
             } finally {
             try {
-                System.out.println("Done reading map file");
+                //System.out.println("Done reading map file");
                 br.close();
             } catch (IOException ex) {
                 Logger.getLogger(SettingsController.class.getName()).log(Level.SEVERE, null, ex);

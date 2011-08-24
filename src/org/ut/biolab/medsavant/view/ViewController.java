@@ -209,7 +209,6 @@ public class ViewController extends JPanel {
             d = new Dimension(img.getWidth(null), 30);//img.getHeight(null));
             this.setMaximumSize(d);
             this.setPreferredSize(d);
-            System.out.println("Size of tab image: " + d);
         }
         
         public void paintComponent(Graphics g) {
