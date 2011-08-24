@@ -181,7 +181,6 @@ public class FilterPanel extends JPanel implements FiltersChangedListener {
             //views.add(PatientNumericFilterView.createFilterView("IQ Performance", PatientTableSchema.ALIAS_IQWPERF));
             //views.add(PatientNumericFilterView.createFilterView("IQ Full Score", PatientTableSchema.ALIAS_IQWFULL));
             
-            
             //VARIANT FILTERS///////////////////////////////////////////////////
             views.addAll(getVariantRecordFilterViews());
             

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.broad.tabix.TabixReader;
 import org.ut.biolab.medsavant.db.table.CohortTableSchema;
 import org.ut.biolab.medsavant.db.table.CohortViewTableSchema;
 import org.ut.biolab.medsavant.db.table.GeneListMembershipTableSchema;
@@ -130,7 +129,7 @@ public class DBUtil {
         conn.commit();
         conn.setAutoCommit(true);   
         
-        
+        /*
         List<VariantRecord> records = vs.getRecords();
         try {
             TabixReader reader = new TabixReader("C:\\Users\\Andrew\\Documents\\medsavant\\test\\tabix_testout_100000");
@@ -145,6 +144,8 @@ public class DBUtil {
         } catch (IOException ex) {
             Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
+         * 
+         */
         
     }
     

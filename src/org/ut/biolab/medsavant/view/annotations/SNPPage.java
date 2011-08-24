@@ -6,6 +6,7 @@ package org.ut.biolab.medsavant.view.annotations;
 
 import java.awt.Component;
 import javax.swing.JPanel;
+import org.ut.biolab.medsavant.view.patients.SplitScreenView;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
 
@@ -15,6 +16,8 @@ import org.ut.biolab.medsavant.view.subview.SubSectionView;
  */
 public class SNPPage extends SubSectionView {
 
+    private SplitScreenView view;
+
     public SNPPage(SectionView parent) { super(parent); }
 
     
@@ -23,7 +26,10 @@ public class SNPPage extends SubSectionView {
     }
 
     public JPanel getView() {
-        return new JPanel();
+        view =  new SplitScreenView(
+                new SNPAnnotationListModel(), 
+                new SNPAnnotationDetailedView());
+        return view;
     }
     
 }

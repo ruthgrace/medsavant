@@ -33,7 +33,8 @@ public class IconFactory {
         FILTER,
         RESULTS,
         CHART,
-        LOGGED_IN
+        LOGGED_IN,
+        SPIRAL
     };
 
     private static final String iconroot = "/org/ut/biolab/medsavant/view/images/icon/";
@@ -48,6 +49,8 @@ public class IconFactory {
                 return getIcon(iconroot + "chart.png");
             case LOGGED_IN:
                 return getIcon(iconroot + "loggedin.png");
+                case SPIRAL:
+                return getIcon(iconroot + "spiral_green.png");
             default:
                 return null;
         }

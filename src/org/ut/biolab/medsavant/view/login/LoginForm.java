@@ -10,16 +10,20 @@
  */
 package org.ut.biolab.medsavant.view.login;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.ut.biolab.medsavant.controller.LoginController;
 import org.ut.biolab.medsavant.controller.SettingsController;
@@ -28,6 +32,7 @@ import org.ut.biolab.medsavant.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.model.event.LoginEvent;
 import org.ut.biolab.medsavant.model.event.LoginListener;
 import org.ut.biolab.medsavant.view.Frame;
+import org.ut.biolab.medsavant.view.images.IconFactory;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -35,6 +40,20 @@ import org.ut.biolab.medsavant.view.util.ViewUtil;
  * @author mfiume
  */
 public class LoginForm extends javax.swing.JPanel implements LoginListener {
+
+    private static class SpiralPanel extends JPanel {
+        private final Image img;
+
+        public SpiralPanel() {
+            img = IconFactory.getInstance().getIcon(IconFactory.StandardIcon.SPIRAL).getImage();
+        }
+        
+        public void paintComponent(Graphics g) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            g.drawImage(img, this.getWidth()/2-img.getWidth(null)/2, this.getHeight()/2-img.getHeight(null)/2, null);
+        }
+    }
 
     /** Creates new form LoginForm */
     public LoginForm() {
@@ -68,6 +87,9 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         label_status.setText("");
         this.panel_title.add(Box.createVerticalGlue(),0); 
         
+        spiralPanel.setLayout(new BorderLayout());
+        spiralPanel.add(new SpiralPanel(),BorderLayout.CENTER); 
+        
         ptitle.add(Box.createHorizontalGlue(),0);
         ptitle.add(Box.createHorizontalGlue());         
         
@@ -93,8 +115,8 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         cb_rememberpassword = new javax.swing.JCheckBox();
         label_status = new javax.swing.JLabel();
         panel_logonholder = new javax.swing.JPanel();
-        field_username = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        field_username = new javax.swing.JTextField();
         field_password = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
         button_login = new javax.swing.JButton();
@@ -111,12 +133,15 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         };
         jPanel4 = new javax.swing.JPanel();
         label_versioninformation = new javax.swing.JLabel();
+        spiralPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(0, 0, 0));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        cb_autosignin.setBackground(new java.awt.Color(255, 255, 255));
+        cb_autosignin.setForeground(new java.awt.Color(204, 204, 204));
         cb_autosignin.setText("Sign me in automatically");
         cb_autosignin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -124,6 +149,8 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             }
         });
 
+        cb_rememberpassword.setBackground(new java.awt.Color(255, 255, 255));
+        cb_rememberpassword.setForeground(new java.awt.Color(204, 204, 204));
         cb_rememberpassword.setText("Remember my password");
         cb_rememberpassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -139,37 +166,29 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(cb_autosignin)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(cb_rememberpassword)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 551, Short.MAX_VALUE)
-                .addComponent(label_status))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cb_autosignin)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 529, Short.MAX_VALUE)
+                        .addComponent(label_status))
+                    .addComponent(cb_rememberpassword))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cb_rememberpassword)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cb_autosignin))
+                .addComponent(cb_rememberpassword)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cb_autosignin)
                     .addComponent(label_status))
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
-        panel_logonholder.setBackground(new java.awt.Color(0, 119, 199));
+        panel_logonholder.setBackground(new java.awt.Color(0, 0, 0));
         panel_logonholder.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 200, 10, 200));
         panel_logonholder.setLayout(new javax.swing.BoxLayout(panel_logonholder, javax.swing.BoxLayout.LINE_AXIS));
-
-        field_username.setColumns(25);
-        field_username.setFont(new java.awt.Font("Lucida Grande", 1, 24));
-        field_username.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        field_username.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                field_usernameKeyPressed(evt);
-            }
-        });
-        panel_logonholder.add(field_username);
 
         jPanel2.setOpaque(false);
         jPanel2.setPreferredSize(new java.awt.Dimension(20, 25));
@@ -178,17 +197,27 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 5, Short.MAX_VALUE)
+            .addGap(0, 7, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGap(0, 34, Short.MAX_VALUE)
         );
 
         panel_logonholder.add(jPanel2);
 
+        field_username.setColumns(25);
+        field_username.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        field_username.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        field_username.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                field_usernameKeyPressed(evt);
+            }
+        });
+        panel_logonholder.add(field_username);
+
         field_password.setColumns(25);
-        field_password.setFont(new java.awt.Font("Lucida Grande", 0, 24));
+        field_password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         field_password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_password.setAutoscrolls(false);
         field_password.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -205,11 +234,11 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 5, Short.MAX_VALUE)
+            .addGap(0, 7, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGap(0, 34, Short.MAX_VALUE)
         );
 
         panel_logonholder.add(jPanel3);
@@ -231,9 +260,9 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         ptitle.setOpaque(false);
         ptitle.setLayout(new javax.swing.BoxLayout(ptitle, javax.swing.BoxLayout.LINE_AXIS));
 
-        label_programtitle.setFont(new java.awt.Font("Trajan Pro", 1, 80));
+        label_programtitle.setFont(new java.awt.Font("Trebuchet MS", 1, 80)); // NOI18N
         label_programtitle.setForeground(new java.awt.Color(255, 255, 255));
-        label_programtitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_programtitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_programtitle.setText("MedSavant");
         ptitle.add(label_programtitle);
 
@@ -254,26 +283,40 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
 
         ptitle.add(jPanel4);
 
-        label_versioninformation.setFont(new java.awt.Font("Lucida Grande", 1, 18));
-        label_versioninformation.setForeground(new java.awt.Color(204, 204, 204));
-        label_versioninformation.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_versioninformation.setText("version information");
-        ptitle.add(label_versioninformation);
-
         panel_title.add(ptitle);
+
+        label_versioninformation.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        label_versioninformation.setForeground(new java.awt.Color(204, 204, 204));
+        label_versioninformation.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_versioninformation.setText("version information");
+        panel_title.add(label_versioninformation);
+
+        javax.swing.GroupLayout spiralPanelLayout = new javax.swing.GroupLayout(spiralPanel);
+        spiralPanel.setLayout(spiralPanelLayout);
+        spiralPanelLayout.setHorizontalGroup(
+            spiralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 815, Short.MAX_VALUE)
+        );
+        spiralPanelLayout.setVerticalGroup(
+            spiralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 234, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panel_title, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
-            .addComponent(panel_logonholder, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
+            .addComponent(panel_logonholder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 815, Short.MAX_VALUE)
+            .addComponent(panel_title, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 815, Short.MAX_VALUE)
+            .addComponent(spiralPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(panel_title, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                .addComponent(panel_title, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(spiralPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(panel_logonholder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -326,6 +369,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
     private javax.swing.JPanel panel_logonholder;
     private javax.swing.JPanel panel_title;
     private javax.swing.JPanel ptitle;
+    private javax.swing.JPanel spiralPanel;
     // End of variables declaration//GEN-END:variables
 
     private void loginUsingEnteredUsernameAndPassword() {
@@ -367,7 +411,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             } else if (ex.getExceptionType() == NonFatalDatabaseException.ExceptionType.TYPE_UNKNOWN) {
                 this.label_status.setText("login failure");
             }
-            this.label_status.setFont(new Font("Tahoma", Font.BOLD, 16));
+            this.label_status.setFont(new Font("Arial", Font.BOLD, 15));
             this.label_status.setForeground(Color.red);
             this.field_username.requestFocus();
             this.button_login.setEnabled(true);
