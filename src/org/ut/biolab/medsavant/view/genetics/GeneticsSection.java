@@ -37,10 +37,10 @@ public class GeneticsSection extends SectionView {
     @Override
     public SubSectionView[] getSubSections() {
         SubSectionView[] pages = new SubSectionView[4];
-        pages[0] = new GeneticsTablePage(this);
-        pages[1] = new GeneticsChartPage(this);
-        pages[2] = new GeneticsRegionsPage(this);
-        pages[3] = new GeneticsTestPage(this);
+        pages[0] = new GeneticsFilterPage(this);
+        pages[1] = new GeneticsTablePage(this);
+        pages[2] = new GeneticsChartPage(this);
+        pages[3] = new AggregatePage(this);
         return pages;
     }
 
@@ -94,9 +94,12 @@ public class GeneticsSection extends SectionView {
 
     private void setPersistencePanels() {
         try {
-            panels = new JPanel[2];
+            
+            /*panels = new JPanel[2];
             panels[0] = new FilterPanel();
             panels[1] = new FilterProgressPanel();
+             * 
+             */
             //TODO: account for exception in filter panel instead
         } catch (Exception ex) {
         }

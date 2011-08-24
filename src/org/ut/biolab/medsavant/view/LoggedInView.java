@@ -7,6 +7,7 @@ package org.ut.biolab.medsavant.view;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
+import org.ut.biolab.medsavant.view.account.AccountSection;
 import org.ut.biolab.medsavant.view.annotations.AnnotationsSection;
 import org.ut.biolab.medsavant.view.genetics.GeneticsSection;
 import org.ut.biolab.medsavant.view.patients.PatientsSection;
@@ -46,6 +47,7 @@ public class LoggedInView extends JPanel {
             addSection(new PatientsSection());
             addSection(new AnnotationsSection());
             addSection(new GeneticsSection());
+            addSection(new AccountSection());
         }
         initiated = true;
     }

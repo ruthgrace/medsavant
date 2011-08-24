@@ -31,5 +31,13 @@ public class SNPPage extends SubSectionView {
                 new SNPAnnotationDetailedView());
         return view;
     }
+
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
     
 }

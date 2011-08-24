@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -19,7 +20,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
+import javax.swing.border.MatteBorder;
 import org.ut.biolab.medsavant.util.view.PeekingPanel;
+import org.ut.biolab.medsavant.view.images.IconFactory;
+import org.ut.biolab.medsavant.view.images.IconFactory.StandardIcon;
 import org.ut.biolab.medsavant.view.menu.Menu;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
@@ -41,8 +45,16 @@ public class ViewController extends JPanel {
     //private JToggleButton buttonSectionPanelController;
     private SectionView currentSection;
     private PeekingPanel peekRight;
+    private SubSectionView currentSubsection;
 
     public void changeSubSectionTo(SubSectionView view) {
+        
+        //if (currentSubsection != null) { currentSubsection.viewDidUnload(); }
+        
+        currentSubsection = view;
+        
+        currentSubsection.viewLoading();
+        
         this.sectionHeader.setSubSection(view);
         
         SectionView parent = view.getParent();
@@ -111,6 +123,8 @@ public class ViewController extends JPanel {
         private final JLabel title;
         private final JPanel sectionMenuPanel;
         private final JPanel subSectionMenuPanel;
+        private final ImagePanel leftTab;
+        private final ImagePanel rightTab;
 
         public SectionHeader() {
             this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
@@ -119,17 +133,27 @@ public class ViewController extends JPanel {
             this.setBorder(ViewUtil.getMediumSideBorder());
             title = ViewUtil.getHeaderLabel(" ");
             this.add(title);
-            sectionMenuPanel = ViewUtil.getClearPanel();
-            subSectionMenuPanel = ViewUtil.getClearPanel();
+            sectionMenuPanel = new JPanel();//ViewUtil.getClearPanel();
+            subSectionMenuPanel = new JPanel();//ViewUtil.getClearPanel();
+            
+            sectionMenuPanel.setBackground(new Color(232,232,232));
+            sectionMenuPanel.setBorder(new MatteBorder(1, 0, 0, 0, Color.gray));
+            
+            subSectionMenuPanel.setBackground(new Color(232,232,232));
+            subSectionMenuPanel.setBorder(new MatteBorder(1, 0, 0, 0, Color.gray));
             
             sectionMenuPanel.setLayout(new BoxLayout(sectionMenuPanel,BoxLayout.X_AXIS));
             subSectionMenuPanel.setLayout(new BoxLayout(subSectionMenuPanel,BoxLayout.X_AXIS));
             
             this.add(Box.createHorizontalGlue());
-            this.add(subSectionMenuPanel);
-            this.add(ViewUtil.getMediumSeparator()); 
+            
+            leftTab = new ImagePanel(IconFactory.StandardIcon.TAB_LEFT);
+            rightTab = new ImagePanel(IconFactory.StandardIcon.TAB_RIGHT);
+            
+            this.add(leftTab);
             this.add(sectionMenuPanel);
-          
+            this.add(subSectionMenuPanel);
+            this.add(rightTab);
             
         }
         
@@ -150,17 +174,49 @@ public class ViewController extends JPanel {
             Component[] subsectionBanner = view.getBanner();
             Component[] sectionBanner = view.getParent().getBanner();
             
+            
+            if (subsectionBanner == null && sectionBanner == null) {
+                leftTab.setVisible(false);
+                rightTab.setVisible(false);
+            } else {
+                leftTab.setVisible(true);
+                rightTab.setVisible(true);
+            }
+            
             if (subsectionBanner != null) {
                 for (Component c : subsectionBanner)
                     subSectionMenuPanel.add(c);
             }
+            
             if (sectionBanner != null) {
-                for (Component c : sectionBanner)
+                
+                for (Component c : sectionBanner) {
                     sectionMenuPanel.add(c);
+                }
+               
             }
         }
         
         
+    }
+    
+    private static class  ImagePanel extends JPanel {
+        private final Image img;
+        private final Dimension d;
+
+        public ImagePanel(StandardIcon si) {
+            img = IconFactory.getInstance().getIcon(si).getImage();
+            d = new Dimension(img.getWidth(null), 30);//img.getHeight(null));
+            this.setMaximumSize(d);
+            this.setPreferredSize(d);
+            System.out.println("Size of tab image: " + d);
+        }
+        
+        public void paintComponent(Graphics g) {
+            //g.setColor(Color.red);
+            //g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            g.drawImage(img, 0,0, null);
+        }
     }
     
     private static ViewController instance;

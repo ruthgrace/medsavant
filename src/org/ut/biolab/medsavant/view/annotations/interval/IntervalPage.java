@@ -165,4 +165,13 @@ public class IntervalPage extends SubSectionView {
         }
         
     }
+    
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
+    
 }

@@ -32,4 +32,7 @@ public abstract class SubSectionView {
     public SectionView getParent() {
         return this.parent;
     }
+    
+    public abstract void viewLoading();
+    public abstract void viewDidUnload();
 }

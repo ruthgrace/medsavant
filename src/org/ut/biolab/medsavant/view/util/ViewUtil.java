@@ -33,6 +33,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import org.ut.biolab.medsavant.view.genetics.filter.FilterPanel;
 
 /**
  *
@@ -309,6 +310,12 @@ public class ViewUtil {
     }
     public static void setBoxYLayout(JPanel p) {
         p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
+    }
+
+    public static JPanel getMessagePanel(String string) {
+        JPanel p = new JPanel();
+        p.add(new JLabel(string));
+        return p;
     }
 
     /*

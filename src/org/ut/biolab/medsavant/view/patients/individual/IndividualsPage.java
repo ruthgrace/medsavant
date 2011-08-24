@@ -47,4 +47,13 @@ public class IndividualsPage extends SubSectionView {
         }); 
         return button;
     }
+    
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
+    
 }

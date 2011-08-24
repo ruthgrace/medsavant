@@ -30,7 +30,7 @@ public class GeneticsTablePage extends SubSectionView {
     public GeneticsTablePage(SectionView parent) { super(parent); }
 
     public String getName() {
-        return "Table";
+        return "  Table";
     }
 
     public JPanel getView() {
@@ -82,6 +82,14 @@ public class GeneticsTablePage extends SubSectionView {
         return null;
     }
     
+    
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
     
     
     

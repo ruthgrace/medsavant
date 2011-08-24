@@ -52,4 +52,13 @@ public class CohortsPage extends SubSectionView {
         }); 
         return button;
     }
+    
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
+    
 }

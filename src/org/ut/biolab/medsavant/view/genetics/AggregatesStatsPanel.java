@@ -133,5 +133,17 @@ public class AggregatesStatsPanel extends JPanel implements FiltersChangedListen
             }
         }
     }
+
+    // TODO: test
+    void stopAggregation() {
+        for (String panelName: panelMap.keySet()){
+            panelMap.get(panelName).setUpdate(false);
+        }
+    }
+
+    // TODO: test
+    void resumeAggregation() {
+        stopAll(currentRegionStat);
+    }
       
 }

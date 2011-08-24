@@ -41,7 +41,7 @@ public class GeneticsChartPage extends SubSectionView {
     public GeneticsChartPage(SectionView parent) { super(parent); }
 
     public String getName() {
-        return "Chart";
+        return "  Chart";
     }
 
     public JPanel getView() {
@@ -83,4 +83,13 @@ public class GeneticsChartPage extends SubSectionView {
          */
         return null;
     }
+    
+    @Override
+    public void viewLoading() {
+    }
+
+    @Override
+    public void viewDidUnload() {
+    }
+    
 }

@@ -22,16 +22,16 @@ import org.ut.biolab.medsavant.view.subview.SubSectionView;
  *
  * @author mfiume
  */
-public class GeneticsRegionsPage extends SubSectionView {
+public class AggregatePage extends SubSectionView {
 
     private JPanel panel;
     private AggregatesStatsPanel asp;
     
-    public GeneticsRegionsPage(SectionView parent) { super(parent); }
+    public AggregatePage(SectionView parent) { super(parent); }
 
     
     public String getName() {
-        return "Aggregate";
+        return "  Aggregate";
     }
 
     public JPanel getView() {
@@ -66,6 +66,19 @@ public class GeneticsRegionsPage extends SubSectionView {
 //        cs[0] = addButton;
 //        return cs;
         return null;
-    }    
+    }  
+    
+    @Override
+    public void viewLoading() {
+        if (asp != null)
+            asp.resumeAggregation();
+    }
+
+    @Override
+    public void viewDidUnload() {
+        if (asp != null)
+            asp.stopAggregation();
+    }
+    
 
 }
