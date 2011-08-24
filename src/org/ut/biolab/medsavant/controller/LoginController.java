@@ -79,7 +79,7 @@ public class LoginController {
     }
 
     private static void fireLoginEvent(LoginEvent evt) {
-        System.out.println("Firing login event: " + evt.getType());
+        //System.out.println("Firing login event: " + evt.getType());
         for (LoginListener l : loginListeners) {
             l.loginEvent(evt);
         }

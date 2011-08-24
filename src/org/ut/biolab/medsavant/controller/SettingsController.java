@@ -204,7 +204,7 @@ public class SettingsController {
         try {
             File pFile = new File(PERSISTENCE_FILE_PATH);
 
-            System.out.println("Saving map file: " + pFile.getAbsolutePath());
+            //System.out.println("Saving map file: " + pFile.getAbsolutePath());
             
             if (pFile.exists()) {
                 pFile.delete();
@@ -215,11 +215,11 @@ public class SettingsController {
             }
         } catch (Exception ex) {
             Logger.getLogger(SettingsController.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("ERROR: saving map file... " + ex.getMessage());
+            //System.out.println("ERROR: saving map file... " + ex.getMessage());
             //ex.printStackTrace();
         } finally {
             try {
-                System.out.println("Done saving map file");
+                //System.out.println("Done saving map file");
                 bw.close();
             } catch (IOException ex) {
                 Logger.getLogger(SettingsController.class.getName()).log(Level.SEVERE, null, ex);

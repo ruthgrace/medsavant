@@ -52,7 +52,7 @@ public class Frame extends JFrame implements LoginListener{
     private boolean queuedForExit = false;
 
     public void switchToSessionView() {
-         System.out.println("Requesting switch to session view");
+         //System.out.println("Requesting switch to session view");
         if (!LoginController.isLoggedIn() || (currentCard != null && currentCard.equals(SESSION_VIEW_CARD_NAME))) { return; }
         if (loginView != null) {
             view.remove(loginView);
@@ -69,7 +69,7 @@ public class Frame extends JFrame implements LoginListener{
     }
 
     public void switchToLoginView() {
-        System.out.println("Requesting switch to login view");
+        //System.out.println("Requesting switch to login view");
         if (currentCard != null && currentCard.equals(LOGIN_CARD_NAME)) { return; }
         if (sessionView != null) {
             view.remove(sessionView);
