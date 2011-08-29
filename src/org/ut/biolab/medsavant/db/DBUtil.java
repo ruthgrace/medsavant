@@ -141,21 +141,21 @@ public class DBUtil {
         
         //join with sift
         long start = System.nanoTime();
-        addAnnotation(AnnotationName.SIFT, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\sift_final_tabix", records);
+        addAnnotation(AnnotationName.SIFT, "annotations\\sift_final_tabix", records);
         long end = System.nanoTime();
         System.out.println("Sift Total time: " + (end-start));
         System.out.println("Sift Time per record: " + ((end-start)/records.size()));
         
         //join with polyphen
         start = System.nanoTime();
-        addAnnotation(AnnotationName.POLYPHEN, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\polyphen_final_tabix", records);
+        addAnnotation(AnnotationName.POLYPHEN, "annotations\\polyphen_final_tabix", records);
         end = System.nanoTime();
         System.out.println("Polyphen Total time: " + (end-start));
         System.out.println("Polyphen Time per record: " + ((end-start)/records.size()));
         
         //join with gatk
         start = System.nanoTime();
-        addAnnotation(AnnotationName.GATK, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\gatk_final_tabix", records);
+        addAnnotation(AnnotationName.GATK, "annotations\\gatk_final_tabix", records);
         end = System.nanoTime();
         System.out.println("Gatk Total time: " + (end-start));
         System.out.println("Gatk Time per record: " + ((end-start)/records.size()));
@@ -163,7 +163,7 @@ public class DBUtil {
 
         //Write to outfile
         start = System.nanoTime();
-        String fileName = "C:\\Users\\Andrew\\Documents\\medsavant\\test\\test_out\\join1";
+        String fileName = "annotations\\join1";
         try {        
             BufferedWriter out = new BufferedWriter(new FileWriter(new File(fileName), false));
             for(VariantRecord r : records){
@@ -194,64 +194,7 @@ public class DBUtil {
         
         long totalEnd = System.nanoTime();
         System.out.println("TOTAL TIME FOR " + records.size() + " RECORDS: " + (totalEnd-totalStart));
-        
-        
-        
-        
-        
-        
-        
-        //O(nlogm) solution
-        /*List<VariantRecord> records = vs.getRecords();
-        System.out.println("Num records: " + records.size());
-        long start = System.nanoTime();
-        try {
-            TabixReader reader = new TabixReader("C:\\Users\\Andrew\\Documents\\medsavant\\test\\gatk_dump_sorted_tabix");
-            BufferedWriter out = new BufferedWriter(new FileWriter(new File("C:\\Users\\Andrew\\Documents\\medsavant\\test\\gatk_dump_sorted_tabix_XXX"), false));           
-
-            int i = 1;
-            for(VariantRecord r : records){
-                
-                if(i%5000 == 0){
-                    System.out.println(i);
-                }
-                i++;
-                
-                out.write(r.toTabString());
-                out.newLine();
-                
-                int tid = reader.chr2tid(r.getChrom());
-                if(tid == -1) {
-                    out.newLine();
-                    continue;
-                }
-                
-                org.broad.tabix.TabixReader.Iterator it = reader.query(tid, r.getPosition().intValue()-1, r.getPosition().intValue());
-                
-                if(it == null){
-                    out.newLine();
-                    continue;
-                }
-                
-                
-                String s;
-                while((s = it.next()) != null){
-                    out.write(s);
-                    //out.newLine();
-                }
-                
-                out.newLine();
-               
-                
-            }
-            
-            out.close();
-        } catch (IOException ex) {
-            Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        long end = System.nanoTime();
-        System.out.println("Total time: " + (end-start));
-        System.out.println("Time per record: " + ((end-start)/records.size()));*/
+       
         
     }
     
@@ -275,9 +218,6 @@ public class DBUtil {
                 
                 if(i%10000000 == 0){
                     System.out.println(i);
-                    /*System.out.println(currentRecords.get(0).toTabString());
-                    System.out.println(annotation);
-                    System.out.println();*/
                 }
                 i++;
                 
