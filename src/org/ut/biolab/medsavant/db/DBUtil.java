@@ -15,8 +15,10 @@ import fiume.vcf.VCFParser;
 import fiume.vcf.VariantRecord;
 import fiume.vcf.VariantSet;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.broad.tabix.TabixReader;
 import org.ut.biolab.medsavant.db.table.CohortTableSchema;
 import org.ut.biolab.medsavant.db.table.CohortViewTableSchema;
 import org.ut.biolab.medsavant.db.table.GeneListMembershipTableSchema;
@@ -104,6 +107,9 @@ public class DBUtil {
     
     public static void addVcfToDb(String filename, int genome_id, int pipeline_id) throws SQLException {
         
+        
+        long totalStart = System.nanoTime();
+        
         //establish connection
         Connection conn;
         try {
@@ -113,7 +119,6 @@ public class DBUtil {
             return;
         }
         
-        PreparedStatement ps = getVcfStatement(conn);
         TableSchema table = MedSavantDatabase.getInstance().getVariantTableSchema();              
         int base_variant_id = QueryUtil.getMaxValueForColumn(conn, table, table.getDBColumn(VariantTableSchema.ALIAS_VARIANTID)) + 1;        
         
@@ -121,294 +126,418 @@ public class DBUtil {
         VariantSet vs = new VariantSet();
         try {
             System.out.println("Parsing variants...");
-            vs = VCFParser.parseVariants(new File(filename), ps, base_variant_id, genome_id, pipeline_id, table.getColumns());
+            vs = VCFParser.parseVariants(new File(filename), base_variant_id, genome_id, pipeline_id);
             System.out.println("Done parsing variants...");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         conn.commit();
         conn.setAutoCommit(true);   
+             
         
-        /*
         List<VariantRecord> records = vs.getRecords();
-        try {
-            TabixReader reader = new TabixReader("C:\\Users\\Andrew\\Documents\\medsavant\\test\\tabix_testout_100000");
+        if(records.isEmpty()) return; 
+        System.out.println("Num records: " + records.size());
+        
+        //join with sift
+        long start = System.nanoTime();
+        addAnnotation(AnnotationName.SIFT, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\sift_final_tabix", records);
+        long end = System.nanoTime();
+        System.out.println("Sift Total time: " + (end-start));
+        System.out.println("Sift Time per record: " + ((end-start)/records.size()));
+        
+        //join with polyphen
+        start = System.nanoTime();
+        addAnnotation(AnnotationName.POLYPHEN, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\polyphen_final_tabix", records);
+        end = System.nanoTime();
+        System.out.println("Polyphen Total time: " + (end-start));
+        System.out.println("Polyphen Time per record: " + ((end-start)/records.size()));
+        
+        //join with gatk
+        start = System.nanoTime();
+        addAnnotation(AnnotationName.GATK, "C:\\Users\\Andrew\\Documents\\medsavant\\test\\final\\gatk_final_tabix", records);
+        end = System.nanoTime();
+        System.out.println("Gatk Total time: " + (end-start));
+        System.out.println("Gatk Time per record: " + ((end-start)/records.size()));
+        
 
+        //Write to outfile
+        start = System.nanoTime();
+        String fileName = "C:\\Users\\Andrew\\Documents\\medsavant\\test\\test_out\\join1";
+        try {        
+            BufferedWriter out = new BufferedWriter(new FileWriter(new File(fileName), false));
             for(VariantRecord r : records){
-                org.broad.tabix.TabixReader.Iterator it = reader.query(1, r.getPosition().intValue(), r.getPosition().intValue()+1);
-                String s;
-                while((s = it.next()) != null){
-
-            }
+                out.write(r.toTabsForUpload() + "\n");
             }
         } catch (IOException ex) {
             Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
-         * 
-         */
+        end = System.nanoTime();
+        System.out.println("Write time: " + (end-start));
+        System.out.println("Time per record: " + ((end-start)/records.size()));
+        
+        
+        //upload outfile to db
+        System.out.println("starting load");
+        start = System.nanoTime();
+        String loadString = 
+                "LOAD DATA LOCAL INFILE '" + fileName.replaceAll("\\\\", "/") + "' " +
+                "INTO TABLE " + "variant_combined_ib" + " " + 
+                "FIELDS TERMINATED BY '\\t' " +
+                "LINES TERMINATED BY '\\n'";
+        Statement s = conn.createStatement();
+        s.execute(loadString);
+        end = System.nanoTime();
+        System.out.println("Import time: " + (end-start));
+        System.out.println("Time per record: " + ((end-start)/records.size()));
+        
+        
+        long totalEnd = System.nanoTime();
+        System.out.println("TOTAL TIME FOR " + records.size() + " RECORDS: " + (totalEnd-totalStart));
+        
+        
+        
+        
+        
+        
+        
+        //O(nlogm) solution
+        /*List<VariantRecord> records = vs.getRecords();
+        System.out.println("Num records: " + records.size());
+        long start = System.nanoTime();
+        try {
+            TabixReader reader = new TabixReader("C:\\Users\\Andrew\\Documents\\medsavant\\test\\gatk_dump_sorted_tabix");
+            BufferedWriter out = new BufferedWriter(new FileWriter(new File("C:\\Users\\Andrew\\Documents\\medsavant\\test\\gatk_dump_sorted_tabix_XXX"), false));           
+
+            int i = 1;
+            for(VariantRecord r : records){
+                
+                if(i%5000 == 0){
+                    System.out.println(i);
+                }
+                i++;
+                
+                out.write(r.toTabString());
+                out.newLine();
+                
+                int tid = reader.chr2tid(r.getChrom());
+                if(tid == -1) {
+                    out.newLine();
+                    continue;
+                }
+                
+                org.broad.tabix.TabixReader.Iterator it = reader.query(tid, r.getPosition().intValue()-1, r.getPosition().intValue());
+                
+                if(it == null){
+                    out.newLine();
+                    continue;
+                }
+                
+                
+                String s;
+                while((s = it.next()) != null){
+                    out.write(s);
+                    //out.newLine();
+                }
+                
+                out.newLine();
+               
+                
+            }
+            
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        long end = System.nanoTime();
+        System.out.println("Total time: " + (end-start));
+        System.out.println("Time per record: " + ((end-start)/records.size()));*/
         
     }
     
-    public static void addVcfToDb1(String filename, int genome_id, int pipeline_id) throws SQLException {
-        
-        //establish connection
-        Connection conn;
+    private enum AnnotationName {GATK, SIFT, POLYPHEN};
+    
+    private static void addAnnotation(AnnotationName annotationName, String annotationFilename, List<VariantRecord> records){
         try {
-            conn = ConnectionController.connect();
-        } catch (Exception ex) {
-            Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
-            return;
-        }
-        
-        
-        //perform staging       
-        clearStagingTable(conn);
-        PreparedStatement ps = getVcfStatement(conn);
-        TableSchema table = MedSavantDatabase.getInstance().getVariantTableSchema();              
-        int base_variant_id = QueryUtil.getMaxValueForColumn(conn, table, table.getDBColumn(VariantTableSchema.ALIAS_VARIANTID)) + 1;        
-        
-        conn.setAutoCommit(false);    
-        VariantSet vs = new VariantSet();
-        try {
-            System.out.println("Parsing variants...");
-            vs = VCFParser.parseVariants(new File(filename), ps, base_variant_id, genome_id, pipeline_id, table.getColumns());
-            System.out.println("Done parsing variants...");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        conn.commit();
-        conn.setAutoCommit(true);   
-        
-        
-        List<VariantRecord> records = vs.getRecords();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("C:\\Users\\Andrew\\Documents\\medsavant\\test\\testout")));
-
-            String line;
-            int i = 0;
-            int matches = 0;
-            int recPos = 0;
-            VariantRecord r = records.get(recPos);
-                    
-            long start = System.nanoTime();
-            while((line = bufferedReader.readLine()) != null){               
+            
+            TabixReader reader = new TabixReader(annotationFilename);
+            
+            org.broad.tabix.TabixReader.Iterator it = null;
+            int pos = 0;
+            List<VariantRecord> currentRecords = getCurrentRecords(records, pos);
+            String chrom = currentRecords.get(0).getChrom();
+            String annotation = null;
+            String annChr = null;
+            boolean endOfIt = true;
+            
+            int i = 1;
+            while(true){
                 
-                int i1 = line.indexOf("\t");
-                int i2 = line.indexOf("\t", i1+1);
-                int i3 = line.indexOf("\t", i2+1);
-                
-                String chr = line.substring(i1+1, i2);
-                long pos = Long.parseLong(line.substring(i2+1, i3));
-                
-                int compare = r.compareTo(chr, pos);
-                while(compare < 0){
-                    recPos++;
-                    if(recPos >= records.size()) break;
-                    r = records.get(recPos);
-                    compare = r.compareTo(chr, pos);
+                if(i%10000000 == 0){
+                    System.out.println(i);
+                    /*System.out.println(currentRecords.get(0).toTabString());
+                    System.out.println(annotation);
+                    System.out.println();*/
                 }
-                if(recPos >= records.size()) break;
-                if (compare == 0){
-                    //System.out.println("MATCH FOUND: " + chr + " " + pos + "\t\t" + r.getChrom() + " " + r.getPosition());
-                    r.setTranscriptStrand("XXX");
-                    matches++;
-                }
-
                 i++;
-                if(i % 10000000 == 0){
-                    System.out.println(i + " records passed");
+                
+                //if we've reached last variantRecord in chrom, get new iterator
+                if(!currentRecords.get(0).getChrom().equals(chrom) || endOfIt){
+                    chrom = currentRecords.get(0).getChrom();
+                    int tid = reader.chr2tid(chrom);
+                    it = reader.query(tid, 0, Integer.MAX_VALUE);
+                    endOfIt = false;
                 }
+                
+                //get the current annotation
+                annotation = it.next();  
+                if(annotation == null){
+                    endOfIt = true;
+                    while(VariantRecord.compareChrom(chrom, annChr) <= 0){
+                        pos += currentRecords.size();
+                        if(pos >= records.size()) break;
+                        currentRecords = getCurrentRecords(records, pos);
+                        chrom = currentRecords.get(0).getChrom();
+                    }
+                    if(pos >= records.size()) break;
+                    continue;
+                }
+                
+                //parse information from annotation
+                int i1 = annotation.indexOf("\t");
+                int i2 = annotation.indexOf("\t", i1+1);
+                int i3 = annotation.indexOf("\t", i2+1);              
+                annChr = annotation.substring(i1+1, i2);
+                long position = Long.parseLong(annotation.substring(i2+1, i3));
+                
+                //perform comparison
+                int compare = currentRecords.get(0).compareTo(annChr, position);
+                
+                //iterate through VariantRecords until position >= annotation
+                while(compare < 0){
+                    pos += currentRecords.size();
+                    if(pos >= records.size()) break;
+                    currentRecords = getCurrentRecords(records, pos);
+                    compare = currentRecords.get(0).compareTo(annChr, position);  
+                }
+                if(pos >= records.size()) break;
+                
+                //match found, update record
+                if(compare == 0){
+                    
+                    switch(annotationName){
+                        case GATK:
+                            annotateGatk(currentRecords, annotation);
+                            break;
+                        case SIFT:
+                            annotateSift(currentRecords, annotation);
+                            break;
+                        case POLYPHEN:
+                            annotatePolyphen(currentRecords, annotation);
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                }             
             }
-            long end = System.nanoTime();
-            System.out.println("total time: " + (end - start));
-            System.out.println("total matches: " + matches);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static void annotateSift(List<VariantRecord> currentRecords, String annotation){
+        //get annotation fields
+        VariantRecord a = getSiftAnnotationRecord(annotation);
 
-            bufferedReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        for(VariantRecord rec : currentRecords){
+            rec.setNameSift(a.getNameSift());
+            rec.setName2Sift(a.getName2Sift());
+            rec.setDamageProbability(a.getDamageProbability());
         }
+    }
+    
+    private static VariantRecord getSiftAnnotationRecord(String line){
+        String[] values = line.split("\t");
+        VariantRecord a = new VariantRecord();
         
+        VariantAnnotationSiftTableSchema s = MedSavantDatabase.getInstance().getVariantSiftTableSchema();
         
+        Double doubleValue;
         
+        a.setNameSift(values[s.INDEX_NAME_SIFT-1]);
+        a.setName2Sift(values[s.INDEX_NAME2_SIFT-1]);
+        if((doubleValue = stringToDouble(values[s.INDEX_DAMAGEPROBABILITY-1])) != null) a.setDamageProbability(doubleValue);
         
-        if(true){
-            return;
+        return a;
+    }
+    
+    private static void annotatePolyphen(List<VariantRecord> currentRecords, String annotation){
+        //get annotation fields
+        VariantRecord a = getPolyphenAnnotationRecord(annotation);
+
+        for(VariantRecord rec : currentRecords){
+            rec.setCdnacoord(a.getCdnacoord());
+            rec.setOpos(a.getOpos());
+            rec.setOaa1(a.getOaa1());
+            rec.setOaa2(a.getOaa2());
+            rec.setSnpid(a.getSnpid());
+            rec.setAcc(a.getAcc());
+            rec.setPos(a.getPos());
+            rec.setPrediction(a.getPrediction());
+            rec.setPph2class(a.getPph2class());
+            rec.setPph2prob(a.getPph2prob());
+            rec.setPph2fpr(a.getPph2fpr());
+            rec.setPph2tpr(a.getPph2tpr());
+            rec.setPph2fdr(a.getPph2fdr());
+            rec.setTransv(a.getTransv());
+            rec.setCodpos(a.getCodpos());
+            rec.setCpg(a.getCpg());
+            rec.setMindjnc(a.getMindjnc());
+            rec.setIdpmax(a.getIdpmax());
+            rec.setIdpsnp(a.getIdpsnp());
+            rec.setIdqmin(a.getIdqmin());
         }
+    }
+    
+    private static VariantRecord getPolyphenAnnotationRecord(String line){
+        String[] values = line.split("\t");
+        VariantRecord a = new VariantRecord();
         
+        VariantAnnotationPolyphenTableSchema s = MedSavantDatabase.getInstance().getVariantPolyphenTableSchema();
         
+        Integer intValue;
+        Float floatValue;
         
-        
-        //delete existing file
-        
-        String dateFormat = "yyyyMMddhhmmss";
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-        String dateString = sdf.format(cal.getTime());
-        String fileName = "/data/medsavant/stagingFile_" + dateString;
-        //(new File(fileName)).delete();
-        
-        
-        System.out.println("A");
-        String q1 = 
-                "select * " +
-                "into outfile '" + filename + "a" + "' " +
-                "fields terminated by '\t' " +
-                "lines terminated by '\n' " +
-                "from variant_staging";
-        Statement s1 = conn.createStatement();
-        s1.execute(q1);
-        
-        System.out.println("B");      
-        String q2 = 
-                "load data infile '" + filename + "a" + "' " +
-                "into table variant_staging_ib " +
-                "fields terminated by '\t'";
-        Statement s2 = conn.createStatement();
-        s2.execute(q2);
-        
-        /*if(true){
-            return;
-        }*/
-        
-        
-        //join with annotations -> outfile
-        
-        System.out.println("starting join");
-        
-        VariantAnnotationSiftTableSchema sift = MedSavantDatabase.getInstance().getVariantSiftTableSchema();
-        VariantAnnotationPolyphenTableSchema polyphen = MedSavantDatabase.getInstance().getVariantPolyphenTableSchema();
-        VariantAnnotationGatkTableSchema gatk = MedSavantDatabase.getInstance().getVariantGatkTableSchema();
-        
-        String dumpString = 
-                "SELECT " 
-                //variant
-                + "t0.*, ";
-        
-        //sift
-        for(Object[] column : sift.getJoinedColumnGrid()){
-            dumpString += "t1.`" + ((DbColumn)column[1]).getColumnNameSQL() + "`, ";
+        a.setCdnacoord(values[s.INDEX_CDNACOORD-1]);
+        if((intValue = stringToInt(values[s.INDEX_OPOS-1])) != null) a.setOpos(intValue);
+        a.setOaa1(values[s.INDEX_OAA1-1]);
+        a.setOaa2(values[s.INDEX_OAA2-1]);
+        a.setSnpid(values[s.INDEX_SNPID-1]);
+        a.setAcc(values[s.INDEX_ACC-1]);
+        if((intValue = stringToInt(values[s.INDEX_POS-1])) != null) a.setPos(intValue);
+        a.setPrediction(values[s.INDEX_PREDICTION-1]);
+        a.setPph2class(values[s.INDEX_PPH2CLASS-1]);
+        if((floatValue = stringToFloat(values[s.INDEX_PPH2PROB-1])) != null) a.setPph2prob(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_PPH2FPR-1])) != null) a.setPph2fpr(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_PPH2TPR-1])) != null) a.setPph2tpr(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_PPH2FDR-1])) != null) a.setPph2fdr(floatValue);
+        if((intValue = stringToInt(values[s.INDEX_TRANSV-1])) != null) a.setTransv(intValue);
+        if((intValue = stringToInt(values[s.INDEX_CODPOS-1])) != null) a.setCodpos(intValue);
+        if((intValue = stringToInt(values[s.INDEX_CPG-1])) != null) a.setCpg(intValue);
+        if((floatValue = stringToFloat(values[s.INDEX_MINDJNC-1])) != null) a.setMindjnc(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_IDPMAX-1])) != null) a.setIdpmax(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_IDPSNP-1])) != null) a.setIdpsnp(floatValue);
+        if((floatValue = stringToFloat(values[s.INDEX_IDQMIN-1])) != null) a.setIdqmin(floatValue);
+ 
+        return a;
+    }
+    
+    private static void annotateGatk(List<VariantRecord> currentRecords, String annotation){
+        //get annotation fields
+        VariantRecord a = getGatkAnnotationRecord(annotation);
+
+        for(VariantRecord rec : currentRecords){
+            rec.setName_gatk(a.getName_gatk());
+            rec.setName2_gatk(a.getName2_gatk());
+            rec.setTranscriptStrand(a.getTranscriptStrand());
+            rec.setPositionType(a.getPositionType());
+            rec.setFrame(a.getFrame());
+            rec.setMrnaCoord(a.getMrnaCoord());
+            rec.setCodonCoord(a.getCodonCoord());
+            rec.setSpliceDist(a.getSpliceDist());
+            rec.setReferenceCodon(a.getReferenceCodon());
+            rec.setReferenceAA(a.getReferenceAA());
+            rec.setVariantCodon(a.getVariantCodon());
+            rec.setVariantAA(a.getVariantAA());
+            rec.setChangesAA(a.getChangesAA());
+            rec.setFunctionalClass(a.getFunctionalClass());
+            rec.setCodingCoordStr(a.getCodingCoordStr());
+            rec.setProteinCoordStr(a.getProteinCoordStr());
+            rec.setInCodingRegion(a.getInCodingRegion());
+            rec.setSpliceInfo(a.getSpliceInfo());
+            rec.setUorfChange(a.getUorfChange());
+            rec.setSpliceInfoCopy(a.getSpliceInfoCopy());
         }
+    }
+    
+    private static VariantRecord getGatkAnnotationRecord(String line){
+        String[] values = line.split("\t");
+        VariantRecord a = new VariantRecord();
         
-        //polyphen
-        for(Object[] column : polyphen.getJoinedColumnGrid()){
-            dumpString += "t2.`" + ((DbColumn)column[1]).getColumnNameSQL() + "`, ";
+        VariantAnnotationGatkTableSchema s = MedSavantDatabase.getInstance().getVariantGatkTableSchema();
+        
+        Integer intValue;
+        
+        a.setName_gatk(values[s.INDEX_NAME_GATK-1]);
+        a.setName2_gatk(values[s.INDEX_NAME2_GATK-1]);
+        a.setTranscriptStrand(values[s.INDEX_TRANSCRIPTSTRAND-1]);
+        a.setPositionType(values[s.INDEX_POSITIONTYPE-1]);      
+        if((intValue = stringToInt(values[s.INDEX_FRAME-1])) != null) a.setFrame(intValue);
+        if((intValue = stringToInt(values[s.INDEX_MRNACOORD-1])) != null) a.setMrnaCoord(intValue);
+        if((intValue = stringToInt(values[s.INDEX_CODONCOORD-1])) != null) a.setCodonCoord(intValue);
+        if((intValue = stringToInt(values[s.INDEX_SPLICEDIST-1])) != null) a.setSpliceDist(intValue);
+        a.setReferenceCodon(values[s.INDEX_REFERENCECODON-1]);
+        a.setReferenceAA(values[s.INDEX_REFERENCEAA-1]);
+        a.setVariantCodon(values[s.INDEX_VARIANTCODON-1]);
+        a.setVariantAA(values[s.INDEX_VARIANTAA-1]);
+        a.setChangesAA(values[s.INDEX_CHANGESAA-1]);
+        a.setFunctionalClass(values[s.INDEX_FUNCTIONALCLASS-1]);
+        a.setCodingCoordStr(values[s.INDEX_CODINGCOORDSTR-1]);
+        a.setProteinCoordStr(values[s.INDEX_PROTEINCOORDSTR-1]);
+        a.setInCodingRegion(values[s.INDEX_INCODINGREGION-1]);
+        a.setSpliceInfo(values[s.INDEX_SPLICEINFO-1]);
+        a.setUorfChange(values[s.INDEX_UORFCHANGE-1]);
+        a.setSpliceInfoCopy(values[s.INDEX_SPLICEINFOCOPY-1]);
+        
+        return a;
+    }
+    
+    private static Integer stringToInt(String s){
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return null;
         }
-        
-        //gatk
-        int i = gatk.getJoinedColumnGrid().length;
-        for(Object[] column : gatk.getJoinedColumnGrid()){
-            dumpString += "t3.`" + ((DbColumn)column[1]).getColumnNameSQL() + "`";
-            if(i != 1){
-                dumpString += ",";
+    }
+    
+    private static Float stringToFloat(String s){
+        try {
+            return Float.parseFloat(s);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+    
+    private static Double stringToDouble(String s){
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+    
+    
+    private static List<VariantRecord> getCurrentRecords(List<VariantRecord> records, int startPosition){
+        List<VariantRecord> result = new ArrayList<VariantRecord>();
+        result.add(records.get(startPosition));
+        String chrom = result.get(0).getChrom();
+        long position = result.get(0).getPosition();
+               
+        while(true){
+            startPosition++;
+            if(startPosition >= records.size()) break;
+            VariantRecord next = records.get(startPosition);
+            if(next.getChrom().equals(chrom) && next.getPosition() == position){
+                result.add(next);
+            } else {
+                break;
             }
-            dumpString += " ";
-            i--;
         }
         
-        dumpString += 
-                "INTO OUTFILE '" + fileName + "' "
-                + "FIELDS TERMINATED BY '\\t' "
-                + "FROM ( select * from variant_staging_ib ) as t0 "       
-                //sift
-                + "LEFT OUTER JOIN ( select * from " + VariantAnnotationSiftTableSchema.TABLE_NAME + " group by chrom) as t1 "
-                + "ON "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_POSITION + "` "
-                //polyphen
-                + "LEFT OUTER JOIN ( select * from " + VariantAnnotationPolyphenTableSchema.TABLE_NAME + " group by chrom) as t1 "
-                + "ON "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_POSITION + "` "
-                //gatk
-                + "LEFT OUTER JOIN ( select * from " + VariantAnnotationGatkTableSchema.TABLE_NAME + " group by chrom) as t1 "
-                + "ON "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_POSITION + "`";
-                
-        
-        /*dumpString +=
-                "INTO OUTFILE '" + fileName + "' "
-                + "FIELDS TERMINATED BY '\\t' "
-                + "FROM variant_staging t0 " 
-                //sift
-                + "LEFT OUTER JOIN " + VariantAnnotationSiftTableSchema.TABLE_NAME + " t1 ON ("
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_POSITION + "`) "
-                //polyphen
-                + "LEFT OUTER JOIN " + VariantAnnotationPolyphenTableSchema.TABLE_NAME + " t2 ON ("
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_POSITION + "`) "
-                //gatk
-                + "LEFT OUTER JOIN " + VariantAnnotationGatkTableSchema.TABLE_NAME + " t3 ON ("
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t3.`" + VariantAnnotationGatkTableSchema.DBFIELDNAME_POSITION + "`)";*/
-                
-        /*String dumpString = 
-                "SELECT " 
-                //variant
-                + "t0.*, "
-                //sift
-                + "t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_NAME_SIFT
-                + "`, t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_NAME2_SIFT
-                + "`, t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_DAMAGEPROBABILITY
-                //polyphen
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CDNACOORD
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_OPOS
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_OAA1
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_OAA2
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_SNPID
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_ACC
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_POS
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PREDICTION
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PPH2CLASS
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PPH2PROB
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PPH2FPR
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PPH2TPR
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_PPH2FDR
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_TRANSV
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CODPOS
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CPG
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_MINDJNC
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_IDPMAX
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_IDPSNP
-                + "`, t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_IDQMIN
-                + "` "
-                + "INTO OUTFILE '" + fileName + "' "
-                + "FIELDS TERMINATED BY '\\t' "
-                + "FROM variant_staging t0 " 
-                //sift
-                + "LEFT OUTER JOIN " + VariantAnnotationSiftTableSchema.TABLE_NAME + " t1 ON ("
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t1.`" + VariantAnnotationSiftTableSchema.DBFIELDNAME_POSITION + "`)"
-                //polyphen
-                + "LEFT OUTER JOIN " + VariantAnnotationPolyphenTableSchema.TABLE_NAME + " t2 ON ("
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_GENOMEID + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_GENOMEID + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_CHROM + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_CHROM + "` AND "
-                + "t0.`" + VariantTableSchema.DBFIELDNAME_POSITION + "`=t2.`" + VariantAnnotationPolyphenTableSchema.DBFIELDNAME_POSITION + "`)";*/
-        Statement s = conn.createStatement();
-        s.execute(dumpString);
-        
-        
-        //load outfile to variants
-        
-        System.out.println("starting load");
-        String loadString = 
-                "LOAD DATA INFILE '" + fileName + "' " +
-                "INTO TABLE " + "variant_combined_ib" + " " + 
-                "FIELDS TERMINATED BY '\\t'";
-        s = conn.createStatement();
-        s.execute(loadString);
-        
-        
-        
-    } 
+        return result;
+    }
     
     public static PreparedStatement getVcfStatement(Connection conn) throws SQLException{
         

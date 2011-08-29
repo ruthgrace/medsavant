@@ -109,7 +109,7 @@ public class VCFParser {
         Logger.log(VCFParser.class, "Parsed " + numRecords + " variant records");
     }*/
 
-    private static VariantSet parseVariantsFromReader(CSVReader r, PreparedStatement ps, int variant_id, int genome_id, int pipeline_id, List<DbColumn> columns) throws IOException, SQLException {
+    private static VariantSet parseVariantsFromReader(CSVReader r, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
         String [] nextLine;
 
         SortedVariantSet s = new SortedVariantSet();
@@ -137,6 +137,11 @@ public class VCFParser {
                 // a data line
                 else {
                     List<VariantRecord> records = parseRecord(nextLine,s.getHeader());
+                    for(VariantRecord rec : records){
+                        rec.setVariantID(variant_id);
+                        rec.setGenomeID(genome_id);
+                        rec.setPipelineID(pipeline_id);
+                    }
                     s.addRecords(records);
                     /*for(VariantRecord rec : records){
                         insertRecord(rec, ps, variant_id, genome_id, pipeline_id, columns);
@@ -253,9 +258,9 @@ public class VCFParser {
         ps.executeUpdate();
     }
 
-    public static VariantSet parseVariants(File vcffile, char delimiter, PreparedStatement ps, int variant_id, int genome_id, int pipeline_id, List<DbColumn> columns) throws FileNotFoundException, IOException, SQLException {
+    public static VariantSet parseVariants(File vcffile, char delimiter, int variant_id, int genome_id, int pipeline_id) throws FileNotFoundException, IOException, SQLException {
         CSVReader r = openFile(vcffile, delimiter);
-        return parseVariantsFromReader(r, ps, variant_id, genome_id, pipeline_id, columns);
+        return parseVariantsFromReader(r, variant_id, genome_id, pipeline_id);
     }
 
     public static void printVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException {
@@ -292,8 +297,8 @@ public class VCFParser {
         return result;
     }
 
-    public static VariantSet parseVariants(File vcffile, PreparedStatement ps, int variant_id, int genome_id, int pipeline_id, List<DbColumn> columns) throws IOException, SQLException {
-        return parseVariants(vcffile,defaultDelimiter,ps,variant_id, genome_id, pipeline_id, columns);
+    public static VariantSet parseVariants(File vcffile, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
+        return parseVariants(vcffile,defaultDelimiter, variant_id, genome_id, pipeline_id);
     }
 
     public static void printVariants(File vcffile) throws IOException {

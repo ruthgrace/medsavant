@@ -15,7 +15,7 @@ import org.ut.biolab.medsavant.db.MedSavantDatabase;
  */
 public class VariantTableSchema extends TableSchema {
 
-    public static final String TABLE_NAME = "variant_ib";
+    public static final String TABLE_NAME = "variant_combined_ib";
 
     public static final String DBFIELDNAME_VARIANTID = "variant_id";
     public static final String DBFIELDNAME_GENOMEID = "genome_id";

@@ -94,6 +94,10 @@ public class TableSchema {
         assert (dbNameToIndex.containsKey(dbName));
         return dbNameToIndex.get(dbName);
     }
+    
+    public int getFieldIndexByAlias(String alias) {
+        return getFieldIndexInDB(getDBName(alias));
+    }
 
     public String getFieldAlias(String dbName) {
         assert (dbNameToAlias.containsKey(dbName));

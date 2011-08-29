@@ -202,6 +202,12 @@ public class VariantRecord implements Serializable {
     public static int PHASE_NA = 0;
     public static int PHASE_UNPHASED = 1;
     public static int PHASE_PHASED = 2;*/
+    
+    /*
+     * DO NOT USE THIS UNLESS YOU KNOW WHAT YOU'RE DOING
+     * Useful for creating empty record in some circumstances
+     */
+    public VariantRecord() {}
   
     public VariantRecord(String[] line) {
         dnaID =  null;
@@ -1389,7 +1395,7 @@ public class VariantRecord implements Serializable {
         this.variantCodon = variantCodon;
     }
     
-    public int compareTo(VariantRecord other){
+    /*public int compareTo(VariantRecord other){
         int chromCompare = this.getChrom().compareTo(other.getChrom());
         if(chromCompare != 0){
             return chromCompare;
@@ -1403,11 +1409,34 @@ public class VariantRecord implements Serializable {
             return chromCompare;
         }   
         return this.getPosition().compareTo(pos);
+    }*/
+    
+    private static String[] chroms = {};
+    
+    public int compareTo(VariantRecord other){
+        return compareTo(other.getChrom(), other.getPosition());
     }
     
+    public int compareTo(String chrom, long pos){
+        int chromCompare = compareChrom(this.getChrom(), chrom);
+        if(chromCompare != 0){
+            return chromCompare;
+        }   
+        return this.getPosition().compareTo(pos);
+    }
     
-
-    
+    public static int compareChrom(String chrom1, String chrom2){
+        chrom1 = chrom1.substring(3);
+        chrom2 = chrom2.substring(3);
+        try {
+            Integer a = Integer.parseInt(chrom1);
+            Integer b = Integer.parseInt(chrom2);
+            return a.compareTo(b);
+        } catch (NumberFormatException e) {
+            return chrom1.compareTo(chrom2);
+        }
+    }
+          
     @Override
     public String toString() {
         return "VariantRecord{" + "dnaID=" + dnaID + "chrom=" + chrom + "pos=" + position + "id=" + dbSNPID + "ref=" + ref + "alt=" + alt + "qual=" + qual + "filter=" + filter + '}';
@@ -1417,6 +1446,94 @@ public class VariantRecord implements Serializable {
 
     public String toTabString() {
         return dnaID + delim + chrom + delim + position + delim + dbSNPID + delim + ref + delim + alt + delim + qual + delim + filter + delim;
+    }
+    
+    private String getString(Object value){
+        if(value== null){
+            return "";
+        } else {
+            return value.toString();
+        }
+    }
+    
+    public String toTabsForUpload() {
+        return  getString(this.variantID) + "\t" + 
+                getString(this.genomeID) + "\t" + 
+                getString(this.pipelineID) + "\t" + 
+                getString(this.dnaID) + "\t" + 
+                getString(this.chrom) + "\t" + 
+                getString(this.position) + "\t" + 
+                getString(this.dbSNPID) + "\t" + 
+                getString(this.ref) + "\t" + 
+                getString(this.alt) + "\t" + 
+                getString(this.qual) + "\t" + 
+                getString(this.filter) + "\t" + 
+                getString(this.aa) + "\t" + 
+                getString(this.ac) + "\t" + 
+                getString(this.af) + "\t" + 
+                getString(this.an) + "\t" + 
+                getString(this.bq) + "\t" + 
+                getString(this.cigar) + "\t" + 
+                getString(this.db) + "\t" + 
+                getString(this.dp) + "\t" + 
+                getString(this.end) + "\t" + 
+                getString(this.h2) + "\t" + 
+                getString(this.mq) + "\t" + 
+                getString(this.mq0) + "\t" + 
+                getString(this.ns) + "\t" + 
+                getString(this.sb) + "\t" + 
+                getString(this.somatic) + "\t" + 
+                getString(this.validated) + "\t" + 
+                getString(this.customInfo) + "\t" + 
+
+                //sift
+                getString(this.name_sift) + "\t" + 
+                getString(this.name2_sift) + "\t" + 
+                getString(this.damage_probability) + "\t" + 
+
+                //polyphen
+                getString(this.cdnacoord) + "\t" + 
+                getString(this.opos) + "\t" + 
+                getString(this.oaa1) + "\t" + 
+                getString(this.oaa2) + "\t" + 
+                getString(this.snpid) + "\t" + 
+                getString(this.acc) + "\t" + 
+                getString(this.pos) + "\t" + 
+                getString(this.prediction) + "\t" + 
+                getString(this.pph2class) + "\t" + 
+                getString(this.pph2prob) + "\t" + 
+                getString(this.pph2fpr) + "\t" + 
+                getString(this.pph2tpr) + "\t" + 
+                getString(this.pph2fdr) + "\t" + 
+                getString(this.transv) + "\t" + 
+                getString(this.codpos) + "\t" + 
+                getString(this.cpg) + "\t" + 
+                getString(this.mindjnc) + "\t" + 
+                getString(this.idpmax) + "\t" + 
+                getString(this.idpsnp) + "\t" + 
+                getString(this.idqmin) + "\t" + 
+
+                //gatk
+                getString(this.name_gatk) + "\t" + 
+                getString(this.name2_gatk) + "\t" + 
+                getString(this.transcriptStrand) + "\t" + 
+                getString(this.positionType) + "\t" + 
+                getString(this.frame) + "\t" + 
+                getString(this.mrnaCoord) + "\t" + 
+                getString(this.codonCoord) + "\t" + 
+                getString(this.spliceDist) + "\t" + 
+                getString(this.referenceCodon) + "\t" + 
+                getString(this.referenceAA) + "\t" + 
+                getString(this.variantCodon) + "\t" + 
+                getString(this.variantAA) + "\t" + 
+                getString(this.changesAA) + "\t" + 
+                getString(this.functionalClass) + "\t" + 
+                getString(this.codingCoordStr) + "\t" + 
+                getString(this.proteinCoordStr) + "\t" + 
+                getString(this.inCodingRegion) + "\t" + 
+                getString(this.spliceInfo) + "\t" + 
+                getString(this.uorfChange) + "\t" + 
+                getString(this.spliceInfoCopy);      
     }
     
 }
