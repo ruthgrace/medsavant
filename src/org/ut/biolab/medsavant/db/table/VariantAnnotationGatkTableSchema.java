@@ -12,7 +12,7 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSchema;
  */
 public class VariantAnnotationGatkTableSchema extends TableSchema {
     
-    public static final String TABLE_NAME = "variant_annotation_gatk";
+    public static final String TABLE_NAME = "variant_annotation_gatk_ib";
     
     public static final String DBFIELDNAME_GENOMEID = "genome_id";
     public static final String DBFIELDNAME_CHROM = "chrom";
