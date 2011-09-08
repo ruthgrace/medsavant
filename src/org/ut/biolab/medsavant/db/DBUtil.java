@@ -479,7 +479,7 @@ public class DBUtil {
         return result;
     }
     
-    public static PreparedStatement getVcfStatement(Connection conn) throws SQLException{
+    /*public static PreparedStatement getVcfStatement(Connection conn) throws SQLException{
         
         TableSchema table = MedSavantDatabase.getInstance().getVariantTableSchema();        
         InsertQuery is = new InsertQuery(MedSavantDatabase.getInstance().getVariantTableSchema().getTable());
@@ -492,9 +492,9 @@ public class DBUtil {
         String insertString = is.toString().replaceAll(VariantTableSchema.TABLE_NAME, "variant_staging"); //TODO: safe?
         PreparedStatement ps = conn.prepareStatement(insertString);
         return ps;
-    }
+    }*/
     
-    public static void clearStagingTable(Connection conn) throws SQLException {
+   /* public static void clearStagingTable(Connection conn) throws SQLException {
         
         TableSchema table = MedSavantDatabase.getInstance().getVariantTableSchema();        
         DeleteQuery d = new DeleteQuery(table.getTable());
@@ -539,7 +539,7 @@ public class DBUtil {
               "`validated` tinyint(1) DEFAULT NULL," +
               "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL" +
             ") ENGINE=BRIGHTHOUSE DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
-    }
+    }*/
     
     
     
