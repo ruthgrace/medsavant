@@ -248,7 +248,7 @@ public class SettingsController {
         } else if (key.equals(KEY_DB_PORT)) {
             return "5029";
         } else if (key.equals(KEY_DB_NAME)) {
-            return "medsavant";
+            return "medsavantdb";
         } else {
             return null;
         }
