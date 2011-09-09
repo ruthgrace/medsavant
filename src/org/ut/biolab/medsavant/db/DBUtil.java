@@ -169,6 +169,7 @@ public class DBUtil {
             for(VariantRecord r : records){
                 out.write(r.toTabsForUpload() + "\n");
             }
+            out.close();
         } catch (IOException ex) {
             Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
