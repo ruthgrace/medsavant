@@ -47,7 +47,7 @@ public class LoggedInView extends JPanel {
             addSection(new PatientsSection());
             addSection(new AnnotationsSection());
             addSection(new GeneticsSection());
-            addSection(new AccountSection());
+            //addSection(new AccountSection());
         }
         initiated = true;
     }

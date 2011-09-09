@@ -63,6 +63,9 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         
         initComponents();
         
+        cb_rememberpassword.setVisible(false);
+        cb_autosignin.setVisible(false);
+        
         if (!ViewUtil.isMac()) {
             this.label_programtitle.setFont(new Font("Georgia", Font.BOLD, 80));
         }
