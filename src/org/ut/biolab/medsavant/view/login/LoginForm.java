@@ -170,7 +170,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(cb_autosignin)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 529, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 596, Short.MAX_VALUE)
                         .addComponent(label_status))
                     .addComponent(cb_rememberpassword))
                 .addContainerGap())
@@ -197,17 +197,17 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 7, Short.MAX_VALUE)
+            .addGap(0, 8, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 34, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         panel_logonholder.add(jPanel2);
 
         field_username.setColumns(25);
-        field_username.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        field_username.setFont(new java.awt.Font("Arial", 1, 18));
         field_username.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_username.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -217,7 +217,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         panel_logonholder.add(field_username);
 
         field_password.setColumns(25);
-        field_password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        field_password.setFont(new java.awt.Font("Arial", 0, 18));
         field_password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_password.setAutoscrolls(false);
         field_password.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -234,16 +234,16 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 7, Short.MAX_VALUE)
+            .addGap(0, 8, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 34, Short.MAX_VALUE)
+            .addGap(0, 28, Short.MAX_VALUE)
         );
 
         panel_logonholder.add(jPanel3);
 
-        button_login.setBackground(new java.awt.Color(0, 119, 199));
+        button_login.setBackground(new java.awt.Color(0, 0, 0));
         button_login.setText("Login");
         button_login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -260,7 +260,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         ptitle.setOpaque(false);
         ptitle.setLayout(new javax.swing.BoxLayout(ptitle, javax.swing.BoxLayout.LINE_AXIS));
 
-        label_programtitle.setFont(new java.awt.Font("Trebuchet MS", 1, 80)); // NOI18N
+        label_programtitle.setFont(new java.awt.Font("Trebuchet MS", 1, 80));
         label_programtitle.setForeground(new java.awt.Color(255, 255, 255));
         label_programtitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_programtitle.setText("MedSavant");
@@ -285,7 +285,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
 
         panel_title.add(ptitle);
 
-        label_versioninformation.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        label_versioninformation.setFont(new java.awt.Font("Arial", 1, 18));
         label_versioninformation.setForeground(new java.awt.Color(204, 204, 204));
         label_versioninformation.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_versioninformation.setText("version information");
