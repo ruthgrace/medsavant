@@ -176,7 +176,9 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
             System.out.println("showing table");
             tablePanel.updateUI();
 
+            System.out.println("Updating table data");
             updateData();
+            System.out.println("Done updating table data");
 
             tablePanel.updateUI();
 
@@ -192,8 +194,8 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
             gviw = new GeneVariantIntersectionWorker(this.currentGenes);
             gviw.execute();
             
-            gpiw = new GenePatientIntersectionWorker(this.currentGenes);
-            gpiw.execute();
+            //gpiw = new GenePatientIntersectionWorker(this.currentGenes);
+            //gpiw.execute();
 
         }
 
@@ -381,6 +383,12 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
                     }
                 }
                 return null;
+            }
+            
+            @Override
+            protected void done() {
+                gpiw = new GenePatientIntersectionWorker(records);
+                gpiw.execute();
             }
         }
         
