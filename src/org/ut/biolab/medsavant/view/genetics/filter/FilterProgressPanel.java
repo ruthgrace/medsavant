@@ -129,6 +129,7 @@ public class FilterProgressPanel extends JPanel implements FiltersChangedListene
         Filter filter = FilterController.getLastFilter();
         String action = FilterController.getLastActionString();
         model.addRow(filter.getName(), action, numRecords); 
+        this.repaint();
     }
     
     private class ProgressTableModel extends AbstractTableModel {
