@@ -141,21 +141,21 @@ public class DBUtil {
         
         //join with sift
         long start = System.nanoTime();
-        addAnnotation(AnnotationName.SIFT, "annotations\\sift_final_tabix", records);
+        addAnnotation(AnnotationName.SIFT, "annotations" + System.getProperty("file.separator") + "sift_final_tabix", records);
         long end = System.nanoTime();
         System.out.println("Sift Total time: " + (end-start));
         System.out.println("Sift Time per record: " + ((end-start)/records.size()));
         
         //join with polyphen
         start = System.nanoTime();
-        addAnnotation(AnnotationName.POLYPHEN, "annotations\\polyphen_final_tabix", records);
+        addAnnotation(AnnotationName.POLYPHEN, "annotations" + System.getProperty("file.separator") + "polyphen_final_tabix", records);
         end = System.nanoTime();
         System.out.println("Polyphen Total time: " + (end-start));
         System.out.println("Polyphen Time per record: " + ((end-start)/records.size()));
         
         //join with gatk
         start = System.nanoTime();
-        addAnnotation(AnnotationName.GATK, "annotations\\gatk_final_tabix", records);
+        addAnnotation(AnnotationName.GATK, "annotations" + System.getProperty("file.separator") + "gatk_final_tabix", records);
         end = System.nanoTime();
         System.out.println("Gatk Total time: " + (end-start));
         System.out.println("Gatk Time per record: " + ((end-start)/records.size()));
@@ -163,7 +163,7 @@ public class DBUtil {
 
         //Write to outfile
         start = System.nanoTime();
-        String fileName = "annotations\\join1";
+        String fileName = "annotations" + System.getProperty("file.separator") + "join1";
         try {        
             BufferedWriter out = new BufferedWriter(new FileWriter(new File(fileName), false));
             for(VariantRecord r : records){
