@@ -84,10 +84,10 @@ public class GeneticsSection extends SectionView {
     @Override
     public Component[] getBanner() {
 
-        Component[] result = new Component[3];
-        result[2] = createVcfButton();
-        result[1] = addShowInSavantButton();
-        result[0] = addSaveResultSetButton();
+        Component[] result = new Component[2];
+        result[1] = createVcfButton();
+        result[0] = addShowInSavantButton();
+        //result[0] = addSaveResultSetButton();
         
         return result;
     }
