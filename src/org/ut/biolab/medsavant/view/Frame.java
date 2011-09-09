@@ -134,7 +134,7 @@ public class Frame extends JFrame implements LoginListener{
         menu.add(fileMenu);
         
         final Frame parent = this;
-        
+        /*
         JMenu viewMenu = new JMenu("View");
         JMenuItem threadManagerItem = new JMenuItem("Threads");
         threadManagerItem.addActionListener(new ActionListener() {
@@ -148,6 +148,8 @@ public class Frame extends JFrame implements LoginListener{
         viewMenu.add(threadManagerItem);
         
         menu.add(viewMenu);
+         * 
+         */
         
         setJMenuBar(menu);
 
