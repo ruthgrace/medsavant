@@ -40,19 +40,7 @@ public class Main {
         frame = new Frame();
         frame.setExtendedState(frame.MAXIMIZED_BOTH);
         frame.setVisible(true);
-        
-        ThreadController.getInstance().runInThread(new Runnable() {
-
-            public void run() {
-                System.out.println("Starting long thread");
-                try {
-                    Thread.sleep(12000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            
-        });
+     
     }
 
     private static void setLAF() {
