@@ -185,8 +185,8 @@ public class FilterPanel extends JPanel implements FiltersChangedListener {
             views.addAll(getVariantRecordFilterViews());
             
             //CUSTOM FILTERS////////////////////////////////////////////////////
-            views.add(GOFilter.getGOntologyFilterView());
-            views.add(HPOFilter.getHPOntologyFilterView());                     
+            //views.add(GOFilter.getGOntologyFilterView());
+            //views.add(HPOFilter.getHPOntologyFilterView());                     
             views.add(new FilterView("WikiPathways", new PathwaysPanel()));
   
             //save and dispose of cache
