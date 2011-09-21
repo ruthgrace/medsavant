@@ -27,4 +27,18 @@ public class ReferenceQueryUtil {
         
         return results;
     }
+    
+    public static int getReferenceId(String referenceName) throws SQLException {
+        
+        Connection conn = ConnectionController.connect();
+        
+        ResultSet rs = conn.createStatement().executeQuery("SELECT reference_id FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + " WHERE `name`=\"" + referenceName + "\"");
+        
+        if(rs.next()){
+            return rs.getInt(1);
+        } else {
+            return -1;
+        }
+    }
+    
 }
