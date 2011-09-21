@@ -1,8 +1,10 @@
 package org.ut.biolab.medsavant.db.util.jobject;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -37,4 +39,31 @@ public class UserQueryUtil {
         
         return rs1.next();
     }
+    
+     
+    public static int addUser(String name, String pass, boolean isAdmin) throws SQLException {
+
+        System.out.println("Adding user...");
+        
+        (ConnectionController.connect()).createStatement().execute(
+                "CREATE USER '"+ name +"'@'localhost' IDENTIFIED BY '"+ pass +"';");
+                
+        (ConnectionController.connect()).createStatement().execute(
+                "GRANT ALL ON "+ DBSettings.DBNAME +".* TO '"+  name +"'@'localhost';");
+        
+
+        
+        String q = "INSERT INTO " + DBSettings.TABLENAME_USER + " VALUES (null,'" + name + "'," + isAdmin + ")";
+        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(q,
+                Statement.RETURN_GENERATED_KEYS);
+
+        stmt.execute();
+        ResultSet res = stmt.getGeneratedKeys();
+        res.next();
+
+        int id = res.getInt(1);
+        
+        return id;
+    }
+
 }

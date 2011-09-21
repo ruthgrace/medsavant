@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
+import org.ut.biolab.medsavant.db.util.DBSettings;
 
 /**
  *
@@ -27,18 +28,25 @@ public class ReferenceQueryUtil {
         
         return results;
     }
-    
-    public static int getReferenceId(String referenceName) throws SQLException {
+
+    public static int getReferenceId(String refName) throws SQLException {
+        Connection c = ConnectionController.connect();
         
-        Connection conn = ConnectionController.connect();
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT reference_id FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + refName + "\"");
         
-        ResultSet rs = conn.createStatement().executeQuery("SELECT reference_id FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + " WHERE `name`=\"" + referenceName + "\"");
-        
-        if(rs.next()){
-            return rs.getInt(1);
+        if (rs1.next()) {
+            return rs1.getInt(1);
         } else {
             return -1;
         }
+    }
+
+     public static boolean containsReference(String name) throws SQLException {
+        Connection c = ConnectionController.connect();
+        
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + name + "\"");
+        
+        return rs1.next();
     }
     
 }

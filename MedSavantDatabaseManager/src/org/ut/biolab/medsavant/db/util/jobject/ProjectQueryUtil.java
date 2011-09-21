@@ -15,6 +15,8 @@ import org.ut.biolab.medsavant.db.util.DBUtil;
  */
 public class ProjectQueryUtil {
     
+    private static final String VARIANT_TABLEINFO_PREFIX = "z_variant";
+    
     public static List<String> getProjectNames() throws SQLException {
         
         Connection conn = ConnectionController.connect();
@@ -65,4 +67,64 @@ public class ProjectQueryUtil {
         
         c.createStatement().execute("DELETE FROM `" + DBSettings.TABLENAME_VARIANTTABLEINFO + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
     }
+
+    public static String getProjectName(int projectid) throws SQLException {
+        Connection c = ConnectionController.connect();
+        
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT name FROM `" + DBSettings.TABLENAME_PROJECT + "` WHERE project_id=" + projectid );
+        
+        if (rs1.next()) {
+            return rs1.getString(1);
+        } else {
+            return null;
+        }
+    }
+    
+    
+    public static String createVariantTable(int projectid, int referenceid) throws SQLException {
+        
+        String variantTableInfoName = VARIANT_TABLEINFO_PREFIX + "_proj" + projectid + "_ref" + referenceid;
+
+        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
+
+        c.createStatement().execute(
+                "CREATE TABLE `" + variantTableInfoName + "` ("
+                + "`variant_id` int(11) NOT NULL,"
+                + "`reference_id` int(11) NOT NULL,"
+                + "`pipeline_id` varchar(10) COLLATE latin1_bin NOT NULL,"
+                + "`dna_id` varchar(10) COLLATE latin1_bin NOT NULL,"
+                + "`chrom` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
+                + "`position` int(11) NOT NULL,"
+                + "`dbsnp_id` varchar(45) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ref` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`alt` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`qual` float(10,0) DEFAULT NULL,"
+                + "`filter` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`aa` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ac` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`af` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`an` int(11) DEFAULT NULL,"
+                + "`bq` float DEFAULT NULL,"
+                + "`cigar` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`db` int(1) DEFAULT NULL,"
+                + "`dp` int(11) DEFAULT NULL,"
+                + "`end` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`h2` int(1) DEFAULT NULL,"
+                + "`mq` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`mq0` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ns` int(11) DEFAULT NULL,"
+                + "`sb` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`somatic` int(1) DEFAULT NULL,"
+                + "`validated` int(1) DEFAULT NULL,"
+                + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`variant_annotation_sift_id` int(11) DEFAULT NULL"
+                + ") ENGINE=BRIGHTHOUSE;");
+
+        String q = "INSERT INTO " + DBSettings.TABLENAME_VARIANTTABLEINFO + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
+        c.createStatement().execute(q);
+
+        return variantTableInfoName;
+    }
+
+    
 }
