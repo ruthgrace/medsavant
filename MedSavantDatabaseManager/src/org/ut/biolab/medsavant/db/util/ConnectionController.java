@@ -43,7 +43,7 @@ public class ConnectionController {
 
     
     private static String dbdriver = "com.mysql.jdbc.Driver";
-    private static String dburl = "jdbc:mysql://localhost:5030/";
+    private static String dburl = "jdbc:mysql://localhost:5029/";
     private static String user = "root";
     private static String pw = "";
 
