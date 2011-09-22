@@ -1,5 +1,7 @@
 package org.ut.biolab.medsavant.db.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
@@ -132,6 +134,19 @@ public class DBUtil {
         ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + referenceName + "\"");
         
         return rs1.next();
+    }
+
+    public static int getNumRecordsInTable(String tablename) {
+        try {
+            Connection c = ConnectionController.connect(DBSettings.DBNAME);
+            ResultSet rs =  c.createStatement().executeQuery("SELECT COUNT(*) FROM `" + tablename + "`");
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
     
 }

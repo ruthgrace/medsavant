@@ -126,5 +126,20 @@ public class ProjectQueryUtil {
         return variantTableInfoName;
     }
 
+    public static int getNumberOfRecordsInVariantTable(int projectid, int refid) throws SQLException {
+        String variantTableName = ProjectQueryUtil.getVariantTable(projectid,refid);
+        return DBUtil.getNumRecordsInTable(variantTableName);
+    }
+
+    private static String getVariantTable(int projectid, int refid) throws SQLException {
+        
+        Connection c = ConnectionController.connect();
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT variant_tablename FROM `" + DBSettings.TABLENAME_VARIANTTABLEINFO + "` "
+                + "WHERE project_id=" + projectid + " AND reference_id=" + refid);
+        rs.next();
+        return rs.getString(1);
+    }
+
     
 }
