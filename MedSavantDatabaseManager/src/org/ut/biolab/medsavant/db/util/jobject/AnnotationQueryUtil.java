@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
+import org.ut.biolab.medsavant.db.util.DBSettings;
 
 /**
  *
@@ -17,8 +18,8 @@ public class AnnotationQueryUtil {
         
         Connection conn = ConnectionController.connect();
         
-        String ref = org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE;
-        String ann = org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_ANNOTATION;
+        String ref = DBSettings.TABLENAME_REFERENCE;
+        String ann = DBSettings.TABLENAME_ANNOTATION;
         
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM `" + ann + "` "
@@ -39,5 +40,28 @@ public class AnnotationQueryUtil {
         }
         
         return results;
+    }
+    
+    public static int[] getAnnotationIds(int projectId, int referenceId) throws SQLException{
+        
+        Connection conn = ConnectionController.connect();
+        
+        ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT annotation_ids FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO);
+        
+        rs.next();
+        String annotationString = rs.getString("annotation_ids");
+        
+        if(annotationString == null || annotationString.isEmpty()){
+            return new int[0];
+        }
+        
+        String[] split = annotationString.split(",");
+        int[] result = new int[split.length];
+        for(int i = 0; i < split.length; i++){
+            result[i] = Integer.parseInt(split[i]);
+        }
+        
+        return result;
     }
 }
