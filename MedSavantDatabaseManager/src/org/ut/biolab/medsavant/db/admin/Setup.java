@@ -19,14 +19,14 @@ public class Setup {
 
     private static void dropTables() throws SQLException {
 
-        
+
         if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_USER)) {
             List<String> userNames = getValuesFromField(DBSettings.TABLENAME_USER, "name");
             for (String s : userNames) {
                 Manage.removeUser(s);
             }
         }
-        
+
         if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_PATIENTTABLEINFO)) {
             List<String> patientTables = getValuesFromField(DBSettings.TABLENAME_PATIENTTABLEINFO, "patient_tablename");
             for (String s : patientTables) {
@@ -46,9 +46,11 @@ public class Setup {
         DBUtil.dropTable(DBSettings.TABLENAME_PROJECT);
         DBUtil.dropTable(DBSettings.TABLENAME_PATIENTTABLEINFO);
         DBUtil.dropTable(DBSettings.TABLENAME_VARIANTTABLEINFO);
+        DBUtil.dropTable(DBSettings.TABLENAME_REGIONSET);
+        DBUtil.dropTable(DBSettings.TABLENAME_REGIONSETMEMBERSHIP);
+        DBUtil.dropTable(DBSettings.TABLENAME_COHORT);
+        DBUtil.dropTable(DBSettings.TABLENAME_COHORTMEMBERSHIP);
     }
-
-    
 
     private static void createTables() throws SQLException {
 
@@ -61,6 +63,33 @@ public class Setup {
                 + "`is_admin` tinyint(1) NOT NULL DEFAULT '0',"
                 + "PRIMARY KEY (`id`),"
                 + "UNIQUE KEY `name` (`name`)"
+                + ") ENGINE=MyISAM;");
+
+        c.createStatement().execute(
+                "CREATE TABLE `" + DBSettings.TABLENAME_REGIONSET + "` ("
+                + "`regionset_id` int(11) NOT NULL AUTO_INCREMENT,"
+                + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
+                + "PRIMARY KEY (`regionset_id`)"
+                + ") ENGINE=MyISAM;");
+
+        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_REGIONSETMEMBERSHIP + "` ("
+                + "`regionset_id` int(11) NOT NULL,"
+                + "`genome_id` int(11) NOT NULL,"
+                + "`chrom` varchar(255) COLLATE latin1_bin NOT NULL,"
+                + "`start` int(11) NOT NULL,"
+                + "`end` int(11) NOT NULL,"
+                + "`description` varchar(255) COLLATE latin1_bin NOT NULL"
+                + ") ENGINE=MyISAM;");
+
+        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_COHORT + "` ("
+                + "`cohort_id` int(11) NOT NULL AUTO_INCREMENT,"
+                + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
+                + "PRIMARY KEY (`cohort_id`)"
+                + ") ENGINE=MyISAM;");
+
+        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_COHORTMEMBERSHIP + "` ("
+                + "`cohort_id` int(11) NOT NULL,"
+                + "`hospital_id` varchar(255) CHARACTER SET latin1 NOT NULL"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(

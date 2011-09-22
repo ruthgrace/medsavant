@@ -25,7 +25,8 @@ public class MedSavantDB {
         Manage manage = new Manage();
         
         UserQueryUtil.addUser("mfiume","", true);
-        UserQueryUtil.addUser("nadmin","pass", false);
+        UserQueryUtil.addUser("abrook","", true);
+        UserQueryUtil.addUser("misko","", false);
         int refid = ReferenceQueryUtil.addReference("hg19");
         int projectid = manage.addProject("Autism Genome Project");
         manage.addAnnotation("GATK", "1.0", refid, "/data/blah", "fieldname1:type1|fieldname2:type2");

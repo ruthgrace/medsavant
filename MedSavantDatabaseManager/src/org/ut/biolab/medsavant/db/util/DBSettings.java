@@ -14,4 +14,8 @@ public class DBSettings {
     public static String TABLENAME_PROJECT = "project";
     public static String TABLENAME_PATIENTTABLEINFO = "patient_tablemap";
     public static String TABLENAME_VARIANTTABLEINFO = "variant_tablemap";
+    public static String TABLENAME_REGIONSET = "region_set";
+    public static String TABLENAME_REGIONSETMEMBERSHIP = "region_set_membership";
+    public static String TABLENAME_COHORT = "cohort";
+    public static String TABLENAME_COHORTMEMBERSHIP = "cohort_membership";
 }
