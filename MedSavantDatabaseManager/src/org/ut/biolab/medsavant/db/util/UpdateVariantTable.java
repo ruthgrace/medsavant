@@ -41,7 +41,7 @@ public class UpdateVariantTable {
         removeTemp(outputFilename);
     }
     
-    public static void performAddVCF(int projectId, int referenceId, String filename) throws SQLException, IOException{
+    public static void performAddVCF(int projectId, int referenceId) throws SQLException, IOException{
         
         String tableName = "z_variant_proj" + projectId + "_ref" + referenceId;       
         

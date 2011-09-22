@@ -18,4 +18,5 @@ public class DBSettings {
     public static String TABLENAME_REGIONSETMEMBERSHIP = "region_set_membership";
     public static String TABLENAME_COHORT = "cohort";
     public static String TABLENAME_COHORTMEMBERSHIP = "cohort_membership";
+    public static String TABLENAME_VARIANTPENDINGUPDATE = "variant_pending_update";
 }

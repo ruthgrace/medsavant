@@ -133,6 +133,15 @@ public class Setup {
                 + "`annotation_ids` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
                 + "UNIQUE KEY `unique` (`project_id`,`reference_id`,`variant_tablename`)"
                 + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + "` ("
+                + "`project_id` int(11) unsigned NOT NULL,"
+                + "`reference_id` int(11) unsigned NOT NULL,"
+                + "`action` int(11) unsigned NOT NULL,"
+                + "PRIMARY KEY (`project_id`,`reference_id`) USING BTREE"
+                + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+
     }
 
     public static void main(String[] argv) throws SQLException {
