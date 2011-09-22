@@ -23,6 +23,7 @@ public class AnnotationFormat {
     private Document doc;
     private boolean hasRef = false;
     private boolean hasAlt = false;
+    private String version;
     
     private List<String> columnNames = new ArrayList<String>();
     private List<String> columnTypes = new ArrayList<String>();
@@ -38,6 +39,7 @@ public class AnnotationFormat {
         
         hasRef = doc.getDocumentElement().getAttribute("hasref").equals("true");
         hasAlt = doc.getDocumentElement().getAttribute("hasalt").equals("true");
+        version = doc.getDocumentElement().getAttribute("version"); 
         
         //copy defaults
         for(int i = 0; i < 5; i++){
@@ -67,6 +69,10 @@ public class AnnotationFormat {
         int pos = columnNames.indexOf(fieldName);
         if(pos == -1) return null;
         return columnTypes.get(pos);
+    }
+    
+    public String getVersion(){
+        return version;
     }
 
 }
