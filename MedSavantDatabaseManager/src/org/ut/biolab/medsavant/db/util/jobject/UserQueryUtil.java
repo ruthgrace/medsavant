@@ -31,7 +31,7 @@ public class UserQueryUtil {
         return results;
     }
 
-    public static boolean containsUser(String username) throws SQLException {
+    public static boolean userExists(String username) throws SQLException {
         
         Connection c = ConnectionController.connect();
         
@@ -64,6 +64,18 @@ public class UserQueryUtil {
         int id = res.getInt(1);
         
         return id;
+    }
+
+    public static boolean isUserAdmin(String username) throws SQLException {
+        if (userExists(username)) {
+            
+            ResultSet rs = ConnectionController.connect().createStatement().executeQuery("SELECT is_admin FROM " + DBSettings.TABLENAME_USER + " WHERE name=\"" + username + "\"");
+            rs.next();
+            return rs.getBoolean(1);
+            
+        } else {
+            return false;
+        }
     }
 
 }
