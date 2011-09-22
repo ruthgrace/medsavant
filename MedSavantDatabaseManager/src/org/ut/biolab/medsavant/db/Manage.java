@@ -48,22 +48,7 @@ public class Manage {
         return projectid;
     }
 
-    public static int addReference(String name) throws SQLException {
-
-        System.out.println("Adding reference...");
-        
-        String q = "INSERT INTO " + DBSettings.TABLENAME_REFERENCE + " VALUES (null,'" + name + "')";
-        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
-                Statement.RETURN_GENERATED_KEYS);
-
-        stmt.execute();
-        ResultSet res = stmt.getGeneratedKeys();
-        res.next();
-
-        int refid = res.getInt(1);
-        
-        return refid;
-    }
+    
     
     public static void removeUser(String name) throws SQLException {
         (ConnectionController.connect()).createStatement().execute(

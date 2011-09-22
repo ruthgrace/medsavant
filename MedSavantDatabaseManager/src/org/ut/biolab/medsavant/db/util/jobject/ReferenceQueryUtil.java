@@ -1,8 +1,10 @@
 package org.ut.biolab.medsavant.db.util.jobject;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -49,4 +51,35 @@ public class ReferenceQueryUtil {
         return rs1.next();
     }
     
+     
+     public static int addReference(String name) throws SQLException {
+
+        System.out.println("Adding reference...");
+        
+        String q = "INSERT INTO " + DBSettings.TABLENAME_REFERENCE + " VALUES (null,'" + name + "')";
+        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
+                Statement.RETURN_GENERATED_KEYS);
+
+        stmt.execute();
+        ResultSet res = stmt.getGeneratedKeys();
+        res.next();
+
+        int refid = res.getInt(1);
+        
+        return refid;
+    }
+     
+     public static boolean removeReference(int refid) throws SQLException {
+         
+         Connection c = ConnectionController.connect();
+         
+         ResultSet rs = c.createStatement().executeQuery("SELECT * FROM " + DBSettings.TABLENAME_ANNOTATION + " WHERE reference_id=" + refid);
+         if (rs.next()) { return false; }
+         rs = c.createStatement().executeQuery("SELECT * FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO + " WHERE reference_id=" + refid);
+         if (rs.next()) { return false; }
+         
+         c.createStatement().execute("DELETE FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE reference_id=" + refid);
+         
+         return true;
+    }
 }
