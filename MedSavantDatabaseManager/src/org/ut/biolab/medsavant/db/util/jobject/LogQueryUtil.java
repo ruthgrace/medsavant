@@ -65,7 +65,7 @@ public class LogQueryUtil {
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " ORDER BY action");
+                + " ORDER BY action"); //always do updates before adds
         
         while(rs.next()){
             int projectId = rs.getInt("project_id");
