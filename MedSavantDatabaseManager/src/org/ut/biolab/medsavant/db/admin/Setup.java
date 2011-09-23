@@ -140,7 +140,7 @@ public class Setup {
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`action` int(11) unsigned NOT NULL,"
-                + "PRIMARY KEY (`project_id`,`reference_id`) USING BTREE"
+                + "PRIMARY KEY (`project_id`,`reference_id`, `action`) USING BTREE"
                 + ") ENGINE=MyISAM;");
 
     }

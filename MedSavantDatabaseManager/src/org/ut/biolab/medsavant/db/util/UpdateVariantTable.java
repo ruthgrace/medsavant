@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
+import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
 
 /**
  *
@@ -22,7 +23,7 @@ public class UpdateVariantTable {
         
     public static void performUpdate(int projectId, int referenceId) throws SQLException{
         
-        String tableName = "z_variant_proj" + projectId + "_ref" + referenceId;
+        String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId; 
         
         //create TDF from existing variants
         String tempFilename = "temp_" + projectId + "_" + referenceId;
@@ -43,10 +44,10 @@ public class UpdateVariantTable {
     
     public static void performAddVCF(int projectId, int referenceId) throws SQLException, IOException{
         
-        String tableName = "z_variant_proj" + projectId + "_ref" + referenceId;       
+        String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId;       
         
         //create TDF from staging table
-        String stagingTableName = "z_variant_staging_proj" + projectId + "_ref" + referenceId;
+        String stagingTableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
         String tempFilename = "temp_" + projectId + "_ref" + referenceId;
         variantsToFile(stagingTableName, tempFilename);
         
@@ -111,7 +112,7 @@ public class UpdateVariantTable {
                 + " ORDER BY dna_id, chrom, position;"); //TODO: correct ordering?
     }
     
-    private static void uploadFile(String filename, String tableName) throws SQLException{
+    public static void uploadFile(String filename, String tableName) throws SQLException{
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
         c.createStatement().execute(
                 "LOAD DATA LOCAL INFILE '" + filename.replaceAll("\\\\", "/") + "' "
