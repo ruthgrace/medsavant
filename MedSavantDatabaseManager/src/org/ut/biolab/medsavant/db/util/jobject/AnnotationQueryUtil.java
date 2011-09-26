@@ -1,12 +1,15 @@
 package org.ut.biolab.medsavant.db.util.jobject;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -47,7 +50,8 @@ public class AnnotationQueryUtil {
         Connection conn = ConnectionController.connect();
         
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT annotation_ids FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO);
+                "SELECT annotation_ids FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO + 
+                " WHERE project_id=" + projectId + " AND reference_id=" + referenceId);
         
         rs.next();
         String annotationString = rs.getString("annotation_ids");
@@ -63,5 +67,15 @@ public class AnnotationQueryUtil {
         }
         
         return result;
+    }
+    
+    public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
+        Connection conn = ConnectionController.connect();
+        
+        ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT format FROM " + DBSettings.TABLENAME_ANNOTATION + " WHERE annotation_id=" + annotationId);
+        
+        rs.next();
+        return new AnnotationFormat(rs.getString("format"));
     }
 }

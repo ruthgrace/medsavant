@@ -74,5 +74,19 @@ public class AnnotationFormat {
     public String getVersion(){
         return version;
     }
+    
+    public String generateSchema(){
+        
+        String result = "";
+        
+        //add custom columns
+        for(int i = DEFAULT_COLUMNS.length; i < columnNames.size(); i++){
+            String columnName = columnNames.get(i);
+            String columnType = columnTypes.get(i);
+            result += "`" + columnName + "` " + columnType + " DEFAULT NULL,";
+        }
+
+        return result;
+    }
 
 }

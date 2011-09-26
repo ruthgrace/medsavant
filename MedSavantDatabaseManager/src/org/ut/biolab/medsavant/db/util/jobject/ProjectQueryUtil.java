@@ -82,16 +82,16 @@ public class ProjectQueryUtil {
     }
     
     public static String createVariantTable(int projectid, int referenceid) throws SQLException {
-        return createVariantTable(projectid, referenceid, false, true);
+        return createVariantTable(projectid, referenceid, null, false, true);
     }
     
-    public static String createVariantTable(int projectid, int referenceid, boolean isStaging, boolean addToTableMap) throws SQLException {
+    public static String createVariantTable(int projectid, int referenceid, int[] annotationIds, boolean isStaging, boolean addToTableMap) throws SQLException {
         
         String variantTableInfoName = (isStaging ? VARIANT_TABLEINFO_STAGING_PREFIX : VARIANT_TABLEINFO_PREFIX) + "_proj" + projectid + "_ref" + referenceid;
 
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
-
-        c.createStatement().execute(
+   
+        String query = 
                 "CREATE TABLE `" + variantTableInfoName + "` ("
                 + "`variant_id` int(11) NOT NULL,"
                 + "`reference_id` int(11) NOT NULL,"
@@ -121,8 +121,19 @@ public class ProjectQueryUtil {
                 + "`somatic` int(1) DEFAULT NULL,"
                 + "`validated` int(1) DEFAULT NULL,"
                 + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`variant_annotation_sift_id` int(11) DEFAULT NULL"
-                + ") ENGINE=BRIGHTHOUSE;");
+                + "`variant_annotation_sift_id` int(11) DEFAULT NULL,";
+        
+        //add each annotation
+        if(annotationIds != null){
+            for(int annotationId : annotationIds){
+                query += getAnnotationSchema(annotationId);
+            }
+        }
+        
+        query = query.substring(0, query.length()-1); //remove last comma
+        query += ") ENGINE=BRIGHTHOUSE;";
+
+        c.createStatement().execute(query);
 
         if(!isStaging && addToTableMap){
             String q = "INSERT INTO " + DBSettings.TABLENAME_VARIANTTABLEINFO + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
@@ -130,6 +141,18 @@ public class ProjectQueryUtil {
         }
 
         return variantTableInfoName;
+    }
+    
+    private static String getAnnotationSchema(int annotationId){
+        
+        AnnotationFormat format = null;
+        try {
+            format = AnnotationQueryUtil.getAnnotationFormat(annotationId);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        
+        return format.generateSchema();
     }
 
     public static int getNumberOfRecordsInVariantTable(int projectid, int refid) throws SQLException {

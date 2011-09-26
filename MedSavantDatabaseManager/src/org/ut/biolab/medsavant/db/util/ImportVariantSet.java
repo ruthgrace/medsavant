@@ -20,7 +20,7 @@ public class ImportVariantSet {
 
         //create the staging table       
         try {
-            ProjectQueryUtil.createVariantTable(projectId, referenceId, true, false);
+            ProjectQueryUtil.createVariantTable(projectId, referenceId, null, true, false);
         } catch (SQLException ex) {
             //table already exists?
         }

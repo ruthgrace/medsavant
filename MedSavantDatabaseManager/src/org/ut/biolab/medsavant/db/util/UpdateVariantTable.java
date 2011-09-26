@@ -29,6 +29,10 @@ public class UpdateVariantTable {
         String tempFilename = "temp_proj" + projectId + "_" + referenceId;
         variantsToFile(tableName, new File(tempFilename));
         
+        //drop table and recreate
+        dropTable(tableName);
+        ProjectQueryUtil.createVariantTable(projectId, referenceId, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false); //recreate with annotations
+        
         //annotate
         String outputFilename = tempFilename + "_annotated";
         int[] annotationIds = AnnotationQueryUtil.getAnnotationIds(projectId, referenceId);
@@ -63,7 +67,7 @@ public class UpdateVariantTable {
         
         //recreate empty table
         dropTable(tableName);
-        ProjectQueryUtil.createVariantTable(projectId, referenceId, false, false);
+        ProjectQueryUtil.createVariantTable(projectId, referenceId, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
         
         //upload file
         uploadFile(new File(outputFilename), tableName);

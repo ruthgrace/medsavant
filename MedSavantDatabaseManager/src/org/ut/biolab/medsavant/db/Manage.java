@@ -11,6 +11,8 @@ import java.sql.Statement;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
+import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
+import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Action;
 
 /**
  *
@@ -104,6 +106,8 @@ public class Manage {
                 + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
         
         (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
+        
+        LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE);
     }
     
     public static void removeProject(String projectName) throws SQLException {
