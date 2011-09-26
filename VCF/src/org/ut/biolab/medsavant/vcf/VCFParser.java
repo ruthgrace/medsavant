@@ -173,7 +173,7 @@ public class VCFParser {
                     //add records to tdf
                     for(VariantRecord v : records){
                         out.write(v.toTabString());
-                        out.newLine();
+                        out.write("\r\n");
                     }
                     numRecords++;
                 }
