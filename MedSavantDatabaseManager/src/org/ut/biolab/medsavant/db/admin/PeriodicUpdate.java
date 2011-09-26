@@ -16,7 +16,7 @@ import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
  */
 public class PeriodicUpdate {
 
-    private static int DEFAULT_PERIOD = 6000; //milliseconds (600000 = 10 mins)
+    private static int DEFAULT_PERIOD = 60000; //milliseconds (600000 = 10 mins)
     
     public static void main(String[] args) throws InterruptedException{
         

@@ -20,14 +20,14 @@ public class ImportVariantSet {
 
         //create the staging table       
         try {
-            ProjectQueryUtil.createVariantTable(projectId, referenceId, true);
+            ProjectQueryUtil.createVariantTable(projectId, referenceId, true, false);
         } catch (SQLException ex) {
             //table already exists?
         }
            
         //add variants to table
         String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
-        UpdateVariantTable.uploadFile(variantsTdf.getAbsolutePath(), tableName); 
+        UpdateVariantTable.uploadFile(variantsTdf, tableName); 
 
         //delete temp file
         variantsTdf.delete();

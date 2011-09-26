@@ -26,8 +26,8 @@ public class UpdateVariantTable {
         String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId; 
         
         //create TDF from existing variants
-        String tempFilename = "temp_" + projectId + "_" + referenceId;
-        variantsToFile(tableName, tempFilename);
+        String tempFilename = "temp_proj" + projectId + "_" + referenceId;
+        variantsToFile(tableName, new File(tempFilename));
         
         //annotate
         String outputFilename = tempFilename + "_annotated";
@@ -35,7 +35,7 @@ public class UpdateVariantTable {
         annotateTDF(tempFilename, outputFilename, annotationIds);
         
         //upload file
-        uploadFile(outputFilename, tableName);
+        uploadFile(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
@@ -48,8 +48,8 @@ public class UpdateVariantTable {
         
         //create TDF from staging table
         String stagingTableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
-        String tempFilename = "temp_" + projectId + "_ref" + referenceId;
-        variantsToFile(stagingTableName, tempFilename);
+        String tempFilename = "temp_proj" + projectId + "_ref" + referenceId;
+        variantsToFile(stagingTableName, new File(tempFilename));
         
         //annotate
         String annotatedFilename = tempFilename + "_annotated";
@@ -58,11 +58,15 @@ public class UpdateVariantTable {
         
         //dump current table and append
         String outputFilename = tempFilename + "_output";
-        dumpTableToFile(tableName, outputFilename);
-        appendToFile(outputFilename, annotatedFilename);
+        dumpTableToFile(tableName, new File(outputFilename));
+        appendToFile(outputFilename, tempFilename); //TODO: tempFilename -> annotatedFilename
+        
+        //recreate empty table
+        dropTable(tableName);
+        ProjectQueryUtil.createVariantTable(projectId, referenceId, false, false);
         
         //upload file
-        uploadFile(outputFilename, tableName);
+        uploadFile(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
@@ -85,40 +89,40 @@ public class UpdateVariantTable {
         String line; 
         while((line = reader.readLine()) != null){
             writer.write(line);
-            writer.newLine();
+            writer.write("\r\n");
         }
         writer.close();
         reader.close();
     }
     
-    private static void dumpTableToFile(String tableName, String filename) throws SQLException{
+    private static void dumpTableToFile(String tableName, File file) throws SQLException{
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
         c.createStatement().execute(
                 "SELECT *"
-                + " INTO OUTFILE " + filename
-                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n'"
+                + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
+                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName + ";");
     }
     
-    private static void variantsToFile(String tableName, String filename) throws SQLException{
+    private static void variantsToFile(String tableName, File file) throws SQLException{
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
         c.createStatement().execute(
-                "SELECT variant_id, reference_id, pipeline_id, dna_id, chrom, position, "
-                + "dbsnp_id, ref, alt, qual, filter, aa, ac, af, an, bq, cigar, db, dp, "
-                + "end, h2, mq, mq0, ns, sb, somatic, validated, custom_info, variant_annotation_sift_id"
-                + " INTO OUTFILE " + filename
-                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n'"
+                "SELECT `variant_id`, `reference_id`, `pipeline_id`, `dna_id`, `chrom`, `position`, `"
+                + "dbsnp_id`, `ref`, `alt`, `qual`, `filter`, `aa`, `ac`, `af`, `an`, `bq`, `cigar`, `db`, `dp`, `"
+                + "end`, `h2`, `mq`, `mq0`, `ns`, `sb`, `somatic`, `validated`, `custom_info`, `variant_annotation_sift_id`"
+                + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
+                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName
-                + " ORDER BY dna_id, chrom, position;"); //TODO: correct ordering?
+                + " ORDER BY `dna_id`, `chrom`, `position`;"); //TODO: correct ordering?
     }
     
-    public static void uploadFile(String filename, String tableName) throws SQLException{
+    public static void uploadFile(File file, String tableName) throws SQLException{
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
         c.createStatement().execute(
-                "LOAD DATA LOCAL INFILE '" + filename.replaceAll("\\\\", "/") + "' "
+                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
                 + "INTO TABLE " + tableName + " "
                 + "FIELDS TERMINATED BY '\\t' "
-                + "LINES TERMINATED BY '\\n';");
+                + "LINES TERMINATED BY '\\r\\n';");
     }
     
     private static void removeTemp(String filename){

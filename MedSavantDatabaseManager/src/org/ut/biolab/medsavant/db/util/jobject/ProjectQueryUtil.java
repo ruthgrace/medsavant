@@ -82,10 +82,10 @@ public class ProjectQueryUtil {
     }
     
     public static String createVariantTable(int projectid, int referenceid) throws SQLException {
-        return createVariantTable(projectid, referenceid, false);
+        return createVariantTable(projectid, referenceid, false, true);
     }
     
-    public static String createVariantTable(int projectid, int referenceid, boolean isStaging) throws SQLException {
+    public static String createVariantTable(int projectid, int referenceid, boolean isStaging, boolean addToTableMap) throws SQLException {
         
         String variantTableInfoName = (isStaging ? VARIANT_TABLEINFO_STAGING_PREFIX : VARIANT_TABLEINFO_PREFIX) + "_proj" + projectid + "_ref" + referenceid;
 
@@ -124,8 +124,10 @@ public class ProjectQueryUtil {
                 + "`variant_annotation_sift_id` int(11) DEFAULT NULL"
                 + ") ENGINE=BRIGHTHOUSE;");
 
-        String q = "INSERT INTO " + DBSettings.TABLENAME_VARIANTTABLEINFO + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
-        c.createStatement().execute(q);
+        if(!isStaging && addToTableMap){
+            String q = "INSERT INTO " + DBSettings.TABLENAME_VARIANTTABLEINFO + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
+            c.createStatement().execute(q);
+        }
 
         return variantTableInfoName;
     }

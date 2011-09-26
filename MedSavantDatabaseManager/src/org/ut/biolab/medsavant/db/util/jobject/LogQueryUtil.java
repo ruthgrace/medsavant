@@ -67,7 +67,9 @@ public class LogQueryUtil {
                 "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
                 + " ORDER BY action"); //always do updates before adds
         
+        boolean foundUpdate = false;
         while(rs.next()){
+            foundUpdate = true;
             int projectId = rs.getInt("project_id");
             int referenceId = rs.getInt("reference_id");
             Action action = intToAction(rs.getInt("action"));           
@@ -80,8 +82,12 @@ public class LogQueryUtil {
                     break;
             }
         }
-           
-        clearLog();
+        
+        //System.out.println(".");
+        if(foundUpdate){
+            //System.out.println("\nX");
+            clearLog();
+        }
     }
     
     private static void clearLog() throws SQLException{
