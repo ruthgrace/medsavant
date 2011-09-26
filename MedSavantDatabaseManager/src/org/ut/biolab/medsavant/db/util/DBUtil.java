@@ -8,6 +8,7 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSchema;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSpec;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.sql.DataSource;
+import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
 
 /**
  *
@@ -147,6 +149,19 @@ public class DBUtil {
             Logger.getLogger(DBUtil.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
+    }
+    
+    public static String getVariantTableName(int projectId, int referenceId){
+        return ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId;
+    }
+    
+    public static void uploadFileToVariantTable(File file, String tableName) throws SQLException{
+        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
+        c.createStatement().execute(
+                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
+                + "INTO TABLE " + tableName + " "
+                + "FIELDS TERMINATED BY '\\t' "
+                + "LINES TERMINATED BY '\\r\\n';");
     }
     
 }

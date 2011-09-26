@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
-import org.ut.biolab.medsavant.db.util.UpdateVariantTable;
 
 /**
  *
@@ -18,7 +19,7 @@ import org.ut.biolab.medsavant.db.util.UpdateVariantTable;
  */
 public class LogQueryUtil {
     
-    public enum Action {ADD_VARIANTS, UPDATE_TABLE};
+    public static enum Action {ADD_VARIANTS, UPDATE_TABLE};
     
     private static int actionToInt(Action action){
         switch(action){
@@ -31,7 +32,7 @@ public class LogQueryUtil {
         }
     }
     
-    private static Action intToAction(int action){
+    public static Action intToAction(int action){
         switch(action){
             case 0:
                 return Action.UPDATE_TABLE;
@@ -61,7 +62,39 @@ public class LogQueryUtil {
         return rs.next();
     }
     
-    public static void checkAndUpdate() throws SQLException, IOException{
+    public static ResultSet getPendingUpdates() throws SQLException, IOException{
+        Connection conn = ConnectionController.connect();
+        ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
+                + " ORDER BY action"); //always do updates before adds
+        
+        return rs;
+        
+        
+        /*boolean foundUpdate = false;
+        while(rs.next()){
+            foundUpdate = true;
+            int projectId = rs.getInt("project_id");
+            int referenceId = rs.getInt("reference_id");
+            Action action = intToAction(rs.getInt("action"));           
+            switch(action){
+                case ADD_VARIANTS:
+                    UpdateVariantTable.performAddVCF(projectId, referenceId);
+                    break;
+                case UPDATE_TABLE:
+                    UpdateVariantTable.performUpdate(projectId, referenceId);
+                    break;
+            }
+        }
+        
+        //System.out.println(".");
+        if(foundUpdate){
+            //System.out.println("\nX");
+            clearLog();
+        }*/
+    }
+    
+    /*public static void checkAndUpdate() throws SQLException, IOException{
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
@@ -88,9 +121,9 @@ public class LogQueryUtil {
             //System.out.println("\nX");
             clearLog();
         }
-    }
+    }*/
     
-    private static void clearLog() throws SQLException{
+    public static void clearLog() throws SQLException{
         Connection conn = ConnectionController.connect();
         conn.createStatement().execute(
                 "DELETE FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE

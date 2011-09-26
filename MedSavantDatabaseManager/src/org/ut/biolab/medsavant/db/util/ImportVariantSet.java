@@ -27,7 +27,7 @@ public class ImportVariantSet {
            
         //add variants to table
         String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
-        UpdateVariantTable.uploadFile(variantsTdf, tableName); 
+        DBUtil.uploadFileToVariantTable(variantsTdf, tableName); 
 
         //delete temp file
         variantsTdf.delete();

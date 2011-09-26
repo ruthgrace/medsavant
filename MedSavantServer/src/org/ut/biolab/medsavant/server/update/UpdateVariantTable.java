@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ut.biolab.medsavant.db.util;
+package org.ut.biolab.medsavant.server.update;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.ut.biolab.medsavant.db.util.ConnectionController;
+import org.ut.biolab.medsavant.db.util.DBSettings;
+import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
 
@@ -39,7 +42,7 @@ public class UpdateVariantTable {
         annotateTDF(tempFilename, outputFilename, annotationIds);
         
         //upload file
-        uploadFile(new File(outputFilename), tableName);
+        DBUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
@@ -70,7 +73,7 @@ public class UpdateVariantTable {
         ProjectQueryUtil.createVariantTable(projectId, referenceId, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
         
         //upload file
-        uploadFile(new File(outputFilename), tableName);
+        DBUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
@@ -118,15 +121,6 @@ public class UpdateVariantTable {
                 + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName
                 + " ORDER BY `dna_id`, `chrom`, `position`;"); //TODO: correct ordering?
-    }
-    
-    public static void uploadFile(File file, String tableName) throws SQLException{
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
-        c.createStatement().execute(
-                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
-                + "INTO TABLE " + tableName + " "
-                + "FIELDS TERMINATED BY '\\t' "
-                + "LINES TERMINATED BY '\\r\\n';");
     }
     
     private static void removeTemp(String filename){
