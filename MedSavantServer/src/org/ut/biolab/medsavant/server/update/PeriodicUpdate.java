@@ -30,31 +30,26 @@ public class PeriodicUpdate {
         while(true){
             try {
                 ResultSet rs = LogQueryUtil.getPendingUpdates();
-                
-                
-                boolean foundUpdate = false;
+
                 while(rs.next()){
-                    foundUpdate = true;
+
                     int projectId = rs.getInt("project_id");
                     int referenceId = rs.getInt("reference_id");
-                    Action action = LogQueryUtil.intToAction(rs.getInt("action"));           
+                    int updateId = rs.getInt("update_id");
+                    Action action = LogQueryUtil.intToAction(rs.getInt("action")); 
+                    
+                    LogQueryUtil.setLogPending(updateId, false);
+                    
                     switch(action){
                         case ADD_VARIANTS:
-                            UpdateVariantTable.performAddVCF(projectId, referenceId);
+                            UpdateVariantTable.performAddVCF(projectId, referenceId, updateId);
                             break;
                         case UPDATE_TABLE:
                             UpdateVariantTable.performUpdate(projectId, referenceId);
                             break;
                     }
+   
                 }
-
-                //System.out.println(".");
-                if(foundUpdate){
-                    //System.out.println("\nX");
-                    LogQueryUtil.clearLog();
-                }
-                
-                
                 
             } catch (SQLException ex) {
                 Logger.getLogger(PeriodicUpdate.class.getName()).log(Level.SEVERE, null, ex);

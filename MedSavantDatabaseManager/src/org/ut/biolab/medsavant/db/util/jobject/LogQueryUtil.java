@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -43,91 +41,36 @@ public class LogQueryUtil {
         }
     }
     
-    public static void addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
-        //if entry does not exist, add entry
-        if(!entryExists(projectId, referenceId, action)){
-            Connection conn = ConnectionController.connect();
-            conn.createStatement().executeUpdate(
-                "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " (project_id, reference_id, action) VALUES"
-                + " (" + projectId + "," + referenceId + "," + actionToInt(action) + ");");
-        }
-    }
-    
-    public static boolean entryExists(int projectId, int referenceId, Action action) throws SQLException{
+    public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
         Connection conn = ConnectionController.connect();
+        conn.createStatement().executeUpdate(
+            "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
+            + " (project_id, reference_id, action) VALUES"
+            + " (" + projectId + "," + referenceId + "," + actionToInt(action) + ");");
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " WHERE project_id=" + projectId + " AND reference_id=" + referenceId + " AND action=" + actionToInt(action));
-        return rs.next();
+                "SELECT update_id FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE +
+                " WHERE project_id=" + projectId + " AND reference_id=" + referenceId + 
+                " ORDER BY update_id DESC"); 
+        rs.next();
+        return rs.getInt("update_id"); 
     }
-    
+
     public static ResultSet getPendingUpdates() throws SQLException, IOException{
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " ORDER BY action"); //always do updates before adds
+                + " WHERE pending=1"
+                + " ORDER BY action, update_id");//always do updates before adds
         
         return rs;
-        
-        
-        /*boolean foundUpdate = false;
-        while(rs.next()){
-            foundUpdate = true;
-            int projectId = rs.getInt("project_id");
-            int referenceId = rs.getInt("reference_id");
-            Action action = intToAction(rs.getInt("action"));           
-            switch(action){
-                case ADD_VARIANTS:
-                    UpdateVariantTable.performAddVCF(projectId, referenceId);
-                    break;
-                case UPDATE_TABLE:
-                    UpdateVariantTable.performUpdate(projectId, referenceId);
-                    break;
-            }
-        }
-        
-        //System.out.println(".");
-        if(foundUpdate){
-            //System.out.println("\nX");
-            clearLog();
-        }*/
     }
-    
-    /*public static void checkAndUpdate() throws SQLException, IOException{
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " ORDER BY action"); //always do updates before adds
         
-        boolean foundUpdate = false;
-        while(rs.next()){
-            foundUpdate = true;
-            int projectId = rs.getInt("project_id");
-            int referenceId = rs.getInt("reference_id");
-            Action action = intToAction(rs.getInt("action"));           
-            switch(action){
-                case ADD_VARIANTS:
-                    UpdateVariantTable.performAddVCF(projectId, referenceId);
-                    break;
-                case UPDATE_TABLE:
-                    UpdateVariantTable.performUpdate(projectId, referenceId);
-                    break;
-            }
-        }
-        
-        //System.out.println(".");
-        if(foundUpdate){
-            //System.out.println("\nX");
-            clearLog();
-        }
-    }*/
-    
-    public static void clearLog() throws SQLException{
+    public static void setLogPending(int updateId, boolean pending) throws SQLException {
         Connection conn = ConnectionController.connect();
-        conn.createStatement().execute(
-                "DELETE FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " WHERE 1=1");       
+        conn.createStatement().executeUpdate(
+                "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                " SET pending=" + (pending ? "1" : "0") + 
+                " WHERE update_id=" + updateId);
     }
     
 }

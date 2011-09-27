@@ -26,7 +26,7 @@ public class UpdateVariantTable {
         
     public static void performUpdate(int projectId, int referenceId) throws SQLException{
         
-        String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId; 
+        String tableName = DBUtil.getVariantTableName(projectId, referenceId);
         
         //create TDF from existing variants
         String tempFilename = "temp_proj" + projectId + "_" + referenceId;
@@ -34,7 +34,7 @@ public class UpdateVariantTable {
         
         //drop table and recreate
         dropTable(tableName);
-        ProjectQueryUtil.createVariantTable(projectId, referenceId, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false); //recreate with annotations
+        ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false); //recreate with annotations
         
         //annotate
         String outputFilename = tempFilename + "_annotated";
@@ -49,13 +49,13 @@ public class UpdateVariantTable {
         removeTemp(outputFilename);
     }
     
-    public static void performAddVCF(int projectId, int referenceId) throws SQLException, IOException{
+    public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException{
         
-        String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId;       
+        String tableName = DBUtil.getVariantTableName(projectId, referenceId);
         
         //create TDF from staging table
-        String stagingTableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
-        String tempFilename = "temp_proj" + projectId + "_ref" + referenceId;
+        String stagingTableName = DBUtil.getVariantStagingTableName(projectId, referenceId, updateId);
+        String tempFilename = "temp_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
         variantsToFile(stagingTableName, new File(tempFilename));
         
         //annotate
@@ -70,7 +70,7 @@ public class UpdateVariantTable {
         
         //recreate empty table
         dropTable(tableName);
-        ProjectQueryUtil.createVariantTable(projectId, referenceId, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
+        ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
         
         //upload file
         DBUtil.uploadFileToVariantTable(new File(outputFilename), tableName);

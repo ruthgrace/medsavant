@@ -18,22 +18,25 @@ public class ImportVariantSet {
     
     public static void performImport(File variantsTdf, int projectId, int referenceId) throws SQLException {
 
+        //add log
+        int updateId = LogQueryUtil.addLogEntry(projectId, referenceId, Action.ADD_VARIANTS);
+        
         //create the staging table       
         try {
-            ProjectQueryUtil.createVariantTable(projectId, referenceId, null, true, false);
+            ProjectQueryUtil.createVariantTable(projectId, referenceId, updateId, null, true, false);
         } catch (SQLException ex) {
             //table already exists?
         }
            
         //add variants to table
-        String tableName = ProjectQueryUtil.VARIANT_TABLEINFO_STAGING_PREFIX + "_proj" + projectId + "_ref" + referenceId;
+        String tableName = DBUtil.getVariantStagingTableName(projectId, referenceId, updateId);
         DBUtil.uploadFileToVariantTable(variantsTdf, tableName); 
 
         //delete temp file
         variantsTdf.delete();
 
-        //add log
-        LogQueryUtil.addLogEntry(projectId, referenceId, Action.ADD_VARIANTS);
+        //set log as pending
+        LogQueryUtil.setLogPending(updateId, true);
         
     }
  

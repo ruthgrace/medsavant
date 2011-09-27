@@ -15,9 +15,6 @@ import org.ut.biolab.medsavant.db.util.DBUtil;
  */
 public class ProjectQueryUtil {
     
-    public static final String VARIANT_TABLEINFO_PREFIX = "z_variant";
-    public static final String VARIANT_TABLEINFO_STAGING_PREFIX = "z_variant_staging";
-    
     public static List<String> getProjectNames() throws SQLException {
         
         Connection conn = ConnectionController.connect();
@@ -82,12 +79,12 @@ public class ProjectQueryUtil {
     }
     
     public static String createVariantTable(int projectid, int referenceid) throws SQLException {
-        return createVariantTable(projectid, referenceid, null, false, true);
+        return createVariantTable(projectid, referenceid, 0, null, false, true);
     }
-    
-    public static String createVariantTable(int projectid, int referenceid, int[] annotationIds, boolean isStaging, boolean addToTableMap) throws SQLException {
+
+    public static String createVariantTable(int projectid, int referenceid, int updateid, int[] annotationIds, boolean isStaging, boolean addToTableMap) throws SQLException {
         
-        String variantTableInfoName = (isStaging ? VARIANT_TABLEINFO_STAGING_PREFIX : VARIANT_TABLEINFO_PREFIX) + "_proj" + projectid + "_ref" + referenceid;
+        String variantTableInfoName = isStaging ? DBUtil.getVariantStagingTableName(projectid, referenceid, updateid) : DBUtil.getVariantTableName(projectid, referenceid);
 
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
    

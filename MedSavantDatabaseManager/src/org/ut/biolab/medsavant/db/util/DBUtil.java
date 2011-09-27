@@ -43,6 +43,9 @@ public class DBUtil {
         }
     }
     
+    public static DbTable importTable(String tablename) throws SQLException {
+        return importTable(DBSettings.DBNAME, tablename);
+    }
     
     public static DbTable importTable(String dbname, String tablename) throws SQLException {
         
@@ -152,7 +155,11 @@ public class DBUtil {
     }
     
     public static String getVariantTableName(int projectId, int referenceId){
-        return ProjectQueryUtil.VARIANT_TABLEINFO_PREFIX + "_proj" + projectId + "_ref" + referenceId;
+        return "z_variant_proj" + projectId + "_ref" + referenceId;
+    }
+    
+    public static String getVariantStagingTableName(int projectId, int referenceId, int updateId){
+        return "z_variant_staging_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
     }
     
     public static void uploadFileToVariantTable(File file, String tableName) throws SQLException{
