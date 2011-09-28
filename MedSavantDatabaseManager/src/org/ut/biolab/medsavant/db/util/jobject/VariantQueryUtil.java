@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 
@@ -163,5 +164,61 @@ public class VariantQueryUtil {
         return map;     
     }
     
+    public static int getNumVariantsInRange(int projectId, int referenceId, List conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
+        
+        String query = 
+                "SELECT COUNT(*)" + 
+                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" + 
+                " WHERE `chrom`=\"" + chrom + "\" AND `position`>=" + start + " AND `position`<" + end;
+        if(!conditions.isEmpty()){
+            query += " AND ";
+        }
+        query += conditionsToString(conditions);
+        
+        Connection conn = ConnectionController.connect();
+        ResultSet rs = conn.createStatement().executeQuery(query);
+        
+        rs.next();
+        return rs.getInt(1);
+    }
+    
+    public static int[] getNumVariantsForBins(int projectId, int referenceId, List conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
+        
+        String queryBase = 
+                "SELECT `position`" +
+                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" + 
+                " WHERE `chrom`=\"" + chrom + "\"";
+        if(!conditions.isEmpty()){
+            queryBase += " AND ";
+        }
+        queryBase += conditionsToString(conditions);
+        
+        
+        String query = "select y.range as `range`, count(*) as `number of occurences` "
+                + "from ("
+                + "select case ";
+        int pos = 0;
+        for(int i = 0; i < numbins; i++){
+            query += "when `position` between " + pos + " and " + (pos+binsize) + " then " + i + " ";
+            pos += binsize;
+        }
+        
+        query += "end as `range` "
+                + "from (";
+        query += queryBase;
+        query += ") x ) y "
+                + "group by y.`range`";
+        
+        Connection conn = ConnectionController.connect();
+        ResultSet rs = conn.createStatement().executeQuery(query);
+        
+        int[] numRows = new int[numbins];
+        for(int i = 0; i < numbins; i++) numRows[i] = 0;
+        while(rs.next()){
+            int index = rs.getInt(1);
+            numRows[index] = rs.getInt(2);
+        }
+        return numRows;     
+    }
     
 }
