@@ -36,7 +36,11 @@ public class DBUtil {
         
         int fpos = s.indexOf("(");
         int rpos = s.indexOf(")");
-                
+        int cpos = s.indexOf(",");
+        if(cpos != -1 && cpos < rpos){
+            rpos = cpos;
+        }
+        
         if (fpos == -1) { return -1; }
         else { 
             return Integer.parseInt(s.substring(fpos+1,rpos)); 
@@ -73,11 +77,11 @@ public class DBUtil {
             table.addColumn(rs.getString(1), getColumnType(rs.getString(2)), getColumnLength(rs.getString(2)));
         }
         
-        for (DbColumn col : table.getColumns()) {
+        /*for (DbColumn col : table.getColumns()) {
             System.out.println(col);
             System.out.println("\t" + col.getTypeNameSQL());
             System.out.println("\t" + col.getTypeLength());
-        }
+        }*/
         
         return table;
     }
