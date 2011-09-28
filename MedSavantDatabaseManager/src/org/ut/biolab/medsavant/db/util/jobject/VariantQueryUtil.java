@@ -5,12 +5,15 @@
 package org.ut.biolab.medsavant.db.util.jobject;
 
 //import com.healthmarketscience.sqlbuilder.Condition;
+import com.healthmarketscience.sqlbuilder.Condition;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -118,5 +121,47 @@ public class VariantQueryUtil {
         rs.next();
         return rs.getInt(1);
     }
+    
+    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List conditions, String column, double min, double max) throws SQLException {
+        
+        String query = 
+                "SELECT COUNT(*)" + 
+                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" +
+                " WHERE `" + column + "`>=" + min + " AND `" + column + "`<" + max;
+        if(!conditions.isEmpty()){
+            query += " AND ";
+        }
+        query += conditionsToString(conditions);
+        
+        Connection conn = ConnectionController.connect();
+        ResultSet rs = conn.createStatement().executeQuery(query);
+        
+        rs.next();
+        return rs.getInt(1);        
+    }
+    
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List conditions, String column) throws SQLException {
+        
+        String query = 
+                "SELECT `" + column + "`, COUNT(*)" + 
+                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0";
+        if(!conditions.isEmpty()){
+            query += "WHERE ";
+        }
+        query += conditionsToString(conditions);
+        query += " GROUP BY `" + column + "`";
+                
+        Connection conn = ConnectionController.connect();
+        ResultSet rs = conn.createStatement().executeQuery(query);
+        
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        
+        while (rs.next()) {
+            map.put(rs.getString(1), rs.getInt(2));
+        }
+
+        return map;     
+    }
+    
     
 }
