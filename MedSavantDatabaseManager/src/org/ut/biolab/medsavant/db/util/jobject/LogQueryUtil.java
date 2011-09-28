@@ -6,8 +6,10 @@ package org.ut.biolab.medsavant.db.util.jobject;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -42,17 +44,16 @@ public class LogQueryUtil {
     }
     
     public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
-        Connection conn = ConnectionController.connect();
-        conn.createStatement().executeUpdate(
-            "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-            + " (project_id, reference_id, action) VALUES"
-            + " (" + projectId + "," + referenceId + "," + actionToInt(action) + ");");
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT update_id FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE +
-                " WHERE project_id=" + projectId + " AND reference_id=" + referenceId + 
-                " ORDER BY update_id DESC"); 
+        String query = 
+                "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                " (project_id, reference_id, action) VALUES" + 
+                " (" + projectId + "," + referenceId + "," + actionToInt(action) + ");";
+        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        stmt.execute();
+        
+        ResultSet rs = stmt.getGeneratedKeys();
         rs.next();
-        return rs.getInt("update_id"); 
+        return rs.getInt(1);
     }
 
     public static ResultSet getPendingUpdates() throws SQLException, IOException{
