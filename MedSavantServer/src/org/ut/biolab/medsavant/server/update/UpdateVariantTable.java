@@ -87,7 +87,7 @@ public class UpdateVariantTable {
     private static void annotateTDF(String tdfFilename, String outputFilename, int[] annotationIds){
         
         //TODO: MARC
-        
+        (new Annotate(tdfFilename, outputFilename, annotationIds)).annotate();
     }
     
     private static void appendToFile(String baseFilename, String appendingFilename) throws IOException{
