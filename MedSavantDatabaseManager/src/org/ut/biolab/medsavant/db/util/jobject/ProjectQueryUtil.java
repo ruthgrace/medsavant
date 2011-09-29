@@ -90,9 +90,9 @@ public class ProjectQueryUtil {
    
         String query = 
                 "CREATE TABLE `" + variantTableInfoName + "` ("
+                + "`upload_id` int(11) NOT NULL,"
+                + "`file_id` int(11) NOT NULL,"
                 + "`variant_id` int(11) NOT NULL,"
-                + "`reference_id` int(11) NOT NULL,"
-                + "`pipeline_id` varchar(10) COLLATE latin1_bin NOT NULL,"
                 + "`dna_id` varchar(10) COLLATE latin1_bin NOT NULL,"
                 + "`chrom` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
                 + "`position` int(11) NOT NULL,"
@@ -117,8 +117,7 @@ public class ProjectQueryUtil {
                 + "`sb` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
                 + "`somatic` int(1) DEFAULT NULL,"
                 + "`validated` int(1) DEFAULT NULL,"
-                + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`variant_annotation_sift_id` int(11) DEFAULT NULL,";
+                + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL,";
         
         //add each annotation
         if(annotationIds != null){

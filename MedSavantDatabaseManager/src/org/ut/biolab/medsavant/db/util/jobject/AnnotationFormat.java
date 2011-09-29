@@ -89,4 +89,12 @@ public class AnnotationFormat {
         return result;
     }
 
+    public boolean hasAlt() {
+        return hasAlt;
+    }
+
+    public boolean hasRef() {
+        return hasRef;
+    }    
+
 }

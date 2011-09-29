@@ -1,5 +1,10 @@
 package org.ut.biolab.medsavant.db.util.jobject;
 
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.broad.tabix.TabixReader;
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author mfiume
@@ -10,28 +15,33 @@ public class Annotation {
         final private String program;
         final private String version;
         final private String reference;
-        final private String path;
-        final private String format;
+        final private String dataPath;
+        final private String formatPath;
+    private TabixReader reader;
 
-    public Annotation(int id, String program, String version, String reference, String path, String format) {
+    public Annotation(int id, String program, String version, String reference, String dataPath, String formatPath) {
         this.id = id;
         this.program = program;
         this.version = version;
         this.reference = reference;
-        this.path = path;
-        this.format = format;
+        this.dataPath = dataPath;
+        this.formatPath = formatPath;
     }
 
-    public String getFormat() {
-        return format;
+    public String getFormatPath() {
+        return formatPath;
+    }
+    
+    public AnnotationFormat getAnnotationFormat() throws IOException, SAXException, ParserConfigurationException {
+        return new AnnotationFormat(this.formatPath);
     }
 
     public int getId() {
         return id;
     }
 
-    public String getPath() {
-        return path;
+    public String getDataPath() {
+        return dataPath;
     }
 
     public String getProgram() {
@@ -44,5 +54,12 @@ public class Annotation {
 
     public String getVersion() {
         return version;
+    }
+    
+    public TabixReader getReader() throws IOException {
+        if (reader == null) {
+            reader = new TabixReader(this.getDataPath());
+        }
+        return reader;
     }
 }
