@@ -20,6 +20,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
 public class LogQueryUtil {
     
     public static enum Action {ADD_VARIANTS, UPDATE_TABLE};
+    public static enum Status {PREPROCESS, PENDING, INPROGRESS, ERROR, COMPLETE}; 
     
     private static int actionToInt(Action action){
         switch(action){
@@ -43,11 +44,45 @@ public class LogQueryUtil {
         }
     }
     
+    private static int statusToInt(Status status){
+        switch(status){
+            case PREPROCESS:
+                return 0;
+            case PENDING:
+                return 1;
+            case INPROGRESS:
+                return 2;
+            case ERROR:
+                return 3;
+            case COMPLETE:
+                return 4;
+            default:
+                return -1;
+        }
+    }
+    
+    private static Status intToStatus(int status){
+        switch(status){
+            case 0:
+                return Status.PREPROCESS;
+            case 1:
+                return Status.PENDING;
+            case 2:
+                return Status.INPROGRESS;
+            case 3:
+                return Status.ERROR;
+            case 4:
+                return Status.COMPLETE;
+            default:
+                return null;
+        }
+    }
+    
     public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
-                " (project_id, reference_id, action) VALUES" + 
-                " (" + projectId + "," + referenceId + "," + actionToInt(action) + ");";
+                " (project_id, reference_id, action, status) VALUES" + 
+                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(Status.PREPROCESS) + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -60,17 +95,17 @@ public class LogQueryUtil {
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
-                + " WHERE pending=1"
+                + " WHERE status=" + statusToInt(Status.PENDING)
                 + " ORDER BY action, update_id");//always do updates before adds
         
         return rs;
     }
-        
-    public static void setLogPending(int updateId, boolean pending) throws SQLException {
+    
+    public static void setLogStatus(int updateId, Status status) throws SQLException {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
                 "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
-                " SET pending=" + (pending ? "1" : "0") + 
+                " SET status=" + statusToInt(status) + 
                 " WHERE update_id=" + updateId);
     }
     

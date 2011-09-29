@@ -6,6 +6,7 @@ package org.ut.biolab.medsavant.db.util.jobject;
 
 //import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.Condition;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,9 +34,9 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT *" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0 ";  
+                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0";  
         if(!conditions.isEmpty()){
-            query += "WHERE ";
+            query += " WHERE ";
         }
         query += conditionsToString(conditions);
         query += " LIMIT " + limit;
@@ -220,5 +221,15 @@ public class VariantQueryUtil {
         }
         return numRows;     
     }
+    
+    public static void uploadFileToVariantTable(File file, String tableName) throws SQLException{
+        Connection c = ConnectionController.connect();
+        c.createStatement().execute(
+                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
+                + "INTO TABLE " + tableName + " "
+                + "FIELDS TERMINATED BY '\\t' "
+                + "LINES TERMINATED BY '\\r\\n';");
+    }
+    
     
 }
