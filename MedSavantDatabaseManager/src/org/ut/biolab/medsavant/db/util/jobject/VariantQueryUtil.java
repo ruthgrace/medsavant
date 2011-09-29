@@ -147,7 +147,7 @@ public class VariantQueryUtil {
                 "SELECT `" + column + "`, COUNT(*)" + 
                 " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0";
         if(!conditions.isEmpty()){
-            query += "WHERE ";
+            query += " WHERE ";
         }
         query += conditionsToString(conditions);
         query += " GROUP BY `" + column + "`";
