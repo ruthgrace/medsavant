@@ -70,7 +70,7 @@ public class UpdateVariantTable {
         //dump current table and append
         String outputFilename = tempFilename + "_output";
         dumpTableToFile(tableName, new File(outputFilename));
-        appendToFile(outputFilename, tempFilename); //TODO: tempFilename -> annotatedFilename
+        appendToFile(outputFilename, annotatedFilename);
         
         //recreate empty table
         dropTable(tableName);
@@ -127,8 +127,8 @@ public class UpdateVariantTable {
                 + "end`, `h2`, `mq`, `mq0`, `ns`, `sb`, `somatic`, `validated`, `custom_info`"
                 + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
                 + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
-                + " FROM " + tableName
-                + " ORDER BY `dna_id`, `chrom`, `position`;"); //TODO: correct ordering?
+                + " FROM " + tableName);
+                //+ " ORDER BY `dna_id`, `chrom`, `position`;"); //TODO: correct ordering?
     }
     
     private static void removeTemp(String filename){
