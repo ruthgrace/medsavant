@@ -13,13 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.logging.Level;
 import org.broad.tabix.TabixReader;
 import org.ut.biolab.medsavant.db.util.jobject.Annotation;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
-import org.ut.biolab.medsavant.server.ServerLog;
-import org.ut.biolab.medsavant.server.ServerLog.LogType;
-import org.ut.biolab.medsavant.server.mail.Mail;
+import org.ut.biolab.medsavant.server.log.ServerLog;
 
 /**
  *
@@ -59,7 +57,7 @@ public class Annotate {
         while (lastChr.equals(currentVariant.chrom)) {
 
             if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
-                ServerLog.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")",LogType.WARNING);
+                ServerLog.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")",Level.WARNING);
                 numWarnings++;
             }
 
@@ -207,7 +205,7 @@ public class Annotate {
     
     public void annotate() throws Exception {
 
-        ServerLog.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.\n\nThanks,\nMedSavant Server Utility");
+        ServerLog.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
         
         // if no annotations to perform, copy input to output
         if (annotationIds.length == 0) {
@@ -243,7 +241,7 @@ public class Annotate {
             f.delete();
         }
         
-        ServerLog.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.\nThanks.");
+        ServerLog.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
     }
 
     /*
@@ -333,7 +331,9 @@ public class Annotate {
     private static int numWarnings;
 
     private static void annotate(File inFile, Annotation annot, File outFile) throws Exception {
-        System.out.printf("Record file: %s\nAnnotation file: %s\nOutput file: %s\n", inFile.getAbsolutePath(), annot.getDataPath(), outFile.getAbsolutePath());
+        ServerLog.log("Record file: " + inFile.getAbsolutePath());
+        ServerLog.log("Annotation file: " + annot.getDataPath());
+        ServerLog.log("Output file: " + outFile.getAbsolutePath());
 
         int numFieldsInInputFile = getNumFieldsInFile(inFile);
         int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumFields();

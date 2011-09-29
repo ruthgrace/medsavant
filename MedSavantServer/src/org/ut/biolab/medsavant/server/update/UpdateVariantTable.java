@@ -12,11 +12,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
+import org.ut.biolab.medsavant.server.log.ServerLog;
 
 /**
  *
@@ -85,9 +88,13 @@ public class UpdateVariantTable {
     }
     
     private static void annotateTDF(String tdfFilename, String outputFilename, int[] annotationIds){
-        
-        //TODO: MARC
-        (new Annotate(tdfFilename, outputFilename, annotationIds)).annotate();
+        try {
+            (new Annotate(tdfFilename, outputFilename, annotationIds)).annotate();
+        } catch (Exception ex) {
+            // TODO: this error should be handled higher up. I.e. the whole annotation process needs to be stopped and appropriate places
+            // updated ... e.g. pending table, admin notified, etc.
+            ServerLog.logByEmail("Uh oh...", "There was a problem annotating " + tdfFilename + ". Here's the error message:\n\n" + ex.getLocalizedMessage());
+        }
     }
     
     private static void appendToFile(String baseFilename, String appendingFilename) throws IOException{
