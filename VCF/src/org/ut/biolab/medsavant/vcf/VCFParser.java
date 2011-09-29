@@ -56,7 +56,7 @@ public class VCFParser {
                 else {
                     List<VariantRecord> records = parseRecord(nextLine,s.getHeader());
                     for (VariantRecord rec : records) {
-                        System.out.println(rec.toTabString());
+                        System.out.println(rec.toTabString(0,0,0));
                     }
                 }
             }
@@ -108,7 +108,7 @@ public class VCFParser {
         Logger.log(VCFParser.class, "Parsed " + numRecords + " variant records");
     }*/
     
-    private static VariantSet parseVariantsFromReader(CSVReader r) throws IOException{
+    /*private static VariantSet parseVariantsFromReader(CSVReader r) throws IOException{
         String [] nextLine;
 
         SortedVariantSet s = new SortedVariantSet();
@@ -144,9 +144,9 @@ public class VCFParser {
         Logger.log(VCFParser.class, "Parsed " + s.getRecords().size() + " variant records");
 
         return s;
-    }
+    }*/
     
-    private static void parseVariantsFromReader(CSVReader r, File outfile) throws IOException {
+    private static void parseVariantsFromReader(CSVReader r, File outfile, int updateId, int fileId) throws IOException {
         
         String[] nextLine;
         int numRecords = 0;
@@ -157,6 +157,7 @@ public class VCFParser {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(outfile, false));
             
+            int variantId = 0;
             while((nextLine = r.readNext()) != null) {
                 // a comment line
                 if (nextLine[0].startsWith(commentChars)) {
@@ -172,8 +173,9 @@ public class VCFParser {
                     List<VariantRecord> records = parseRecord(nextLine,header);
                     //add records to tdf
                     for(VariantRecord v : records){
-                        out.write(v.toTabString());
+                        out.write(v.toTabString(updateId, fileId, variantId));
                         out.write("\r\n");
+                        variantId++;
                     }
                     numRecords++;
                 }
@@ -186,7 +188,7 @@ public class VCFParser {
         Logger.log(VCFParser.class, "Parsed " + numRecords + " variant records");
     }
 
-    private static VariantSet parseVariantsFromReader(CSVReader r, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
+    /*private static VariantSet parseVariantsFromReader(CSVReader r, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
         String [] nextLine;
 
         SortedVariantSet s = new SortedVariantSet();
@@ -220,14 +222,14 @@ public class VCFParser {
                         rec.setPipelineID(pipeline_id);
                     }
                     s.addRecords(records);
-                    /*for(VariantRecord rec : records){
-                        insertRecord(rec, ps, variant_id, genome_id, pipeline_id, columns);
-                        variant_id++;
-                        numRecords++;
-                        if(numRecords % 10000 == 0){
-                            System.out.println(numRecords);
-                        }
-                    }*/
+                    //for(VariantRecord rec : records){
+                    //    insertRecord(rec, ps, variant_id, genome_id, pipeline_id, columns);
+                    //    variant_id++;
+                    //    numRecords++;
+                    //    if(numRecords % 10000 == 0){
+                    //        System.out.println(numRecords);
+                    //    }
+                    //}
                 }
             }
         }
@@ -235,7 +237,7 @@ public class VCFParser {
         Logger.log(VCFParser.class, "Parsed " + s.getRecords().size() + " variant records");
 
         return s;
-    }
+    }*/
     
     /*public static void insertRecord(VariantRecord record, PreparedStatement ps, int variant_id, int genome_id, int pipeline_id, List<DbColumn> columns) throws SQLException{
         for(int i = 0; i < columns.size(); i++){
@@ -335,20 +337,20 @@ public class VCFParser {
         ps.executeUpdate();
     }*/
     
-    public static void parseVariants(File vcffile, File outfile, char delimiter) throws FileNotFoundException, IOException{
+    public static void parseVariants(File vcffile, File outfile, char delimiter, int updateId, int fileId) throws FileNotFoundException, IOException{
         CSVReader r = openFile(vcffile, delimiter);
-        parseVariantsFromReader(r, outfile);
+        parseVariantsFromReader(r, outfile, updateId, fileId);
     }
     
-    public static VariantSet parseVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException{
+    /*public static VariantSet parseVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException{
         CSVReader r = openFile(vcffile, delimiter);
         return parseVariantsFromReader(r);
-    }
+    }*/
 
-    public static VariantSet parseVariants(File vcffile, char delimiter, int variant_id, int genome_id, int pipeline_id) throws FileNotFoundException, IOException, SQLException {
+    /*public static VariantSet parseVariants(File vcffile, char delimiter, int variant_id, int genome_id, int pipeline_id) throws FileNotFoundException, IOException, SQLException {
         CSVReader r = openFile(vcffile, delimiter);
         return parseVariantsFromReader(r, variant_id, genome_id, pipeline_id);
-    }
+    }*/
 
     public static void printVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException {
         CSVReader r = openFile(vcffile, delimiter);
@@ -384,17 +386,17 @@ public class VCFParser {
         return result;
     }
     
-    public static void parseVariants(File vcffile, File outfile) throws FileNotFoundException, IOException {
-        parseVariants(vcffile, outfile, defaultDelimiter);
+    public static void parseVariants(File vcffile, File outfile, int updateId, int fileId) throws FileNotFoundException, IOException {
+        parseVariants(vcffile, outfile, defaultDelimiter, updateId, fileId);
     }
 
-    public static VariantSet parseVariants(File vcffile) throws FileNotFoundException, IOException{
+    /*public static VariantSet parseVariants(File vcffile) throws FileNotFoundException, IOException{
         return parseVariants(vcffile, defaultDelimiter);
     }
     
     public static VariantSet parseVariants(File vcffile, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
         return parseVariants(vcffile,defaultDelimiter, variant_id, genome_id, pipeline_id);
-    }
+    }*/
 
     public static void printVariants(File vcffile) throws IOException {
         printVariants(vcffile,defaultDelimiter);

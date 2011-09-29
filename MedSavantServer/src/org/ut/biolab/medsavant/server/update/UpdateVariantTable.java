@@ -19,6 +19,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
+import org.ut.biolab.medsavant.db.util.jobject.VariantQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLog;
 
 /**
@@ -27,7 +28,7 @@ import org.ut.biolab.medsavant.server.log.ServerLog;
  */
 public class UpdateVariantTable {
         
-    public static void performUpdate(int projectId, int referenceId) throws SQLException{
+    public static void performUpdate(int projectId, int referenceId) throws SQLException, Exception{
         
         String tableName = DBUtil.getVariantTableName(projectId, referenceId);
         
@@ -45,14 +46,14 @@ public class UpdateVariantTable {
         annotateTDF(tempFilename, outputFilename, annotationIds);
         
         //upload file
-        DBUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
+        VariantQueryUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
         removeTemp(outputFilename);
     }
     
-    public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException{
+    public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException, Exception{
         
         String tableName = DBUtil.getVariantTableName(projectId, referenceId);
         
@@ -76,7 +77,7 @@ public class UpdateVariantTable {
         ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
         
         //upload file
-        DBUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
+        VariantQueryUtil.uploadFileToVariantTable(new File(outputFilename), tableName);
         
         //remove temporary files
         removeTemp(tempFilename);
@@ -121,9 +122,9 @@ public class UpdateVariantTable {
     private static void variantsToFile(String tableName, File file) throws SQLException{
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
         c.createStatement().execute(
-                "SELECT `variant_id`, `reference_id`, `pipeline_id`, `dna_id`, `chrom`, `position`, `"
+                "SELECT `upload_id`, `file_id`, `variant_id`, `dna_id`, `chrom`, `position`, `"
                 + "dbsnp_id`, `ref`, `alt`, `qual`, `filter`, `aa`, `ac`, `af`, `an`, `bq`, `cigar`, `db`, `dp`, `"
-                + "end`, `h2`, `mq`, `mq0`, `ns`, `sb`, `somatic`, `validated`, `custom_info`, `variant_annotation_sift_id`"
+                + "end`, `h2`, `mq`, `mq0`, `ns`, `sb`, `somatic`, `validated`, `custom_info`"
                 + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
                 + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName

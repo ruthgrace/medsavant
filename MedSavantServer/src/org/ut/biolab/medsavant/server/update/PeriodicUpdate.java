@@ -38,15 +38,21 @@ public class PeriodicUpdate {
                     int updateId = rs.getInt("update_id");
                     Action action = LogQueryUtil.intToAction(rs.getInt("action")); 
                     
-                    LogQueryUtil.setLogPending(updateId, false);
+                    LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.INPROGRESS);
                     
-                    switch(action){
-                        case ADD_VARIANTS:
-                            UpdateVariantTable.performAddVCF(projectId, referenceId, updateId);
-                            break;
-                        case UPDATE_TABLE:
-                            UpdateVariantTable.performUpdate(projectId, referenceId);
-                            break;
+                    try {
+                        switch(action){
+                            case ADD_VARIANTS:
+                                UpdateVariantTable.performAddVCF(projectId, referenceId, updateId);
+                                break;
+                            case UPDATE_TABLE:
+                                UpdateVariantTable.performUpdate(projectId, referenceId);
+                                break;
+                        }
+                        LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.COMPLETE);                      
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.ERROR);
                     }
    
                 }

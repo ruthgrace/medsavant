@@ -105,7 +105,11 @@ public class VariantRecord implements Serializable {
     public static final Class CLASS_OF_SPLICEINFOCOPY = String.class;
     
     //variant
+    
+    private int uploadID;
+    private int fileID;
     private int variantID;
+    
     private int genomeID;
     private int pipelineID;
     private String dnaID;
@@ -1448,12 +1452,12 @@ public class VariantRecord implements Serializable {
     //    return dnaID + delim + chrom + delim + position + delim + dbSNPID + delim + ref + delim + alt + delim + qual + delim + filter + delim;
    // }
     
-    public String toTabString() {
-        return  getString(this.variantID) + "\t" + 
-                getString(null) + "\t" +                //TODO 
-                getString(this.pipelineID) + "\t" + 
+    public String toTabString(int uploadId, int fileId, int variantId) {
+        return  getString(uploadId) + "\t" + 
+                getString(fileId) + "\t" + 
+                getString(variantId) + "\t" + 
                 getString(this.dnaID) + "\t" + 
-                getString(this.chrom) + "\t" + 
+                getString(this.chrom) + "\t" +              
                 getString(this.position) + "\t" + 
                 getString(this.dbSNPID) + "\t" + 
                 getString(this.ref) + "\t" + 
@@ -1497,7 +1501,7 @@ public class VariantRecord implements Serializable {
         }
     }
     
-    public String toTabsForUpload() {
+    /*public String toTabsForUpload() {
         return  getString(this.variantID) + "\t" + 
                 getString(this.genomeID) + "\t" + 
                 getString(this.pipelineID) + "\t" + 
@@ -1575,6 +1579,6 @@ public class VariantRecord implements Serializable {
                 getString(this.spliceInfo) + "\t" + 
                 getString(this.uorfChange) + "\t" + 
                 getString(this.spliceInfoCopy);      
-    }
+    }*/
     
 }

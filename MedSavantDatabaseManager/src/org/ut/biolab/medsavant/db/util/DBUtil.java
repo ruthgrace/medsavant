@@ -166,13 +166,4 @@ public class DBUtil {
         return "z_variant_staging_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
     }
     
-    public static void uploadFileToVariantTable(File file, String tableName) throws SQLException{
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
-        c.createStatement().execute(
-                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
-                + "INTO TABLE " + tableName + " "
-                + "FIELDS TERMINATED BY '\\t' "
-                + "LINES TERMINATED BY '\\r\\n';");
-    }
-    
 }
