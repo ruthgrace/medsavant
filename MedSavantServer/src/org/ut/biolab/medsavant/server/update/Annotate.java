@@ -195,7 +195,7 @@ public class Annotate {
     private static String[] readNext(CSVReader recordReader) throws IOException {
         String[] line = recordReader.readNext();
         if (line == null) { return null;}
-        else { line[line.length-1].replaceAll("\n", ""); }
+        else { line[line.length-1].replace("\n", "").replace("\r",""); }
         return line;
     }
 
