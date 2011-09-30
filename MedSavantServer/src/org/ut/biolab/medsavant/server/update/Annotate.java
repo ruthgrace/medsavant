@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import org.broad.tabix.TabixReader;
+import org.broad.tabix.TabixReader.Iterator;
 import org.ut.biolab.medsavant.db.util.jobject.Annotation;
 import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLog;
@@ -78,8 +79,8 @@ public class Annotate {
             // update annotation pointer
             while (currentAnnotation.position < currentVariant.position) {
                 
-                String nextannot = it.next();
-
+                String nextannot = readNextFromIterator(it);
+                
                 // happens when there are no more annotations for this chrom
                 if (nextannot == null) {
                     ServerLog.log("No more annotations for this chromosome");
@@ -126,7 +127,7 @@ public class Annotate {
                             break;
                             // not sure, keep looking
                         } else {
-                            String nextannot = it.next();
+                            String nextannot = readNextFromIterator(it);
 
                             // happens when there are no more annotations for this chrom
                             if (nextannot == null) {
@@ -196,6 +197,15 @@ public class Annotate {
         if (line == null) { return null;}
         else { line[line.length-1].replaceAll("\n", ""); }
         return line;
+    }
+
+    private static String readNextFromIterator(Iterator it) throws IOException {
+        String next = it.next();
+        if (next == null) { return next; }
+         if (next.charAt(next.length()-1) == '\n') {
+                    next = next.substring(0,next.length()-1);
+                }
+         return next;
     }
 
     
