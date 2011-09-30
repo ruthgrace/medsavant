@@ -34,7 +34,7 @@ public class Annotate {
     private static final int VARIANT_INDEX_OF_POS = 5;
     private static final int VARIANT_INDEX_OF_REF = 7;
     private static final int VARIANT_INDEX_OF_ALT = 8;
-    private static File variantFile = new File("/Users/mfiume/Desktop/variantDump");
+    private static File variantFile = new File("/Users/mfiume/Desktop/variantDump1");
     private static final int JUMP_DISTANCE = 100000;
 
     private static VariantRecord annotateForChromosome(String chrom, VariantRecord currentVariant, CSVReader recordReader, TabixReader annotationReader, CSVWriter writer, boolean annotationHasRef, boolean annotationHasAlt, int numFieldsInOutputFile) throws EOFException, IOException {
@@ -196,7 +196,7 @@ public class Annotate {
         if (line == null) {
             return null;
         } else {
-            line = Arrays.copyOfRange(line, 0, line.length - 1);
+            line[line.length - 1] = removeNewLinesAndCarriageReturns(line[line.length - 1]);
         }
         
         //System.out.println("[" + line[line.length - 1] + "]");
@@ -208,6 +208,7 @@ public class Annotate {
         if (next == null) {
             return next;
         }
+        //System.out.println("[" + removeNewLinesAndCarriageReturns(next) + "]");
         return removeNewLinesAndCarriageReturns(next);
     }
 
@@ -485,7 +486,7 @@ public class Annotate {
      */
     private static int getNumFieldsInTDF(File inFile) throws FileNotFoundException, IOException {
         CSVReader reader = new CSVReader(new FileReader(inFile));
-        int result = reader.readNext().length-1; // -1 because it adds one for the new line
+        int result = reader.readNext().length;
         reader.close();
         return result;
     }
