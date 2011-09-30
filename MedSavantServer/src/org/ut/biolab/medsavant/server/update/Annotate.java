@@ -35,7 +35,6 @@ public class Annotate {
     private static final int VARIANT_INDEX_OF_REF = 7;
     private static final int VARIANT_INDEX_OF_ALT = 8;
     private static File variantFile = new File("/Users/mfiume/Desktop/variantDump");
-    
     private static final int JUMP_DISTANCE = 100000;
 
     private static VariantRecord annotateForChromosome(String chrom, VariantRecord currentVariant, CSVReader recordReader, TabixReader annotationReader, CSVWriter writer, boolean annotationHasRef, boolean annotationHasAlt, int numFieldsInOutputFile) throws EOFException, IOException {
@@ -58,7 +57,7 @@ public class Annotate {
         while (lastChr.equals(currentVariant.chrom)) {
 
             if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
-                ServerLog.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")",Level.WARNING);
+                ServerLog.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
                 numWarnings++;
             }
 
@@ -69,7 +68,7 @@ public class Annotate {
             if (currentVariant.position > lastPosition + JUMP_DISTANCE) {
                 //log("Skipping chunk in annotations to " + currentVariant.position + " in " + currentVariant.chrom);
                 it = annotationReader.query(annotationReader.chr2tid(currentVariant.chrom), currentVariant.position, Integer.MAX_VALUE);
-                
+
                 // happens when there are no more annotations for this chrom
                 if (it == null) {
                     return skipToNextChr(currentVariant, recordReader, writer, outLine);
@@ -78,9 +77,9 @@ public class Annotate {
 
             // update annotation pointer
             while (currentAnnotation.position < currentVariant.position) {
-                
+
                 String nextannot = readNextFromIterator(it);
-                
+
                 // happens when there are no more annotations for this chrom
                 if (nextannot == null) {
                     ServerLog.log("No more annotations for this chromosome");
@@ -171,7 +170,7 @@ public class Annotate {
 
             lastChr = currentVariant.chrom;
             lastPosition = currentVariant.position;
-                        
+
             String[] nextLine = readNext(recordReader);
             // throw an exception if we hit the end of the variant file
             if (nextLine == null) {
@@ -194,27 +193,30 @@ public class Annotate {
 
     private static String[] readNext(CSVReader recordReader) throws IOException {
         String[] line = recordReader.readNext();
-        if (line == null) { return null;}
-        else { line[line.length-1] = removeNewLinesAndCarriageReturns(line[line.length-1]); }
+        if (line == null) {
+            return null;
+        } else {
+            line[line.length - 1] = removeNewLinesAndCarriageReturns(line[line.length - 1]);
+        }
         return line;
     }
 
     private static String readNextFromIterator(Iterator it) throws IOException {
         String next = it.next();
-        if (next == null) { return next; }
+        if (next == null) {
+            return next;
+        }
         return removeNewLinesAndCarriageReturns(next);
     }
 
     private static String removeNewLinesAndCarriageReturns(String next) {
-        if (next.substring(next.length()-2).equals("\r\n")) {
-                    next = next.substring(0,next.length()-2);
-                }
-         else if (next.charAt(next.length()-1) == '\n') {
-                    next = next.substring(0,next.length()-1);
-                }
+        if (next.length() > 2 && next.substring(next.length() - 2).equals("\r\n")) {
+            next = next.substring(0, next.length() - 2);
+        } else if (next.length() > 1 && next.charAt(next.length() - 1) == '\n') {
+            next = next.substring(0, next.length() - 1);
+        }
         return next;
     }
-
     
     private String tdfFilename;
     private String outputFilename;
@@ -226,11 +228,11 @@ public class Annotate {
         this.outputFilename = outputFilename;
         this.annotationIds = annotIds;
     }
-    
+
     public void annotate() throws Exception {
 
         ServerLog.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
-        
+
         // if no annotations to perform, copy input to output
         if (annotationIds.length == 0) {
             copyFile(tdfFilename, outputFilename);
@@ -264,7 +266,7 @@ public class Annotate {
         for (File f : tmpFiles) {
             f.delete();
         }
-        
+
         ServerLog.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
     }
 
@@ -292,7 +294,7 @@ public class Annotate {
         String[] recordLine = null;
 
         String[] lastLine = null;
-        
+
         writer.writeNext(copyArray(currentPos.line, outLine));
         numLinesWritten++;
 
@@ -314,20 +316,20 @@ public class Annotate {
             if (currentChr.equals(nextLineChr)) {
 
                 lastLine = recordLine;
-                
+
                 writer.writeNext(copyArray(recordLine, outLine));
                 numLinesWritten++;
-                
+
                 // if we hit a new chr, bail
             } else {
                 break;
             }
         }
-        
+
         //log("Last variant: { chr=" + lastLine[VARIANT_INDEX_OF_CHR] + " pos=" + lastLine[VARIANT_INDEX_OF_POS] + "}");
 
         ServerLog.log("Next variant: " + new VariantRecord(recordLine));
-        
+
         return new VariantRecord(recordLine);
     }
 
@@ -360,7 +362,9 @@ public class Annotate {
         ServerLog.log("Output file: " + outFile.getAbsolutePath());
 
         int numFieldsInInputFile = getNumFieldsInFile(inFile);
-        int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumFields();
+        int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumNonDefaultFields();
+
+        ServerLog.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
 
         CSVReader recordReader = new CSVReader(new FileReader(inFile));
         TabixReader annotationReader = annot.getReader();
@@ -374,25 +378,25 @@ public class Annotate {
 
         int totalLinesWritten = 0;
         numWarnings = 0;
-        
+
         boolean eof = false;
-        
+
         while (true) {
             try {
                 ServerLog.log("Annotating variants in " + nextPosition.chrom);
                 ServerLog.log("First variant for chrom: " + nextPosition.toString());
                 numMatches = 0;
                 numLinesWritten = 0;
-                
+
                 nextPosition = annotateForChromosome(nextPosition.chrom, nextPosition, recordReader, annotationReader, writer, annotationHasRef, annotationHasAlt, numFieldsInOutputFile);
                 ServerLog.log("Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
-                
+
                 totalLinesWritten += numLinesWritten;
-                
-                if (totalLinesWritten+1 != numLinesRead) {
+
+                if (totalLinesWritten + 1 != numLinesRead) {
                     throw new Exception("error: missed some lines");
                 }
-                
+
                 // an exception is thrown when we hit the end of the input file
             } catch (Exception e) {
                 e.printStackTrace();
@@ -400,15 +404,15 @@ public class Annotate {
                 break;
             }
         }
-        
+
         if (!eof) {
             numLinesWritten++;
             writer.writeNext(copyArray(nextPosition.line, new String[numFieldsInOutputFile]));
         }
-        
+
         recordReader.close();
         writer.close();
-        
+
         ServerLog.log("Done annotating file, " + numLinesRead + " read " + totalLinesWritten + " written with " + numWarnings + " warnings");
     }
 
@@ -521,8 +525,6 @@ public class Annotate {
         System.arraycopy(inLine, 0, outLine, 0, inLine.length);
         return outLine;
     }
-
-    
 
     private static void print(String[] nextLine) {
         for (String s : nextLine) {
