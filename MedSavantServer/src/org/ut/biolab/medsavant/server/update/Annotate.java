@@ -196,8 +196,10 @@ public class Annotate {
         if (line == null) {
             return null;
         } else {
-            line[line.length - 1] = removeNewLinesAndCarriageReturns(line[line.length - 1]);
+            line = Arrays.copyOfRange(line, 0, line.length - 1);
         }
+        
+        //System.out.println("[" + line[line.length - 1] + "]");
         return line;
     }
 
@@ -293,8 +295,6 @@ public class Annotate {
 
         String[] recordLine = null;
 
-        String[] lastLine = null;
-
         writer.writeNext(copyArray(currentPos.line, outLine));
         numLinesWritten++;
 
@@ -314,8 +314,6 @@ public class Annotate {
 
             // write this record to file if we're on the same chr
             if (currentChr.equals(nextLineChr)) {
-
-                lastLine = recordLine;
 
                 writer.writeNext(copyArray(recordLine, outLine));
                 numLinesWritten++;
@@ -361,7 +359,7 @@ public class Annotate {
         ServerLog.log("Annotation file: " + annot.getDataPath());
         ServerLog.log("Output file: " + outFile.getAbsolutePath());
 
-        int numFieldsInInputFile = getNumFieldsInFile(inFile);
+        int numFieldsInInputFile = getNumFieldsInTDF(inFile);
         int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumNonDefaultFields();
 
         ServerLog.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
@@ -485,9 +483,9 @@ public class Annotate {
     /**
      * HELPER FUNCTIONS
      */
-    private static int getNumFieldsInFile(File inFile) throws FileNotFoundException, IOException {
+    private static int getNumFieldsInTDF(File inFile) throws FileNotFoundException, IOException {
         CSVReader reader = new CSVReader(new FileReader(inFile));
-        int result = reader.readNext().length;
+        int result = reader.readNext().length-1; // -1 because it adds one for the new line
         reader.close();
         return result;
     }
