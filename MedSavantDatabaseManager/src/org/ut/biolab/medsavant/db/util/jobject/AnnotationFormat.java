@@ -24,6 +24,8 @@ public class AnnotationFormat {
     private boolean hasRef = false;
     private boolean hasAlt = false;
     private String version;
+    private String program;
+    private String prefix;
     
     private List<String> columnNames = new ArrayList<String>();
     private List<String> columnTypes = new ArrayList<String>();
@@ -40,6 +42,9 @@ public class AnnotationFormat {
         hasRef = doc.getDocumentElement().getAttribute("hasref").equals("true");
         hasAlt = doc.getDocumentElement().getAttribute("hasalt").equals("true");
         version = doc.getDocumentElement().getAttribute("version"); 
+        program = doc.getDocumentElement().getAttribute("program"); 
+        
+        prefix = program + "_" + version.replaceAll("\\.", "_") + "_"; 
         
         //copy defaults
         for(int i = 0; i < 5; i++){
@@ -52,8 +57,8 @@ public class AnnotationFormat {
         NodeList fields = doc.getElementsByTagName("field");
         for(int i = 0; i < fields.getLength(); i++){
             Element field = (Element)(fields.item(i));
-            columnNames.add(field.getAttribute("name"));
-            columnTypes.add(field.getAttribute("field")); 
+            columnNames.add(prefix + field.getAttribute("name"));
+            columnTypes.add(field.getAttribute("type")); 
         }
     }
     
