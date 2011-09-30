@@ -195,17 +195,24 @@ public class Annotate {
     private static String[] readNext(CSVReader recordReader) throws IOException {
         String[] line = recordReader.readNext();
         if (line == null) { return null;}
-        else { line[line.length-1].replace("\n", "").replace("\r",""); }
+        else { line[line.length-1] = removeNewLinesAndCarriageReturns(line[line.length-1]); }
         return line;
     }
 
     private static String readNextFromIterator(Iterator it) throws IOException {
         String next = it.next();
         if (next == null) { return next; }
-         if (next.charAt(next.length()-1) == '\n') {
+        return removeNewLinesAndCarriageReturns(next);
+    }
+
+    private static String removeNewLinesAndCarriageReturns(String next) {
+        if (next.substring(next.length()-2).equals("\r\n")) {
+                    next = next.substring(0,next.length()-2);
+                }
+         else if (next.charAt(next.length()-1) == '\n') {
                     next = next.substring(0,next.length()-1);
                 }
-         return next;
+        return next;
     }
 
     
