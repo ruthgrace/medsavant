@@ -34,7 +34,7 @@ public class Annotate {
     private static final int VARIANT_INDEX_OF_POS = 5;
     private static final int VARIANT_INDEX_OF_REF = 7;
     private static final int VARIANT_INDEX_OF_ALT = 8;
-    private static File variantFile = new File("/Users/mfiume/Desktop/variantDump1");
+    private static File variantFile = new File("/Users/mfiume/Desktop/temp_proj10_ref1_update20");
     private static final int JUMP_DISTANCE = 100000;
 
     private static VariantRecord annotateForChromosome(String chrom, VariantRecord currentVariant, CSVReader recordReader, TabixReader annotationReader, CSVWriter writer, boolean annotationHasRef, boolean annotationHasAlt, int numFieldsInOutputFile) throws EOFException, IOException {
