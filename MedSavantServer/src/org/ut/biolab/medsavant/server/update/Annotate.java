@@ -215,9 +215,9 @@ public class Annotate {
     private static String removeNewLinesAndCarriageReturns(String next) {
         //System.out.print("next [" + next + "] ");
         
-        next = next.replaceAll("\r\n","");
+        //next = next.replaceAll("\r\n","");
         next = next.replaceAll("\n","");
-        
+        next = next.replaceAll("\r","");
         /*
         if (next.length() > 2 && next.substring(next.length() - 2).equals("\r\n")) {
             next = next.substring(0, next.length() - 2);
