@@ -1453,34 +1453,34 @@ public class VariantRecord implements Serializable {
    // }
     
     public String toTabString(int uploadId, int fileId, int variantId) {
-        return  getString(uploadId) + "\t" + 
-                getString(fileId) + "\t" + 
-                getString(variantId) + "\t" + 
-                getString(this.dnaID) + "\t" + 
-                getString(this.chrom) + "\t" +              
-                getString(this.position) + "\t" + 
-                getString(this.dbSNPID) + "\t" + 
-                getString(this.ref) + "\t" + 
-                getString(this.alt) + "\t" + 
-                getString(this.qual) + "\t" + 
-                getString(this.filter) + "\t" + 
-                getString(this.aa) + "\t" + 
-                getString(this.ac) + "\t" + 
-                getString(this.af) + "\t" + 
-                getString(this.an) + "\t" + 
-                getString(this.bq) + "\t" + 
-                getString(this.cigar) + "\t" + 
-                getString(this.db, true) + "\t" +
-                getString(this.dp) + "\t" + 
-                getString(this.end) + "\t" + 
-                getString(this.h2, true) + "\t" + 
-                getString(this.mq) + "\t" + 
-                getString(this.mq0) + "\t" +
-                getString(this.ns) + "\t" + 
-                getString(this.sb) + "\t" + 
-                getString(this.somatic, true) + "\t" + 
-                getString(this.validated, true) + "\t" + 
-                getString(this.customInfo) + "\t"; 
+        return  "\"" + getString(uploadId) + "\"," + 
+                "\"" + getString(fileId) + "\"," + 
+                "\"" + getString(variantId) + "\"," + 
+                "\"" + getString(this.dnaID) + "\"," + 
+                "\"" + getString(this.chrom) + "\"," +              
+                "\"" + getString(this.position) + "\"," + 
+                "\"" + getString(this.dbSNPID) + "\"," + 
+                "\"" + getString(this.ref) + "\"," + 
+                "\"" + getString(this.alt) + "\"," + 
+                "\"" + getString(this.qual) + "\"," + 
+                "\"" + getString(this.filter) + "\"," + 
+                "\"" + getString(this.aa) + "\"," + 
+                "\"" + getString(this.ac) + "\"," + 
+                "\"" + getString(this.af) + "\"," + 
+                "\"" + getString(this.an) + "\"," + 
+                "\"" + getString(this.bq) + "\"," + 
+                "\"" + getString(this.cigar) + "\"," + 
+                "\"" + getString(this.db, true) + "\"," +
+                "\"" + getString(this.dp) + "\"," + 
+                "\"" + getString(this.end) + "\"," + 
+                "\"" + getString(this.h2, true) + "\"," + 
+                "\"" + getString(this.mq) + "\"," + 
+                "\"" + getString(this.mq0) + "\"," +
+                "\"" + getString(this.ns) + "\"," + 
+                "\"" + getString(this.sb) + "\"," + 
+                "\"" + getString(this.somatic, true) + "\"," + 
+                "\"" + getString(this.validated, true) + "\"," + 
+                "\"" + getString(this.customInfo) + "\""; 
     }
     
     private String getString(Object value){

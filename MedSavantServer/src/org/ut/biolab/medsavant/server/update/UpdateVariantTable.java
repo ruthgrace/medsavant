@@ -33,7 +33,7 @@ public class UpdateVariantTable {
         String tableName = DBUtil.getVariantTableName(projectId, referenceId);
         
         //create TDF from existing variants
-        String tempFilename = "temp_proj" + projectId + "_" + referenceId;
+        String tempFilename = "temp_proj" + projectId + "_ref" + referenceId;
         variantsToFile(tableName, new File(tempFilename));
         
         //drop table and recreate
@@ -88,14 +88,8 @@ public class UpdateVariantTable {
         dropTable(stagingTableName);       
     }
     
-    private static void annotateTDF(String tdfFilename, String outputFilename, int[] annotationIds){
-        try {
-            (new Annotate(tdfFilename, outputFilename, annotationIds)).annotate();
-        } catch (Exception ex) {
-            // TODO: this error should be handled higher up. I.e. the whole annotation process needs to be stopped and appropriate places
-            // updated ... e.g. pending table, admin notified, etc.
-            ServerLog.logByEmail("Uh oh...", "There was a problem annotating " + tdfFilename + ". Here's the error message:\n\n" + ex.getLocalizedMessage());
-        }
+    private static void annotateTDF(String tdfFilename, String outputFilename, int[] annotationIds) throws Exception{
+        (new Annotate(tdfFilename, outputFilename, annotationIds)).annotate();
     }
     
     private static void appendToFile(String baseFilename, String appendingFilename) throws IOException{
@@ -115,7 +109,8 @@ public class UpdateVariantTable {
         c.createStatement().execute(
                 "SELECT *"
                 + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
-                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
+                + " FIELDS TERMINATED BY ',' ENCLOSED BY '\"'"
+                + " LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName + ";");
     }
     
@@ -126,7 +121,8 @@ public class UpdateVariantTable {
                 + "dbsnp_id`, `ref`, `alt`, `qual`, `filter`, `aa`, `ac`, `af`, `an`, `bq`, `cigar`, `db`, `dp`, `"
                 + "end`, `h2`, `mq`, `mq0`, `ns`, `sb`, `somatic`, `validated`, `custom_info`"
                 + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
-                + " FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\r\\n'"
+                + " FIELDS TERMINATED BY ',' ENCLOSED BY '\"'"
+                + " LINES TERMINATED BY '\\r\\n'"
                 + " FROM " + tableName);
                 //+ " ORDER BY `dna_id`, `chrom`, `position`;"); //TODO: correct ordering?
     }

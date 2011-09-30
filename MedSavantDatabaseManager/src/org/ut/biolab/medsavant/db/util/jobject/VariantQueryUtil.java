@@ -227,9 +227,9 @@ public class VariantQueryUtil {
         c.createStatement().execute(
                 "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
                 + "INTO TABLE " + tableName + " "
-                + "FIELDS TERMINATED BY '\\t' "
+                + "FIELDS TERMINATED BY ',' ENCLOSED BY '\"' "
                 + "LINES TERMINATED BY '\\r\\n';");
     }
-    
+
     
 }

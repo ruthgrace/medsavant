@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
 import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Action;
+import org.ut.biolab.medsavant.server.log.ServerLog;
 
 /**
  *
@@ -51,6 +52,7 @@ public class PeriodicUpdate {
                         }
                         LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.COMPLETE);                      
                     } catch (Exception e){
+                        ServerLog.logByEmail("Uh oh...", "There was a problem making update " + updateId + ". Here's the error message:\n\n" + e.getLocalizedMessage());
                         e.printStackTrace();
                         LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.ERROR);
                     }

@@ -78,11 +78,15 @@ public class LogQueryUtil {
         }
     }
     
-    public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
+    public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{   
+        return addLogEntry(projectId, referenceId, action, Status.PREPROCESS);
+    }
+    
+    public static int addLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException{    
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
                 " (project_id, reference_id, action, status) VALUES" + 
-                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(Status.PREPROCESS) + ");";
+                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         

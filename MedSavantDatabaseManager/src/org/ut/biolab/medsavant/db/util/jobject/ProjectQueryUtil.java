@@ -128,7 +128,7 @@ public class ProjectQueryUtil {
         
         query = query.substring(0, query.length()-1); //remove last comma
         query += ") ENGINE=BRIGHTHOUSE;";
-
+        
         c.createStatement().execute(query);
 
         if(!isStaging && addToTableMap){

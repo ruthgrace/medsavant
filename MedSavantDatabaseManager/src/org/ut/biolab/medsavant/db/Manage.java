@@ -13,6 +13,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
 import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Action;
+import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Status;
 
 /**
  *
@@ -107,7 +108,7 @@ public class Manage {
         
         (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
         
-        LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE);
+        LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
     
     public static void removeProject(String projectName) throws SQLException {

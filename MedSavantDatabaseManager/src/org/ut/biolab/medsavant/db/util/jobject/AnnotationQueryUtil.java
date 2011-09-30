@@ -102,5 +102,5 @@ public class AnnotationQueryUtil {
         
         rs.next();
         return new AnnotationFormat(rs.getString("format"));
-    }
+    }    
 }

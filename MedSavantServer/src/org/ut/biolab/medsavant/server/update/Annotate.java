@@ -370,14 +370,19 @@ public class Annotate {
         ServerLog.log("Output file: " + outFile.getAbsolutePath());
 
         int numFieldsInInputFile = getNumFieldsInTDF(inFile);
+        if(numFieldsInInputFile == 0){
+            outFile.createNewFile();
+            ServerLog.log("Done annotating file. Nothing to annotate.");
+            return;
+        }
         int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumNonDefaultFields();
 
         ServerLog.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
 
         CSVReader recordReader = new CSVReader(new FileReader(inFile));
         TabixReader annotationReader = annot.getReader();
-        CSVWriter writer = new CSVWriter(new FileWriter(outFile));
-
+        CSVWriter writer = new CSVWriter(new FileWriter(outFile), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER, "\r\n");
+        
         boolean annotationHasRef = annot.getAnnotationFormat().hasRef();
         boolean annotationHasAlt = annot.getAnnotationFormat().hasAlt();
 
@@ -439,7 +444,7 @@ public class Annotate {
             setFromLine(line);
         }
 
-        private void setFromLine(String[] line) {
+        private void setFromLine(String[] line) {     
             this.line = line;
             chrom = line[VARIANT_INDEX_OF_CHR];
             position = Integer.parseInt(line[VARIANT_INDEX_OF_POS]);
@@ -495,37 +500,32 @@ public class Annotate {
      */
     private static int getNumFieldsInTDF(File inFile) throws FileNotFoundException, IOException {
         CSVReader reader = new CSVReader(new FileReader(inFile));
-        int result = reader.readNext().length;
+        String[] next = reader.readNext();
+        if(next == null) return 0;
+        int result = next.length;
         reader.close();
         return result;
     }
 
-    private static void copyFile(String srFile, String dtFile) {
-        try {
-            File f1 = new File(srFile);
-            File f2 = new File(dtFile);
-            InputStream in = new FileInputStream(f1);
+    private static void copyFile(String srFile, String dtFile) throws Exception {
+        File f1 = new File(srFile);
+        File f2 = new File(dtFile);
+        InputStream in = new FileInputStream(f1);
 
-            //For Append the file.
-            //  OutputStream out = new FileOutputStream(f2,true);
+        //For Append the file.
+        //  OutputStream out = new FileOutputStream(f2,true);
 
-            //For Overwrite the file.
-            OutputStream out = new FileOutputStream(f2);
+        //For Overwrite the file.
+        OutputStream out = new FileOutputStream(f2);
 
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            System.out.println("File copied.");
-        } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage() + " in the specified directory.");
-            System.exit(0);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
         }
+        in.close();
+        out.close();
+        System.out.println("File copied.");
     }
 
     private static String[] copyArray(String[] inLine, String[] outLine) {
