@@ -70,6 +70,10 @@ public class AnnotationFormat {
         return columnNames.size();
     }
     
+    public int getNumNonDefaultFields(){
+        return columnNames.size() - (DEFAULT_COLUMNS.length - (hasRef ? 0 : 1) - (hasAlt ? 0 : 1));
+    }
+    
     public String getFieldType(String fieldName){
         int pos = columnNames.indexOf(fieldName);
         if(pos == -1) return null;
