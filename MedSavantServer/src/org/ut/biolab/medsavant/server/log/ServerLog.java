@@ -1,14 +1,10 @@
 package org.ut.biolab.medsavant.server.log;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import org.ut.biolab.medsavant.server.mail.Mail;
 
 /**
@@ -51,7 +47,6 @@ public class ServerLog {
         } else {
             log("(No email address configured to sent to): \"" + message.replace("\n", "") + "\"",l);
         }
-        
     }
 
     public static void log(String msg, Level level) {

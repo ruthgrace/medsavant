@@ -25,7 +25,7 @@ public class Mail {
 
     public static void main(String[] args) {
         String from = "MedSavant Server Utility";
-        if (Mail.sendEMailToDevelopers(from, "Test Subject", "Test Body", null)) {
+        if (Mail.sendEmail(from, "Test Subject", "Test Body", null)) {
             System.out.println("Mail sent successfully");
         } else {
             System.out.println("Uh oh...");
@@ -33,10 +33,10 @@ public class Mail {
     }
 
     public synchronized static boolean sendEmail(String to, String subject, String text) {
-        return sendEMailToDevelopers(to,subject,text,null);
+        return sendEmail(to,subject,text,null);
     }
 
-    public synchronized static boolean sendEMailToDevelopers(String to, String subject, String text, File attachment) {
+    public synchronized static boolean sendEmail(String to, String subject, String text, File attachment) {
         try {
             // create some properties and get the default Session
             Properties props = new Properties();

@@ -194,3 +194,556 @@ org.ut.biolab.medsavant.server[INFO|main|12:08:59]: Next variant: VariantRecord{
 org.ut.biolab.medsavant.server[INFO|main|12:08:59]: Done annotating this chromosome; 1125 matches found, 6068 written 
 org.ut.biolab.medsavant.server[INFO|main|12:08:59]: Annotating variants in chr10 
 org.ut.biolab.medsavant.server[INFO|main|12:08:59]: First variant for chrom: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: (Also emailed to marcfiume@gmail.com): "Annotation of /Users/mfiume/Desktop/variantDump was started. 1 annotation(s) will be performed.You will be notified again upon completion.MedSavant Server Utility" 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: Record file: /Users/mfiume/Desktop/variantDump 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: Annotation file: /Users/mfiume/Desktop/annotations/sift2.tab.gz 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: Output file: /Users/mfiume/Desktop/variantDump.annot_part0 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: Annotating variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:48:22]: First variant for chrom: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:39]: Flushing remaining variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:48:39]: Next variant: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:39]: Done annotating this chromosome; 1125 matches found, 6068 written 
+org.ut.biolab.medsavant.server[INFO|main|3:48:39]: Annotating variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:48:39]: First variant for chrom: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: Flushing remaining variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: Next variant: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: Done annotating this chromosome; 356 matches found, 2534 written 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: Annotating variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:48:47]: First variant for chrom: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: Flushing remaining variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: Next variant: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: Done annotating this chromosome; 705 matches found, 3430 written 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: Annotating variants in chr12 
+org.ut.biolab.medsavant.server[INFO|main|3:48:58]: First variant for chrom: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:10]: Done annotating this chromosome; 484 matches found, 3212 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:10]: Annotating variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:49:10]: First variant for chrom: VariantRecord{chrom=chr13, position=19042581, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:15]: Done annotating this chromosome; 197 matches found, 1399 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:15]: Annotating variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:49:15]: First variant for chrom: VariantRecord{chrom=chr14, position=19110239, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:21]: Flushing remaining variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:49:21]: Next variant: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:21]: Done annotating this chromosome; 333 matches found, 2088 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:21]: Annotating variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:49:21]: First variant for chrom: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: Flushing remaining variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: Next variant: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: Done annotating this chromosome; 302 matches found, 2045 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: Annotating variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:49:26]: First variant for chrom: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: Flushing remaining variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: Next variant: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: Done annotating this chromosome; 256 matches found, 1896 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: Annotating variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:49:32]: First variant for chrom: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: Flushing remaining variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: Next variant: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: Done annotating this chromosome; 450 matches found, 2371 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: Annotating variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:49:45]: First variant for chrom: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: Flushing remaining variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: Next variant: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: Done annotating this chromosome; 189 matches found, 1265 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: Annotating variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:49:47]: First variant for chrom: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:57]: Flushing remaining variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:49:57]: Next variant: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:49:57]: Done annotating this chromosome; 718 matches found, 2647 written 
+org.ut.biolab.medsavant.server[INFO|main|3:49:57]: Annotating variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:49:57]: First variant for chrom: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: (Also emailed to marcfiume@gmail.com): "Annotation of /Users/mfiume/Desktop/variantDump was started. 1 annotation(s) will be performed.You will be notified again upon completion.MedSavant Server Utility" 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: Record file: /Users/mfiume/Desktop/variantDump 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: Annotation file: /Users/mfiume/Desktop/annotations/sift2.tab.gz 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: Output file: /Users/mfiume/Desktop/variantDump.annot_part0 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: Annotating variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:50:47]: First variant for chrom: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:04]: Flushing remaining variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:51:04]: Next variant: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:04]: Done annotating this chromosome; 1125 matches found, 6068 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:04]: Annotating variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:51:04]: First variant for chrom: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: Flushing remaining variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: Next variant: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: Done annotating this chromosome; 356 matches found, 2534 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: Annotating variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:51:11]: First variant for chrom: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: Flushing remaining variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: Next variant: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: Done annotating this chromosome; 705 matches found, 3430 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: Annotating variants in chr12 
+org.ut.biolab.medsavant.server[INFO|main|3:51:20]: First variant for chrom: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:29]: Done annotating this chromosome; 484 matches found, 3212 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:29]: Annotating variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:51:29]: First variant for chrom: VariantRecord{chrom=chr13, position=19042581, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:32]: Done annotating this chromosome; 197 matches found, 1399 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:32]: Annotating variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:51:32]: First variant for chrom: VariantRecord{chrom=chr14, position=19110239, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:37]: Flushing remaining variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:51:37]: Next variant: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:37]: Done annotating this chromosome; 333 matches found, 2088 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:37]: Annotating variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:51:37]: First variant for chrom: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: Flushing remaining variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: Next variant: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: Done annotating this chromosome; 302 matches found, 2045 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: Annotating variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:51:44]: First variant for chrom: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: Flushing remaining variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: Next variant: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: Done annotating this chromosome; 256 matches found, 1896 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: Annotating variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:51:50]: First variant for chrom: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: Flushing remaining variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: Next variant: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: Done annotating this chromosome; 450 matches found, 2371 written 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: Annotating variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:51:59]: First variant for chrom: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: Flushing remaining variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: Next variant: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: Done annotating this chromosome; 189 matches found, 1265 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: Annotating variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:52:01]: First variant for chrom: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:10]: Flushing remaining variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:52:10]: Next variant: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:10]: Done annotating this chromosome; 718 matches found, 2647 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:10]: Annotating variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:52:10]: First variant for chrom: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:23]: Flushing remaining variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:52:23]: Next variant: VariantRecord{chrom=chr20, position=76930, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:23]: Done annotating this chromosome; 854 matches found, 5249 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:23]: Annotating variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:52:23]: First variant for chrom: VariantRecord{chrom=chr20, position=76930, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:26]: Flushing remaining variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:52:26]: Next variant: VariantRecord{chrom=chr21, position=9483297, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:26]: Done annotating this chromosome; 118 matches found, 1176 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:26]: Annotating variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:52:26]: First variant for chrom: VariantRecord{chrom=chr21, position=9483297, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: Flushing remaining variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: Next variant: VariantRecord{chrom=chr22, position=16101526, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: Done annotating this chromosome; 142 matches found, 827 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: Annotating variants in chr22 
+org.ut.biolab.medsavant.server[INFO|main|3:52:28]: First variant for chrom: VariantRecord{chrom=chr22, position=16101526, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:30]: Done annotating this chromosome; 114 matches found, 783 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:30]: Annotating variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:52:30]: First variant for chrom: VariantRecord{chrom=chr3, position=386520, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: Flushing remaining variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: Next variant: VariantRecord{chrom=chr4, position=53314, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: Done annotating this chromosome; 550 matches found, 3304 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: Annotating variants in chr4 
+org.ut.biolab.medsavant.server[INFO|main|3:52:40]: First variant for chrom: VariantRecord{chrom=chr4, position=53314, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:46]: Done annotating this chromosome; 496 matches found, 2969 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:46]: Annotating variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:52:46]: First variant for chrom: VariantRecord{chrom=chr5, position=169361, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:57]: Flushing remaining variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:52:57]: Next variant: VariantRecord{chrom=chr6, position=106343, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:52:57]: Done annotating this chromosome; 480 matches found, 2742 written 
+org.ut.biolab.medsavant.server[INFO|main|3:52:57]: Annotating variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:52:57]: First variant for chrom: VariantRecord{chrom=chr6, position=106343, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: Flushing remaining variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: Next variant: VariantRecord{chrom=chr7, position=538277, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: Done annotating this chromosome; 630 matches found, 3574 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: Annotating variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:53:14]: First variant for chrom: VariantRecord{chrom=chr7, position=538277, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: Flushing remaining variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: Next variant: VariantRecord{chrom=chr8, position=142083, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: Done annotating this chromosome; 458 matches found, 3299 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: Annotating variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:53:23]: First variant for chrom: VariantRecord{chrom=chr8, position=142083, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: Flushing remaining variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: Next variant: VariantRecord{chrom=chr9, position=146032, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: Done annotating this chromosome; 316 matches found, 2176 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: Annotating variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:53:28]: First variant for chrom: VariantRecord{chrom=chr9, position=146032, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: Flushing remaining variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: Next variant: VariantRecord{chrom=chrX, position=2700157, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: Done annotating this chromosome; 362 matches found, 2413 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: Annotating variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|3:53:35]: First variant for chrom: VariantRecord{chrom=chrX, position=2700157, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Done annotating this chromosome; 151 matches found, 857 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Annotating variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: First variant for chrom: VariantRecord{chrom=chrY, position=4925023, ref=T, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Flushing remaining variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Next variant: VariantRecord{chrom=chr1, position=809681, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Done annotating this chromosome; 2 matches found, 101 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: Annotating variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:53:38]: First variant for chrom: VariantRecord{chrom=chr1, position=809681, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:57]: Flushing remaining variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:53:57]: Next variant: VariantRecord{chrom=chr10, position=93603, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:53:57]: Done annotating this chromosome; 1103 matches found, 5306 written 
+org.ut.biolab.medsavant.server[INFO|main|3:53:57]: Annotating variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:53:57]: First variant for chrom: VariantRecord{chrom=chr10, position=93603, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: Flushing remaining variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: Next variant: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: Done annotating this chromosome; 441 matches found, 2495 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: Annotating variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:54:04]: First variant for chrom: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: Flushing remaining variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: Next variant: VariantRecord{chrom=chr12, position=274572, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: Done annotating this chromosome; 806 matches found, 3378 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: Annotating variants in chr12 
+org.ut.biolab.medsavant.server[INFO|main|3:54:13]: First variant for chrom: VariantRecord{chrom=chr12, position=274572, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:22]: Done annotating this chromosome; 641 matches found, 3147 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:22]: Annotating variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:54:22]: First variant for chrom: VariantRecord{chrom=chr13, position=19393160, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: Flushing remaining variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: Next variant: VariantRecord{chrom=chr14, position=19114712, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: Done annotating this chromosome; 216 matches found, 1287 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: Annotating variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:54:24]: First variant for chrom: VariantRecord{chrom=chr14, position=19114712, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:29]: Flushing remaining variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:54:29]: Next variant: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:29]: Done annotating this chromosome; 370 matches found, 1888 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:29]: Annotating variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:54:29]: First variant for chrom: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:35]: Done annotating this chromosome; 381 matches found, 1865 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:35]: Annotating variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:54:35]: First variant for chrom: VariantRecord{chrom=chr16, position=67058, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: Flushing remaining variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: Next variant: VariantRecord{chrom=chr17, position=295782, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: Done annotating this chromosome; 277 matches found, 1499 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: Annotating variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:54:41]: First variant for chrom: VariantRecord{chrom=chr17, position=295782, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: Flushing remaining variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: Next variant: VariantRecord{chrom=chr18, position=117241, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: Done annotating this chromosome; 445 matches found, 2110 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: Annotating variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:54:50]: First variant for chrom: VariantRecord{chrom=chr18, position=117241, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: Flushing remaining variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: Next variant: VariantRecord{chrom=chr19, position=372551, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: Done annotating this chromosome; 218 matches found, 1083 written 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: Annotating variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:54:52]: First variant for chrom: VariantRecord{chrom=chr19, position=372551, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:01]: Done annotating this chromosome; 628 matches found, 2270 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:01]: Annotating variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:55:01]: First variant for chrom: VariantRecord{chrom=chr2, position=41578, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:15]: Flushing remaining variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:55:15]: Next variant: VariantRecord{chrom=chr20, position=76962, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:15]: Done annotating this chromosome; 1017 matches found, 4690 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:15]: Annotating variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:55:15]: First variant for chrom: VariantRecord{chrom=chr20, position=76962, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:18]: Flushing remaining variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:55:18]: Next variant: VariantRecord{chrom=chr21, position=9483272, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:18]: Done annotating this chromosome; 173 matches found, 1116 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:18]: Annotating variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:55:18]: First variant for chrom: VariantRecord{chrom=chr21, position=9483272, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: Flushing remaining variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: Next variant: VariantRecord{chrom=chr22, position=16159158, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: Done annotating this chromosome; 130 matches found, 623 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: Annotating variants in chr22 
+org.ut.biolab.medsavant.server[INFO|main|3:55:20]: First variant for chrom: VariantRecord{chrom=chr22, position=16159158, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:23]: Done annotating this chromosome; 114 matches found, 675 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:23]: Annotating variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:55:23]: First variant for chrom: VariantRecord{chrom=chr3, position=367825, ref=G, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: Flushing remaining variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: Next variant: VariantRecord{chrom=chr4, position=53428, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: Done annotating this chromosome; 692 matches found, 3328 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: Annotating variants in chr4 
+org.ut.biolab.medsavant.server[INFO|main|3:55:32]: First variant for chrom: VariantRecord{chrom=chr4, position=53428, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:39]: Done annotating this chromosome; 577 matches found, 2816 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:39]: Annotating variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:55:39]: First variant for chrom: VariantRecord{chrom=chr5, position=195507, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: Flushing remaining variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: Next variant: VariantRecord{chrom=chr6, position=123921, ref=T, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: Done annotating this chromosome; 576 matches found, 2663 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: Annotating variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:55:47]: First variant for chrom: VariantRecord{chrom=chr6, position=123921, ref=T, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:56]: Flushing remaining variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:55:56]: Next variant: VariantRecord{chrom=chr7, position=540741, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:55:56]: Done annotating this chromosome; 751 matches found, 3457 written 
+org.ut.biolab.medsavant.server[INFO|main|3:55:56]: Annotating variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:55:56]: First variant for chrom: VariantRecord{chrom=chr7, position=540741, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: Flushing remaining variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: Next variant: VariantRecord{chrom=chr8, position=163387, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: Done annotating this chromosome; 479 matches found, 2794 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: Annotating variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:56:09]: First variant for chrom: VariantRecord{chrom=chr8, position=163387, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: Flushing remaining variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: Next variant: VariantRecord{chrom=chr9, position=52415, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: Done annotating this chromosome; 377 matches found, 1925 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: Annotating variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:56:15]: First variant for chrom: VariantRecord{chrom=chr9, position=52415, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: Flushing remaining variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: Next variant: VariantRecord{chrom=chrX, position=2724760, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: Done annotating this chromosome; 343 matches found, 1961 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: Annotating variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|3:56:23]: First variant for chrom: VariantRecord{chrom=chrX, position=2724760, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Flushing remaining variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Next variant: VariantRecord{chrom=chrY, position=2843588, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Done annotating this chromosome; 183 matches found, 923 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Annotating variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: First variant for chrom: VariantRecord{chrom=chrY, position=2843588, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Flushing remaining variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Next variant: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Done annotating this chromosome; 1 matches found, 55 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: Annotating variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:56:28]: First variant for chrom: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:45]: Flushing remaining variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:56:45]: Next variant: VariantRecord{chrom=chr10, position=225990, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:45]: Done annotating this chromosome; 1765 matches found, 8178 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:45]: Annotating variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:56:45]: First variant for chrom: VariantRecord{chrom=chr10, position=225990, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:56:51]: Done annotating this chromosome; 704 matches found, 3681 written 
+org.ut.biolab.medsavant.server[INFO|main|3:56:51]: Annotating variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:56:51]: First variant for chrom: VariantRecord{chrom=chr11, position=238955, ref=C, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: Flushing remaining variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: Next variant: VariantRecord{chrom=chr12, position=86503, ref=G, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: Done annotating this chromosome; 1118 matches found, 4631 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: Annotating variants in chr12 
+org.ut.biolab.medsavant.server[INFO|main|3:57:01]: First variant for chrom: VariantRecord{chrom=chr12, position=86503, ref=G, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:10]: Done annotating this chromosome; 967 matches found, 4715 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:10]: Annotating variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:57:10]: First variant for chrom: VariantRecord{chrom=chr13, position=19042042, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: Flushing remaining variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: Next variant: VariantRecord{chrom=chr14, position=19114944, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: Done annotating this chromosome; 379 matches found, 2082 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: Annotating variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:57:13]: First variant for chrom: VariantRecord{chrom=chr14, position=19114944, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:18]: Flushing remaining variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|3:57:18]: Next variant: VariantRecord{chrom=chr15, position=20083644, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:18]: Done annotating this chromosome; 560 matches found, 2845 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:18]: Annotating variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:57:18]: First variant for chrom: VariantRecord{chrom=chr15, position=20083644, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: Flushing remaining variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: Next variant: VariantRecord{chrom=chr16, position=105325, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: Done annotating this chromosome; 571 matches found, 2868 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: Annotating variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:57:24]: First variant for chrom: VariantRecord{chrom=chr16, position=105325, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:30]: Flushing remaining variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|3:57:30]: Next variant: VariantRecord{chrom=chr17, position=131516, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:30]: Done annotating this chromosome; 401 matches found, 2314 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:30]: Annotating variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:57:30]: First variant for chrom: VariantRecord{chrom=chr17, position=131516, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:40]: Flushing remaining variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|3:57:40]: Next variant: VariantRecord{chrom=chr18, position=48104, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:40]: Done annotating this chromosome; 737 matches found, 3170 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:40]: Annotating variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:57:40]: First variant for chrom: VariantRecord{chrom=chr18, position=48104, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:47]: Flushing remaining variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|3:57:47]: Next variant: VariantRecord{chrom=chr19, position=104978, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:57:47]: Done annotating this chromosome; 342 matches found, 1781 written 
+org.ut.biolab.medsavant.server[INFO|main|3:57:47]: Annotating variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|3:57:47]: First variant for chrom: VariantRecord{chrom=chr19, position=104978, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:01]: Done annotating this chromosome; 880 matches found, 2770 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:01]: Annotating variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:58:01]: First variant for chrom: VariantRecord{chrom=chr2, position=224819, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:27]: Flushing remaining variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|3:58:27]: Next variant: VariantRecord{chrom=chr20, position=76962, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:27]: Done annotating this chromosome; 1627 matches found, 7937 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:27]: Annotating variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:58:27]: First variant for chrom: VariantRecord{chrom=chr20, position=76962, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:30]: Flushing remaining variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|3:58:30]: Next variant: VariantRecord{chrom=chr21, position=9483272, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:30]: Done annotating this chromosome; 209 matches found, 1403 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:30]: Annotating variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:58:30]: First variant for chrom: VariantRecord{chrom=chr21, position=9483272, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: Flushing remaining variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: Next variant: VariantRecord{chrom=chr22, position=16101390, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: Done annotating this chromosome; 176 matches found, 901 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: Annotating variants in chr22 
+org.ut.biolab.medsavant.server[INFO|main|3:58:32]: First variant for chrom: VariantRecord{chrom=chr22, position=16101390, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:34]: Done annotating this chromosome; 146 matches found, 857 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:34]: Annotating variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:58:34]: First variant for chrom: VariantRecord{chrom=chr3, position=367735, ref=A, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: Flushing remaining variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: Next variant: VariantRecord{chrom=chr4, position=59258, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: Done annotating this chromosome; 1049 matches found, 5067 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: Annotating variants in chr4 
+org.ut.biolab.medsavant.server[INFO|main|3:58:44]: First variant for chrom: VariantRecord{chrom=chr4, position=59258, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:51]: Done annotating this chromosome; 998 matches found, 4690 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:51]: Annotating variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:58:51]: First variant for chrom: VariantRecord{chrom=chr5, position=195507, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: Flushing remaining variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: Next variant: VariantRecord{chrom=chr6, position=105908, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: Done annotating this chromosome; 944 matches found, 4201 written 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: Annotating variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:58:59]: First variant for chrom: VariantRecord{chrom=chr6, position=105908, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: Flushing remaining variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: Next variant: VariantRecord{chrom=chr7, position=550450, ref=A, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: Done annotating this chromosome; 1043 matches found, 4821 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: Annotating variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:59:08]: First variant for chrom: VariantRecord{chrom=chr7, position=550450, ref=A, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: Flushing remaining variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: Next variant: VariantRecord{chrom=chr8, position=116079, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: Done annotating this chromosome; 839 matches found, 4478 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: Annotating variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:59:16]: First variant for chrom: VariantRecord{chrom=chr8, position=116079, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: Flushing remaining variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: Next variant: VariantRecord{chrom=chr9, position=117036, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: Done annotating this chromosome; 600 matches found, 3180 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: Annotating variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:59:21]: First variant for chrom: VariantRecord{chrom=chr9, position=117036, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:28]: Flushing remaining variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|3:59:28]: Next variant: VariantRecord{chrom=chrX, position=2774478, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:28]: Done annotating this chromosome; 627 matches found, 3179 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:28]: Annotating variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|3:59:28]: First variant for chrom: VariantRecord{chrom=chrX, position=2774478, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Flushing remaining variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Next variant: VariantRecord{chrom=chrY, position=2712305, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Done annotating this chromosome; 261 matches found, 1222 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Annotating variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: First variant for chrom: VariantRecord{chrom=chrY, position=2712305, ref=A, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Flushing remaining variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Next variant: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Done annotating this chromosome; 14 matches found, 130 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: Annotating variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:59:32]: First variant for chrom: VariantRecord{chrom=chr1, position=63516, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:48]: Flushing remaining variants in chr1 
+org.ut.biolab.medsavant.server[INFO|main|3:59:48]: Next variant: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:48]: Done annotating this chromosome; 1125 matches found, 6068 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:48]: Annotating variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:59:48]: First variant for chrom: VariantRecord{chrom=chr10, position=93816, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: Flushing remaining variants in chr10 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: Next variant: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: Done annotating this chromosome; 356 matches found, 2534 written 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: Annotating variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|3:59:55]: First variant for chrom: VariantRecord{chrom=chr11, position=193863, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: Flushing remaining variants in chr11 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: Next variant: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: Done annotating this chromosome; 705 matches found, 3430 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: Annotating variants in chr12 
+org.ut.biolab.medsavant.server[INFO|main|4:00:04]: First variant for chrom: VariantRecord{chrom=chr12, position=266719, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:13]: Done annotating this chromosome; 484 matches found, 3212 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:13]: Annotating variants in chr13 
+org.ut.biolab.medsavant.server[INFO|main|4:00:13]: First variant for chrom: VariantRecord{chrom=chr13, position=19042581, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:16]: Done annotating this chromosome; 197 matches found, 1399 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:16]: Annotating variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|4:00:16]: First variant for chrom: VariantRecord{chrom=chr14, position=19110239, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:21]: Flushing remaining variants in chr14 
+org.ut.biolab.medsavant.server[INFO|main|4:00:21]: Next variant: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:21]: Done annotating this chromosome; 333 matches found, 2088 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:21]: Annotating variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|4:00:21]: First variant for chrom: VariantRecord{chrom=chr15, position=20083754, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: Flushing remaining variants in chr15 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: Next variant: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: Done annotating this chromosome; 302 matches found, 2045 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: Annotating variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|4:00:26]: First variant for chrom: VariantRecord{chrom=chr16, position=97610, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: Flushing remaining variants in chr16 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: Next variant: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: Done annotating this chromosome; 256 matches found, 1896 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: Annotating variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|4:00:32]: First variant for chrom: VariantRecord{chrom=chr17, position=436221, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: Flushing remaining variants in chr17 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: Next variant: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: Done annotating this chromosome; 450 matches found, 2371 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: Annotating variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|4:00:41]: First variant for chrom: VariantRecord{chrom=chr18, position=47492, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: Flushing remaining variants in chr18 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: Next variant: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: Done annotating this chromosome; 189 matches found, 1265 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: Annotating variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|4:00:43]: First variant for chrom: VariantRecord{chrom=chr19, position=104827, ref=T, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:52]: Flushing remaining variants in chr19 
+org.ut.biolab.medsavant.server[INFO|main|4:00:52]: Next variant: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:00:52]: Done annotating this chromosome; 718 matches found, 2647 written 
+org.ut.biolab.medsavant.server[INFO|main|4:00:52]: Annotating variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|4:00:52]: First variant for chrom: VariantRecord{chrom=chr2, position=224970, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:05]: Flushing remaining variants in chr2 
+org.ut.biolab.medsavant.server[INFO|main|4:01:05]: Next variant: VariantRecord{chrom=chr20, position=76930, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:05]: Done annotating this chromosome; 854 matches found, 5249 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:05]: Annotating variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|4:01:05]: First variant for chrom: VariantRecord{chrom=chr20, position=76930, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:08]: Flushing remaining variants in chr20 
+org.ut.biolab.medsavant.server[INFO|main|4:01:08]: Next variant: VariantRecord{chrom=chr21, position=9483297, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:08]: Done annotating this chromosome; 118 matches found, 1176 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:08]: Annotating variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|4:01:08]: First variant for chrom: VariantRecord{chrom=chr21, position=9483297, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: Flushing remaining variants in chr21 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: Next variant: VariantRecord{chrom=chr22, position=16101526, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: Done annotating this chromosome; 142 matches found, 827 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: Annotating variants in chr22 
+org.ut.biolab.medsavant.server[INFO|main|4:01:10]: First variant for chrom: VariantRecord{chrom=chr22, position=16101526, ref=A, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:12]: Done annotating this chromosome; 114 matches found, 783 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:12]: Annotating variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|4:01:12]: First variant for chrom: VariantRecord{chrom=chr3, position=386520, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: Flushing remaining variants in chr3 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: Next variant: VariantRecord{chrom=chr4, position=53314, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: Done annotating this chromosome; 550 matches found, 3304 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: Annotating variants in chr4 
+org.ut.biolab.medsavant.server[INFO|main|4:01:22]: First variant for chrom: VariantRecord{chrom=chr4, position=53314, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:28]: Done annotating this chromosome; 496 matches found, 2969 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:28]: Annotating variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|4:01:28]: First variant for chrom: VariantRecord{chrom=chr5, position=169361, ref=C, alt=T} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:35]: Flushing remaining variants in chr5 
+org.ut.biolab.medsavant.server[INFO|main|4:01:35]: Next variant: VariantRecord{chrom=chr6, position=106343, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:35]: Done annotating this chromosome; 480 matches found, 2742 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:35]: Annotating variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|4:01:35]: First variant for chrom: VariantRecord{chrom=chr6, position=106343, ref=T, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: Flushing remaining variants in chr6 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: Next variant: VariantRecord{chrom=chr7, position=538277, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: Done annotating this chromosome; 630 matches found, 3574 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: Annotating variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|4:01:43]: First variant for chrom: VariantRecord{chrom=chr7, position=538277, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: Flushing remaining variants in chr7 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: Next variant: VariantRecord{chrom=chr8, position=142083, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: Done annotating this chromosome; 458 matches found, 3299 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: Annotating variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|4:01:50]: First variant for chrom: VariantRecord{chrom=chr8, position=142083, ref=G, alt=C} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: Flushing remaining variants in chr8 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: Next variant: VariantRecord{chrom=chr9, position=146032, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: Done annotating this chromosome; 316 matches found, 2176 written 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: Annotating variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|4:01:55]: First variant for chrom: VariantRecord{chrom=chr9, position=146032, ref=C, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: No more annotations for this chromosome 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: Flushing remaining variants in chr9 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: Next variant: VariantRecord{chrom=chrX, position=2700157, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: Done annotating this chromosome; 362 matches found, 2413 written 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: Annotating variants in chrX 
+org.ut.biolab.medsavant.server[INFO|main|4:02:01]: First variant for chrom: VariantRecord{chrom=chrX, position=2700157, ref=G, alt=A} 
+org.ut.biolab.medsavant.server[INFO|main|4:02:04]: Done annotating this chromosome; 151 matches found, 857 written 
+org.ut.biolab.medsavant.server[INFO|main|4:02:04]: Annotating variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|4:02:04]: First variant for chrom: VariantRecord{chrom=chrY, position=4925023, ref=T, alt=G} 
+org.ut.biolab.medsavant.server[INFO|main|4:02:05]: Flushing remaining variants in chrY 
+org.ut.biolab.medsavant.server[INFO|main|4:02:05]: Done annotating file, 251305 read 251204 written with 0 warnings 
+org.ut.biolab.medsavant.server[INFO|main|4:02:30]: (Also emailed to marcfiume@gmail.com): "Annotation of /Users/mfiume/Desktop/variantDump completed. 1 annotations were performed.MedSavant Server Utility" 
