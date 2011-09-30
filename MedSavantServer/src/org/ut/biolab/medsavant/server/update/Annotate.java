@@ -213,11 +213,13 @@ public class Annotate {
     }
 
     private static String removeNewLinesAndCarriageReturns(String next) {
+        //System.out.print("next [" + next + "] ");
         if (next.length() > 2 && next.substring(next.length() - 2).equals("\r\n")) {
             next = next.substring(0, next.length() - 2);
         } else if (next.length() > 1 && next.charAt(next.length() - 1) == '\n') {
             next = next.substring(0, next.length() - 1);
         }
+       // System.out.print("parsed [" + next + "]");
         return next;
     }
     
