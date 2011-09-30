@@ -171,7 +171,7 @@ public class Annotate {
             lastChr = currentVariant.chrom;
             lastPosition = currentVariant.position;
                         
-            String[] nextLine = recordReader.readNext();
+            String[] nextLine = readNext(recordReader);
             // throw an exception if we hit the end of the variant file
             if (nextLine == null) {
                 throw new EOFException("e1");
@@ -189,6 +189,13 @@ public class Annotate {
         System.arraycopy(line0, 0, outLine, 0, line0.length);
         System.arraycopy(line1, numFieldsFromLine1ToExclude, outLine, line0.length, line1.length - numFieldsFromLine1ToExclude);
         return outLine;
+    }
+
+    private static String[] readNext(CSVReader recordReader) throws IOException {
+        String[] line = recordReader.readNext();
+        if (line == null) { return null;}
+        else { line[line.length-1].replaceAll("\n", ""); }
+        return line;
     }
 
     
@@ -275,7 +282,7 @@ public class Annotate {
         // loop until we get to the next chromosome
         while (true) {
 
-            recordLine = recordReader.readNext();
+            recordLine = readNext(recordReader);
 
             // we hit the end of the record file, bail
             // TODO: should exit cleaner
@@ -345,7 +352,7 @@ public class Annotate {
         boolean annotationHasRef = annot.getAnnotationFormat().hasRef();
         boolean annotationHasAlt = annot.getAnnotationFormat().hasAlt();
 
-        VariantRecord nextPosition = new VariantRecord(recordReader.readNext());
+        VariantRecord nextPosition = new VariantRecord(readNext(recordReader));
         numLinesRead++;
 
         int totalLinesWritten = 0;
