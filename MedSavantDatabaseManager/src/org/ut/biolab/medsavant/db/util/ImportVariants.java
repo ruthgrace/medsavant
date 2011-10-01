@@ -45,7 +45,6 @@ public class ImportVariants {
 
             //update progress
             String progress = "Importing file " + (i+1) + " of " + vcfFiles.length;
-            System.out.println(progress);
             if(progressLabel != null){               
                 progressLabel.setText(progress);
             }

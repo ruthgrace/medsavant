@@ -54,8 +54,6 @@ public class ReferenceQueryUtil {
      
      public static int addReference(String name) throws SQLException {
 
-        System.out.println("Adding reference...");
-        
         String q = "INSERT INTO " + DBSettings.TABLENAME_REFERENCE + " VALUES (null,'" + name + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
                 Statement.RETURN_GENERATED_KEYS);

@@ -43,8 +43,6 @@ public class UserQueryUtil {
      
     public static int addUser(String name, String pass, boolean isAdmin) throws SQLException {
 
-        System.out.println("Adding user...");
-        
         (ConnectionController.connect()).createStatement().execute(
                 "CREATE USER '"+ name +"'@'localhost' IDENTIFIED BY '"+ pass +"';");
                 

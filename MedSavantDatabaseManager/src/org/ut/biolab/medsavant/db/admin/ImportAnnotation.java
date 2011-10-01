@@ -70,12 +70,10 @@ public class ImportAnnotation {
     }
     
     public static void setError(String errorString){
-        System.err.println(errorString);
         System.exit(1);
     }
     
     public static void setError(String errorString, Exception e){
-        System.err.println(errorString);
         e.printStackTrace();
         System.exit(1);
     }

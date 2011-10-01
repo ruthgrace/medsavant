@@ -157,9 +157,7 @@ public class Setup {
     }
 
     public static void main(String[] argv) throws SQLException {
-        System.out.println("Dropping tables...");
         dropTables();
-        System.out.println("Creating tables...");
         createTables();
     }
 

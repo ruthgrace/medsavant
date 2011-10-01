@@ -175,8 +175,6 @@ public class ProjectQueryUtil {
     
     public static int addProject(String name) throws SQLException {
 
-        System.out.println("Adding project...");
-        
         String projectQuery = "INSERT INTO " + DBSettings.TABLENAME_PROJECT + " VALUES (null,'" + name + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(projectQuery,
                 Statement.RETURN_GENERATED_KEYS);
@@ -184,7 +182,6 @@ public class ProjectQueryUtil {
         stmt.execute();
         ResultSet res = stmt.getGeneratedKeys();
         res.next();
-        //System.out.println("Key: " + res.getInt(1));
 
         int projectid = res.getInt(1);
 
@@ -218,7 +215,6 @@ public class ProjectQueryUtil {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
         
-        System.out.println("Setting annotation...");
         
         String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
                 + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
@@ -242,7 +238,6 @@ public class ProjectQueryUtil {
       
     public static void removeProject(int projectid) throws SQLException {
         
-        System.out.println("Removing project...");
         
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         
@@ -273,8 +268,6 @@ public class ProjectQueryUtil {
     public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
-        
-        System.out.println("Setting annotation...");
         
         String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
                 + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
