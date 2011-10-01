@@ -29,123 +29,6 @@ public class VCFParser {
     private static String commentSplitter = "=";
     private static String commentChars = "##";
 
-    private static void printVariantsFromReader(CSVReader r) throws IOException {
-        String [] nextLine;
-
-        VariantSet s = new VariantSet();
-
-        Logger.log(VCFParser.class, "Parsing variant file");
-
-        while ((nextLine = r.readNext()) != null) {
-
-            //Logger.log(VCFParser.class, "Parsing " + nextLine[0] + "...");
-
-            if (nextLine.length > 0) {
-
-                // a comment line
-                if (nextLine[0].startsWith(commentChars)) {
-                    String[] keyValue = parseComment(nextLine[0]);
-                    s.addProperty(keyValue[0],keyValue[1]);
-                }
-                // header line
-                else if (nextLine[0].startsWith(headerChars)) {
-                    s.setHeader(parseHeader(nextLine));
-                    Logger.log(VCFParser.class, s.getHeader().toString());
-                }
-                // a data line
-                else {
-                    List<VariantRecord> records = parseRecord(nextLine,s.getHeader());
-                    for (VariantRecord rec : records) {
-                        System.out.println(rec.toTabString(0,0,0));
-                    }
-                }
-            }
-        }
-    }
-    
-    /*private static void parseVariantsFromReader(CSVReader r, File outfile, int variant_id, int genome_id, int pipeline_id) throws IOException {
-        
-        String[] nextLine;
-        int numRecords = 0;
-        VCFHeader header = null;
-        //File tdfFile = new File("C:/Users/Andrew/Documents/medsavant/variant_tdf");
-        
-        Logger.log(VCFParser.class, "Parsing variant file");
-        
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(outfile, false));
-            
-            while((nextLine = r.readNext()) != null) {
-                // a comment line
-                if (nextLine[0].startsWith(commentChars)) {
-                    //do nothing
-                }
-                // header line
-                else if (nextLine[0].startsWith(headerChars)) {
-                    header = parseHeader(nextLine);
-                    Logger.log(VCFParser.class, header.toString());
-                }
-                // a data line
-                else {
-                    List<VariantRecord> records = parseRecord(nextLine,header);
-                    //add records to tdf
-                    for(VariantRecord v : records){
-                        v.setVariantID(variant_id);
-                        v.setGenomeID(genome_id);
-                        v.setPipelineID(pipeline_id);
-                        out.write(v.toTabString());
-                        out.newLine();
-                        variant_id++;
-                    }
-                    numRecords++;
-                }
-            }
-            out.close();
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
-         
-        Logger.log(VCFParser.class, "Parsed " + numRecords + " variant records");
-    }*/
-    
-    /*private static VariantSet parseVariantsFromReader(CSVReader r) throws IOException{
-        String [] nextLine;
-
-        SortedVariantSet s = new SortedVariantSet();
-
-        Logger.log(VCFParser.class, "Parsing variant file");
-        
-        int numRecords = 0;
-
-        while ((nextLine = r.readNext()) != null) {
-
-            //Logger.log(VCFParser.class, "Parsing " + nextLine[0] + "...");
-
-            if (nextLine.length > 0) {
-
-                // a comment line
-                if (nextLine[0].startsWith(commentChars)) {
-                    String[] keyValue = parseComment(nextLine[0]);
-                    s.addProperty(keyValue[0],keyValue[1]);
-                }
-                // header line
-                else if (nextLine[0].startsWith(headerChars)) {
-                    s.setHeader(parseHeader(nextLine));
-                    Logger.log(VCFParser.class, s.getHeader().toString());
-                }
-                // a data line
-                else {
-                    List<VariantRecord> records = parseRecord(nextLine,s.getHeader());
-                    s.addRecords(records);
-                }
-            }
-        }
-
-        Logger.log(VCFParser.class, "Parsed " + s.getRecords().size() + " variant records");
-
-        return s;
-    }*/
-    
     private static void parseVariantsFromReader(CSVReader r, File outfile, int updateId, int fileId) throws IOException {
         
         String[] nextLine;
@@ -341,21 +224,6 @@ public class VCFParser {
         CSVReader r = openFile(vcffile, delimiter);
         parseVariantsFromReader(r, outfile, updateId, fileId);
     }
-    
-    /*public static VariantSet parseVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException{
-        CSVReader r = openFile(vcffile, delimiter);
-        return parseVariantsFromReader(r);
-    }*/
-
-    /*public static VariantSet parseVariants(File vcffile, char delimiter, int variant_id, int genome_id, int pipeline_id) throws FileNotFoundException, IOException, SQLException {
-        CSVReader r = openFile(vcffile, delimiter);
-        return parseVariantsFromReader(r, variant_id, genome_id, pipeline_id);
-    }*/
-
-    public static void printVariants(File vcffile, char delimiter) throws FileNotFoundException, IOException {
-        CSVReader r = openFile(vcffile, delimiter);
-        printVariantsFromReader(r);
-    }
 
     private static CSVReader openFile(File vcffile, char delim) throws FileNotFoundException {
         return new CSVReader(new FileReader(vcffile), delim);
@@ -397,10 +265,6 @@ public class VCFParser {
     public static VariantSet parseVariants(File vcffile, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
         return parseVariants(vcffile,defaultDelimiter, variant_id, genome_id, pipeline_id);
     }*/
-
-    public static void printVariants(File vcffile) throws IOException {
-        printVariants(vcffile,defaultDelimiter);
-    }
        
     /*public static GenotypeField[] parseFormat(String formatString){
         formatString = formatString.trim();
