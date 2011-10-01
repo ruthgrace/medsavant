@@ -18,7 +18,8 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
  * @author Andrew
  */
 public class LogQueryUtil {
-    
+
+   
     public static enum Action {ADD_VARIANTS, UPDATE_TABLE};
     public static enum Status {PREPROCESS, PENDING, INPROGRESS, ERROR, COMPLETE}; 
     
@@ -79,10 +80,14 @@ public class LogQueryUtil {
     }
     
     public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
+        return addLogEntry(projectId,referenceId,action,Status.PREPROCESS);
+    }
+    
+    public static int addLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
                 " (project_id, reference_id, action, status) VALUES" + 
-                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(Status.PREPROCESS) + ");";
+                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -90,6 +95,7 @@ public class LogQueryUtil {
         rs.next();
         return rs.getInt(1);
     }
+    
 
     public static ResultSet getPendingUpdates() throws SQLException, IOException{
         Connection conn = ConnectionController.connect();

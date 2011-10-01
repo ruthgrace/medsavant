@@ -213,7 +213,7 @@ public class ProjectQueryUtil {
 
         return patientTableName;
     }
-    
+    /*
      public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
@@ -227,7 +227,7 @@ public class ProjectQueryUtil {
         
         LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE);
     }
-
+    */
 
       public static void removeProject(String projectName) throws SQLException {
         
@@ -269,8 +269,8 @@ public class ProjectQueryUtil {
         c.createStatement().execute("DELETE FROM `" + DBSettings.TABLENAME_VARIANTTABLEINFO + "` WHERE project_id=" + projectid);
     }
     
-    /*
-    public void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
+    
+    public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
         
@@ -283,7 +283,5 @@ public class ProjectQueryUtil {
         
         LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
-     * 
-     */
     
 }
