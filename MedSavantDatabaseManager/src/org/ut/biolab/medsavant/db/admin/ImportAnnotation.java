@@ -12,9 +12,10 @@ import net.sf.samtools.util.AsciiLineReader;
 import net.sf.samtools.util.BlockCompressedOutputStream;
 import org.broad.tabix.TabixWriter;
 import org.ut.biolab.medsavant.db.Manage;
-import org.ut.biolab.medsavant.db.util.jobject.AnnotationFormat;
-import org.ut.biolab.medsavant.db.util.jobject.ReferenceQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.AnnotationFormat;
+import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.broad.tabix.TabixWriter.Conf;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 
 /**
  *
@@ -66,7 +67,7 @@ public class ImportAnnotation {
         }
 
         //add annotation
-        Manage.addAnnotation(program, version, referenceId, tabixFile.getAbsolutePath().replaceAll("\\\\", "/"), formatFile.getAbsolutePath().replaceAll("\\\\", "/"));
+        AnnotationQueryUtil.addAnnotation(program, version, referenceId, tabixFile.getAbsolutePath().replaceAll("\\\\", "/"), formatFile.getAbsolutePath().replaceAll("\\\\", "/"));
     }
     
     public static void setError(String errorString){

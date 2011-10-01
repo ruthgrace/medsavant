@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.sql.DataSource;
-import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 
 /**
  *

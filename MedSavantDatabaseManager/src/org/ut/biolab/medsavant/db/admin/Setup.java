@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.ut.biolab.medsavant.db.Manage;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
+import org.ut.biolab.medsavant.db.util.query.UserQueryUtil;
 
 /**
  *
@@ -23,7 +23,7 @@ public class Setup {
         if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_USER)) {
             List<String> userNames = getValuesFromField(DBSettings.TABLENAME_USER, "name");
             for (String s : userNames) {
-                Manage.removeUser(s);
+                UserQueryUtil.removeUser(s);
             }
         }
 

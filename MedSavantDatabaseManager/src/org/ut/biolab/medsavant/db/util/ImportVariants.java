@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
-import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
-import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Action;
-import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
-import org.ut.biolab.medsavant.db.util.jobject.VariantQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.LogQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.LogQueryUtil.Action;
+import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.VariantQueryUtil;
 import org.ut.biolab.medsavant.vcf.VCFParser;
 
 /**
