@@ -574,7 +574,6 @@ public class VariantRecord implements Serializable {
             try {
                 return Long.parseLong(value);
             } catch (Exception e) {
-                reportErrorConverting(Long.class, value);
                 return null;
             }
         }
@@ -583,7 +582,6 @@ public class VariantRecord implements Serializable {
             try {
                 return Float.parseFloat(value);
             } catch (Exception e) {
-                reportErrorConverting(Float.class, value);
                 return null;
             }
         }
@@ -597,7 +595,6 @@ public class VariantRecord implements Serializable {
             try {
                 return Integer.parseInt(value);
             } catch (Exception e) {
-                reportErrorConverting(Integer.class, value);
                 return null;
             }
         }
@@ -819,10 +816,6 @@ public class VariantRecord implements Serializable {
         
     }*/
 
-    private void reportErrorConverting(Class c, String value) {
-        System.err.println("Error: parsing " + value + " as " + c);
-    }
-    
     public int getVariantID(){
         return variantID;
     }

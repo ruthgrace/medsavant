@@ -24,7 +24,6 @@ public class VariantSet {
     }
 
     void addProperty(String string, Object o) {
-//      System.out.println("Adding property " + string + " with value " + o);
         properties.add(new VCFProperty(string,o));
     }
 

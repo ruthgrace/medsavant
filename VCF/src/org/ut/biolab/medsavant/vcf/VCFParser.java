@@ -35,8 +35,6 @@ public class VCFParser {
         int numRecords = 0;
         VCFHeader header = null;
         
-        Logger.log(VCFParser.class, "Parsing variant file");
-        
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(outfile, false));
             
@@ -49,7 +47,6 @@ public class VCFParser {
                 // header line
                 else if (nextLine[0].startsWith(headerChars)) {
                     header = parseHeader(nextLine);
-                    Logger.log(VCFParser.class, header.toString());
                 }
                 // a data line
                 else {
@@ -67,8 +64,6 @@ public class VCFParser {
         } catch (IOException ex){
             ex.printStackTrace();
         }
-         
-        Logger.log(VCFParser.class, "Parsed " + numRecords + " variant records");
     }
 
     /*private static VariantSet parseVariantsFromReader(CSVReader r, int variant_id, int genome_id, int pipeline_id) throws IOException, SQLException {
@@ -109,9 +104,6 @@ public class VCFParser {
                     //    insertRecord(rec, ps, variant_id, genome_id, pipeline_id, columns);
                     //    variant_id++;
                     //    numRecords++;
-                    //    if(numRecords % 10000 == 0){
-                    //        System.out.println(numRecords);
-                    //    }
                     //}
                 }
             }
