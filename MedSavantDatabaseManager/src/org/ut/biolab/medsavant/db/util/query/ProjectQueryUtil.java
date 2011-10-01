@@ -10,8 +10,8 @@ import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
-import org.ut.biolab.medsavant.db.util.query.LogQueryUtil.Action;
-import org.ut.biolab.medsavant.db.util.query.LogQueryUtil.Status;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
 
 /**
  *
@@ -281,7 +281,7 @@ public class ProjectQueryUtil {
         
         (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
         
-        LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
+        AnnotationLogQueryUtil.addAnnotationLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
     
 }

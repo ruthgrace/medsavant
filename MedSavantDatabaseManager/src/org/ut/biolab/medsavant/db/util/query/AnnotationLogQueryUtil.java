@@ -17,7 +17,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
  *
  * @author Andrew
  */
-public class LogQueryUtil {
+public class AnnotationLogQueryUtil {
 
    
     public static enum Action {ADD_VARIANTS, UPDATE_TABLE};
@@ -79,11 +79,11 @@ public class LogQueryUtil {
         }
     }
     
-    public static int addLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
-        return addLogEntry(projectId,referenceId,action,Status.PREPROCESS);
+    public static int addAnnotationLogEntry(int projectId, int referenceId, Action action) throws SQLException{    
+        return addAnnotationLogEntry(projectId,referenceId,action,Status.PREPROCESS);
     }
     
-    public static int addLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
+    public static int addAnnotationLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
                 " (project_id, reference_id, action, status) VALUES" + 
@@ -107,7 +107,7 @@ public class LogQueryUtil {
         return rs;
     }
     
-    public static void setLogStatus(int updateId, Status status) throws SQLException {
+    public static void setAnnotationLogStatus(int updateId, Status status) throws SQLException {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
                 "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 

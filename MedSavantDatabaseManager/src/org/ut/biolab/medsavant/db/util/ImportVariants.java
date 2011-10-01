@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
-import org.ut.biolab.medsavant.db.util.query.LogQueryUtil;
-import org.ut.biolab.medsavant.db.util.query.LogQueryUtil.Action;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.VariantQueryUtil;
 import org.ut.biolab.medsavant.vcf.VCFParser;
@@ -30,7 +30,7 @@ public class ImportVariants {
     public static void performImport(File[] vcfFiles, int projectId, int referenceId, JLabel progressLabel) throws SQLException {
         
         //add log
-        int updateId = LogQueryUtil.addLogEntry(projectId, referenceId, Action.ADD_VARIANTS);
+        int updateId = AnnotationLogQueryUtil.addAnnotationLogEntry(projectId, referenceId, Action.ADD_VARIANTS);
         
         //create the staging table       
         try {
@@ -75,7 +75,7 @@ public class ImportVariants {
         }
         
         //set log as pending
-        LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.PENDING);
+        AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.PENDING);
     }
  
 }
