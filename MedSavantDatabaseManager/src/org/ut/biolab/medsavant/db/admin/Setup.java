@@ -40,6 +40,7 @@ public class Setup {
             }
         }
 
+        DBUtil.dropTable(DBSettings.TABLENAME_SERVELOG);
         DBUtil.dropTable(DBSettings.TABLENAME_USER);
         DBUtil.dropTable(DBSettings.TABLENAME_ANNOTATION);
         DBUtil.dropTable(DBSettings.TABLENAME_REFERENCE);
@@ -57,6 +58,16 @@ public class Setup {
 
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
 
+        c.createStatement().execute(
+                "CREATE TABLE `" + DBSettings.TABLENAME_SERVELOG + "` ("
+                  + "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
+                  + "`user` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
+                  + "`event` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
+                  + "`description` blob,"
+                  + "PRIMARY KEY (`id`)"
+                + ") ENGINE=MyISAM;"
+                );
+        
         c.createStatement().execute(
                 "CREATE TABLE `" + DBSettings.TABLENAME_USER + "` ("
                 + "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,"

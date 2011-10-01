@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.xml.sax.SAXException;
@@ -109,7 +110,7 @@ public class AnnotationQueryUtil {
        
     public static int addAnnotation(String program, String version, int referenceid, String path, String format) throws SQLException {
         
-        System.out.println("Adding annotation...");
+        DBLogger.log("Adding annotation...");
         
         String q = "INSERT INTO " 
                 + DBSettings.TABLENAME_ANNOTATION 

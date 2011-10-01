@@ -19,4 +19,5 @@ public class DBSettings {
     public static String TABLENAME_COHORT = "cohort";
     public static String TABLENAME_COHORTMEMBERSHIP = "cohort_membership";
     public static String TABLENAME_VARIANTPENDINGUPDATE = "variant_pending_update";
+    public static String TABLENAME_SERVELOG = "server_log";
 }

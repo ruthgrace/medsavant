@@ -57,7 +57,6 @@ public class DBUtil {
         try {
             c = ConnectionController.connect(dbname);
         } catch (Exception ex) {
-            System.err.println("error: could not connection to db");
             ex.printStackTrace();
             return null;
         }
@@ -76,13 +75,7 @@ public class DBUtil {
         while (rs.next()) {
             table.addColumn(rs.getString(1), getColumnType(rs.getString(2)), getColumnLength(rs.getString(2)));
         }
-        
-        /*for (DbColumn col : table.getColumns()) {
-            System.out.println(col);
-            System.out.println("\t" + col.getTypeNameSQL());
-            System.out.println("\t" + col.getTypeLength());
-        }*/
-        
+
         return table;
     }
     
@@ -92,35 +85,6 @@ public class DBUtil {
         c.createStatement().execute(
                 "DROP TABLE IF EXISTS " + tablename + ";");
     }
-
-    /*
-    private static void printResultSet(ResultSet rs) throws SQLException {
-        ResultSetMetaData rsMetaData = rs.getMetaData();
-        int numberOfColumns = rsMetaData.getColumnCount();
-
-        System.out.println("Number of columns: " + numberOfColumns);
-        
-        //System.out.println(rsMetaData);
-        for (int i = 1; i <= numberOfColumns; i++) {
-            //System.out.println(i);
-            System.out.print("=" + rsMetaData.getColumnName(i) + "=\t");
-        }
-        System.out.println();
-        for (int i = 1; i <= numberOfColumns; i++) {
-            System.out.print("[" + rsMetaData.getColumnTypeName(i) + "]\t");
-        }
-        System.out.println();
-        
-        while (rs.next()) {
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.format("%s\t", rs.getString(i));
-            }
-            System.out.println();
-        }
-        
-    }
-     * 
-     */
 
     public static boolean tableExists(String dbname, String tablename) throws SQLException {
         Statement s = ConnectionController.connect(dbname).createStatement();
