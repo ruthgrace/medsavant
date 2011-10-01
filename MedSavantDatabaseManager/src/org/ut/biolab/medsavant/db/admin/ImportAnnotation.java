@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import net.sf.samtools.util.AsciiLineReader;
 import net.sf.samtools.util.BlockCompressedOutputStream;
 import org.broad.tabix.TabixWriter;
-import org.ut.biolab.medsavant.db.Manage;
 import org.ut.biolab.medsavant.db.util.query.AnnotationFormat;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.broad.tabix.TabixWriter.Conf;
