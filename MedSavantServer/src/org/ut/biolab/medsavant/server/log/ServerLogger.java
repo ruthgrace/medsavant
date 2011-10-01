@@ -11,7 +11,7 @@ import org.ut.biolab.medsavant.server.mail.Mail;
  *
  * @author mfiume
  */
-public class ServerLog {
+public class ServerLogger {
 
     private static String logPath = "server.log";
     private static String emailaddress;

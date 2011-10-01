@@ -16,9 +16,9 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import org.broad.tabix.TabixReader;
 import org.broad.tabix.TabixReader.Iterator;
-import org.ut.biolab.medsavant.db.util.jobject.Annotation;
-import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
-import org.ut.biolab.medsavant.server.log.ServerLog;
+import org.ut.biolab.medsavant.db.util.query.Annotation;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
+import org.ut.biolab.medsavant.server.log.ServerLogger;
 
 /**
  *
@@ -57,7 +57,7 @@ public class Annotate {
         while (lastChr.equals(currentVariant.chrom)) {
 
             if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
-                ServerLog.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
+                ServerLogger.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
                 numWarnings++;
             }
 
@@ -82,7 +82,7 @@ public class Annotate {
 
                 // happens when there are no more annotations for this chrom
                 if (nextannot == null) {
-                    ServerLog.log("No more annotations for this chromosome");
+                    ServerLogger.log("No more annotations for this chromosome");
                     annotationHitEnd = true;
                     break;
                 }
@@ -130,7 +130,7 @@ public class Annotate {
 
                             // happens when there are no more annotations for this chrom
                             if (nextannot == null) {
-                                ServerLog.log("Annotation hit end; skipping chrom");
+                                ServerLogger.log("Annotation hit end; skipping chrom");
                                 annotationHitEnd1 = true;
                                 break;
                             }
@@ -199,7 +199,6 @@ public class Annotate {
             line[line.length - 1] = removeNewLinesAndCarriageReturns(line[line.length - 1]);
         }
         
-        //System.out.println("[" + line[line.length - 1] + "]");
         return line;
     }
 
@@ -208,12 +207,10 @@ public class Annotate {
         if (next == null) {
             return next;
         }
-        //System.out.println("[" + removeNewLinesAndCarriageReturns(next) + "]");
         return removeNewLinesAndCarriageReturns(next);
     }
 
     private static String removeNewLinesAndCarriageReturns(String next) {
-        //System.out.print("next [" + next + "] ");
         
         //next = next.replaceAll("\r\n","");
         next = next.replaceAll("\n","");
@@ -226,7 +223,6 @@ public class Annotate {
         }
          *
          */
-       // System.out.print("parsed [" + next + "]");
         return next;
     }
     
@@ -243,7 +239,7 @@ public class Annotate {
 
     public void annotate() throws Exception {
 
-        ServerLog.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
+        ServerLogger.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
 
         // if no annotations to perform, copy input to output
         if (annotationIds.length == 0) {
@@ -279,7 +275,7 @@ public class Annotate {
             f.delete();
         }
 
-        ServerLog.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
+        ServerLogger.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
     }
 
     /*
@@ -301,7 +297,7 @@ public class Annotate {
         String currentChr = currentPos.chrom;
         String nextLineChr = currentPos.chrom;
 
-        ServerLog.log("Flushing remaining variants in " + currentPos.chrom);
+        ServerLogger.log("Flushing remaining variants in " + currentPos.chrom);
 
         String[] recordLine = null;
 
@@ -336,7 +332,7 @@ public class Annotate {
 
         //log("Last variant: { chr=" + lastLine[VARIANT_INDEX_OF_CHR] + " pos=" + lastLine[VARIANT_INDEX_OF_POS] + "}");
 
-        ServerLog.log("Next variant: " + new VariantRecord(recordLine));
+        ServerLogger.log("Next variant: " + new VariantRecord(recordLine));
 
         return new VariantRecord(recordLine);
     }
@@ -365,19 +361,19 @@ public class Annotate {
     private static int numWarnings;
 
     private static void annotate(File inFile, Annotation annot, File outFile) throws Exception {
-        ServerLog.log("Record file: " + inFile.getAbsolutePath());
-        ServerLog.log("Annotation file: " + annot.getDataPath());
-        ServerLog.log("Output file: " + outFile.getAbsolutePath());
+        ServerLogger.log("Record file: " + inFile.getAbsolutePath());
+        ServerLogger.log("Annotation file: " + annot.getDataPath());
+        ServerLogger.log("Output file: " + outFile.getAbsolutePath());
 
         int numFieldsInInputFile = getNumFieldsInTDF(inFile);
         if(numFieldsInInputFile == 0){
             outFile.createNewFile();
-            ServerLog.log("Done annotating file. Nothing to annotate.");
+            ServerLogger.log("Done annotating file. Nothing to annotate.");
             return;
         }
         int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumNonDefaultFields();
 
-        ServerLog.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
+        ServerLogger.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
 
         CSVReader recordReader = new CSVReader(new FileReader(inFile));
         TabixReader annotationReader = annot.getReader();
@@ -396,13 +392,13 @@ public class Annotate {
 
         while (true) {
             try {
-                ServerLog.log("Annotating variants in " + nextPosition.chrom);
-                ServerLog.log("First variant for chrom: " + nextPosition.toString());
+                ServerLogger.log("Annotating variants in " + nextPosition.chrom);
+                ServerLogger.log("First variant for chrom: " + nextPosition.toString());
                 numMatches = 0;
                 numLinesWritten = 0;
 
                 nextPosition = annotateForChromosome(nextPosition.chrom, nextPosition, recordReader, annotationReader, writer, annotationHasRef, annotationHasAlt, numFieldsInOutputFile);
-                ServerLog.log("Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
+                ServerLogger.log("Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
 
                 totalLinesWritten += numLinesWritten;
 
@@ -426,7 +422,7 @@ public class Annotate {
         recordReader.close();
         writer.close();
 
-        ServerLog.log("Done annotating file, " + numLinesRead + " read " + totalLinesWritten + " written with " + numWarnings + " warnings");
+        ServerLogger.log("Done annotating file, " + numLinesRead + " read " + totalLinesWritten + " written with " + numWarnings + " warnings");
     }
 
     /**
@@ -534,17 +530,12 @@ public class Annotate {
         return outLine;
     }
 
-    private static void print(String[] nextLine) {
-        for (String s : nextLine) {
-            System.out.print(s + "\t");
-        }
-    }
 
     /**
      * MAIN
      */
     public static void main(String[] args) throws Exception {
-        ServerLog.setMailRecipient("marcfiume@gmail.com");
+        ServerLogger.setMailRecipient("marcfiume@gmail.com");
         Annotate annot = new Annotate(variantFile.getAbsolutePath(), variantFile.getAbsolutePath() + ".annot", new int[]{3});
         annot.annotate();
     }

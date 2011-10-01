@@ -17,10 +17,10 @@ import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
-import org.ut.biolab.medsavant.db.util.jobject.AnnotationQueryUtil;
-import org.ut.biolab.medsavant.db.util.jobject.ProjectQueryUtil;
-import org.ut.biolab.medsavant.db.util.jobject.VariantQueryUtil;
-import org.ut.biolab.medsavant.server.log.ServerLog;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.VariantQueryUtil;
+import org.ut.biolab.medsavant.server.log.ServerLogger;
 
 /**
  *

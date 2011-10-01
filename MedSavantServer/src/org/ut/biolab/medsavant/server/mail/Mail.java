@@ -25,11 +25,7 @@ public class Mail {
 
     public static void main(String[] args) {
         String from = "MedSavant Server Utility";
-        if (Mail.sendEmail(from, "Test Subject", "Test Body", null)) {
-            System.out.println("Mail sent successfully");
-        } else {
-            System.out.println("Uh oh...");
-        }
+        Mail.sendEmail(from, "Test Subject", "Test Body", null);
     }
 
     public synchronized static boolean sendEmail(String to, String subject, String text) {

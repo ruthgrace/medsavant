@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil;
-import org.ut.biolab.medsavant.db.util.jobject.LogQueryUtil.Action;
-import org.ut.biolab.medsavant.server.log.ServerLog;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
+import org.ut.biolab.medsavant.server.log.ServerLogger;
 
 /**
  *
@@ -30,16 +30,16 @@ public class PeriodicUpdate {
         
         while(true){
             try {
-                ResultSet rs = LogQueryUtil.getPendingUpdates();
+                ResultSet rs = AnnotationLogQueryUtil.getPendingUpdates();
 
                 while(rs.next()){
 
                     int projectId = rs.getInt("project_id");
                     int referenceId = rs.getInt("reference_id");
                     int updateId = rs.getInt("update_id");
-                    Action action = LogQueryUtil.intToAction(rs.getInt("action")); 
+                    Action action = AnnotationLogQueryUtil.intToAction(rs.getInt("action")); 
                     
-                    LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.INPROGRESS);
+                    AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.INPROGRESS);
                     
                     try {
                         switch(action){
@@ -50,11 +50,11 @@ public class PeriodicUpdate {
                                 UpdateVariantTable.performUpdate(projectId, referenceId);
                                 break;
                         }
-                        LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.COMPLETE);                      
+                        AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.COMPLETE);                      
                     } catch (Exception e){
-                        ServerLog.logByEmail("Uh oh...", "There was a problem making update " + updateId + ". Here's the error message:\n\n" + e.getLocalizedMessage());
+                        ServerLogger.logByEmail("Uh oh...", "There was a problem making update " + updateId + ". Here's the error message:\n\n" + e.getLocalizedMessage());
                         e.printStackTrace();
-                        LogQueryUtil.setLogStatus(updateId, LogQueryUtil.Status.ERROR);
+                        AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.ERROR);
                     }
    
                 }
