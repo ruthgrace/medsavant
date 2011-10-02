@@ -151,6 +151,8 @@ public class Setup {
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`action` int(11) unsigned NOT NULL,"
+                + "`status` int(5) unsigned NOT NULL DEFAULT '0',"
+                + "`timestamp` datetime DEFAULT NULL,"
                 + "PRIMARY KEY (`project_id`,`reference_id`, `action`) USING BTREE"
                 + ") ENGINE=MyISAM;");
 

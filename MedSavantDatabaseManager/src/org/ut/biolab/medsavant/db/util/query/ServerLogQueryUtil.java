@@ -14,7 +14,12 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
  */
 public class ServerLogQueryUtil {
 
+    public static final String SEVERVER_UNAME = "server";
     public enum LogType { INFO, ERROR, LOGIN, LOGOUT };
+    
+    public static void addServerLog(LogType t, String description) {
+        addLog(SEVERVER_UNAME, t, description);
+    }
     
     public static void addLog(String uname, LogType t, String description) {
         try {

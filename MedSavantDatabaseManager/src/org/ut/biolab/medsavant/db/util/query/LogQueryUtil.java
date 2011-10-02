@@ -26,7 +26,8 @@ public class LogQueryUtil {
                 + "project.name,"
                 + "reference.name,"
                 + "action,"
-                + "status "
+                + "status,"
+                + "timestamp "
                 + "FROM `" + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + "` "
                 + "LEFT JOIN `" + DBSettings.TABLENAME_PROJECT + "` ON `" + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + "`.project_id=`" + DBSettings.TABLENAME_PROJECT + "`.project_id "
                 + "LEFT JOIN `" + DBSettings.TABLENAME_REFERENCE + "` ON `" + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + "`.reference_id=`" + DBSettings.TABLENAME_REFERENCE + "`.reference_id;";
