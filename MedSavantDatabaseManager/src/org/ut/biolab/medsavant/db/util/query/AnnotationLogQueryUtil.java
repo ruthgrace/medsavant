@@ -62,7 +62,7 @@ public class AnnotationLogQueryUtil {
         }
     }
     
-    private static Status intToStatus(int status){
+    public static Status intToStatus(int status){
         switch(status){
             case 0:
                 return Status.PREPROCESS;

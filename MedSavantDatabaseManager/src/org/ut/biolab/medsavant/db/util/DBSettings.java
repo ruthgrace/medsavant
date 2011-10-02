@@ -20,4 +20,10 @@ public class DBSettings {
     public static String TABLENAME_COHORTMEMBERSHIP = "cohort_membership";
     public static String TABLENAME_VARIANTPENDINGUPDATE = "variant_pending_update";
     public static String TABLENAME_SERVELOG = "server_log";
+
+    public static String FIELDNAME_LOG_USER = "user";
+    public static String FIELDNAME_LOG_EVENT = "event";
+    public static String FIELDNAME_LOG_DESCRIPTION = "description";
+    public static String FIELDNAME_LOG_TIMESTAMP = "timestamp";
+
 }
