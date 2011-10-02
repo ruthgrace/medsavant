@@ -19,8 +19,8 @@ public class ServerLogger {
     private static Logger logger;
     private static boolean logOpen;
 
-    public static void log(String string) {
-        log(string, Level.INFO);
+    public static void log(Class c,String string) {
+        log(c,string, Level.INFO);
     }
 
     private static void openLogFile() throws IOException {
@@ -35,26 +35,26 @@ public class ServerLogger {
         emailaddress = eaddress;
     }
 
-    public static void logByEmail(String subject, String message) {
-        logByEmail(subject,message,Level.INFO);
+    public static void logByEmail(Class c,String subject, String message) {
+        logByEmail(c,subject,message,Level.INFO);
     }
     
-    public static void logByEmail(String subject, String message, Level l) {
+    public static void logByEmail(Class c,String subject, String message, Level l) {
         message += "\n\nMedSavant Server Utility";
         if (emailaddress != null) {
             Mail.sendEmail(emailaddress, "[" + l + "] " + subject, message);
-            log("(Also emailed to " + emailaddress + "): \"" + message.replace("\n", "") + "\"",l);
+            log(c,"(Also emailed to " + emailaddress + "): \"" + message.replace("\n", "") + "\"",l);
         } else {
-            log("(No email address configured to sent to): \"" + message.replace("\n", "") + "\"",l);
+            log(c,"(No email address configured to sent to): \"" + message.replace("\n", "") + "\"",l);
         }
     }
 
-    public static void log(String msg, Level level) {
+    public static void log(Class c,String msg, Level level) {
         try {
             if (!logOpen) {
                 openLogFile();
             }
-            logger.log(level, msg);
+            logger.log(level, "'{'{0}'} '{1}", new Object[]{c.toString(), msg});
         } catch (IOException ex) {
         }
     }

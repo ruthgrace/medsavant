@@ -57,7 +57,7 @@ public class Annotate {
         while (lastChr.equals(currentVariant.chrom)) {
 
             if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
-                ServerLogger.log("Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
+                ServerLogger.log(Annotate.class,"Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
                 numWarnings++;
             }
 
@@ -82,7 +82,7 @@ public class Annotate {
 
                 // happens when there are no more annotations for this chrom
                 if (nextannot == null) {
-                    ServerLogger.log("No more annotations for this chromosome");
+                    ServerLogger.log(Annotate.class,"No more annotations for this chromosome");
                     annotationHitEnd = true;
                     break;
                 }
@@ -130,7 +130,7 @@ public class Annotate {
 
                             // happens when there are no more annotations for this chrom
                             if (nextannot == null) {
-                                ServerLogger.log("Annotation hit end; skipping chrom");
+                                ServerLogger.log(Annotate.class,"Annotation hit end; skipping chrom");
                                 annotationHitEnd1 = true;
                                 break;
                             }
@@ -239,7 +239,7 @@ public class Annotate {
 
     public void annotate() throws Exception {
 
-        ServerLogger.logByEmail("Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
+        ServerLogger.logByEmail(Annotate.class,"Annotation started", "Annotation of " + this.tdfFilename + " was started. " + annotationIds.length + " annotation(s) will be performed.\n\nYou will be notified again upon completion.");
 
         // if no annotations to perform, copy input to output
         if (annotationIds.length == 0) {
@@ -275,7 +275,7 @@ public class Annotate {
             f.delete();
         }
 
-        ServerLogger.logByEmail("Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
+        ServerLogger.logByEmail(Annotate.class,"Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
     }
 
     /*
@@ -297,7 +297,7 @@ public class Annotate {
         String currentChr = currentPos.chrom;
         String nextLineChr = currentPos.chrom;
 
-        ServerLogger.log("Flushing remaining variants in " + currentPos.chrom);
+        ServerLogger.log(Annotate.class,"Flushing remaining variants in " + currentPos.chrom);
 
         String[] recordLine = null;
 
@@ -332,7 +332,7 @@ public class Annotate {
 
         //log("Last variant: { chr=" + lastLine[VARIANT_INDEX_OF_CHR] + " pos=" + lastLine[VARIANT_INDEX_OF_POS] + "}");
 
-        ServerLogger.log("Next variant: " + new VariantRecord(recordLine));
+        ServerLogger.log(Annotate.class,"Next variant: " + new VariantRecord(recordLine));
 
         return new VariantRecord(recordLine);
     }
@@ -361,19 +361,19 @@ public class Annotate {
     private static int numWarnings;
 
     private static void annotate(File inFile, Annotation annot, File outFile) throws Exception {
-        ServerLogger.log("Record file: " + inFile.getAbsolutePath());
-        ServerLogger.log("Annotation file: " + annot.getDataPath());
-        ServerLogger.log("Output file: " + outFile.getAbsolutePath());
+        ServerLogger.log(Annotate.class,"Record file: " + inFile.getAbsolutePath());
+        ServerLogger.log(Annotate.class,"Annotation file: " + annot.getDataPath());
+        ServerLogger.log(Annotate.class,"Output file: " + outFile.getAbsolutePath());
 
         int numFieldsInInputFile = getNumFieldsInTDF(inFile);
         if(numFieldsInInputFile == 0){
             outFile.createNewFile();
-            ServerLogger.log("Done annotating file. Nothing to annotate.");
+            ServerLogger.log(Annotate.class,"Done annotating file. Nothing to annotate.");
             return;
         }
         int numFieldsInOutputFile = numFieldsInInputFile + annot.getAnnotationFormat().getNumNonDefaultFields();
 
-        ServerLogger.log("input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
+        ServerLogger.log(Annotate.class,"input file: " + numFieldsInInputFile + " nondefault: " + annot.getAnnotationFormat().getNumNonDefaultFields() + " total: " + numFieldsInOutputFile);
 
         CSVReader recordReader = new CSVReader(new FileReader(inFile));
         TabixReader annotationReader = annot.getReader();
@@ -392,13 +392,13 @@ public class Annotate {
 
         while (true) {
             try {
-                ServerLogger.log("Annotating variants in " + nextPosition.chrom);
-                ServerLogger.log("First variant for chrom: " + nextPosition.toString());
+                ServerLogger.log(Annotate.class,"Annotating variants in " + nextPosition.chrom);
+                ServerLogger.log(Annotate.class,"First variant for chrom: " + nextPosition.toString());
                 numMatches = 0;
                 numLinesWritten = 0;
 
                 nextPosition = annotateForChromosome(nextPosition.chrom, nextPosition, recordReader, annotationReader, writer, annotationHasRef, annotationHasAlt, numFieldsInOutputFile);
-                ServerLogger.log("Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
+                ServerLogger.log(Annotate.class,"Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
 
                 totalLinesWritten += numLinesWritten;
 
@@ -422,7 +422,7 @@ public class Annotate {
         recordReader.close();
         writer.close();
 
-        ServerLogger.log("Done annotating file, " + numLinesRead + " read " + totalLinesWritten + " written with " + numWarnings + " warnings");
+        ServerLogger.log(Annotate.class,"Done annotating file, " + numLinesRead + " read " + totalLinesWritten + " written with " + numWarnings + " warnings");
     }
 
     /**
