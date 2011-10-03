@@ -27,6 +27,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationField;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
+import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -61,15 +62,15 @@ public class AddAnnotation {
         path = args[0];
         tabixPath = path + ".tabix";
         try {
-            System.out.println("parsing format");
+            ServerLogger.log(AddAnnotation.class, "parsing format");
             parseFormat(args[1]);
-            System.out.println("formatting tabix");
+            ServerLogger.log(AddAnnotation.class, "formatting tabix");
             formatTabix(getFieldNames(), new File(path), new File(tabixPath));
-            System.out.println("generating tables");
+            ServerLogger.log(AddAnnotation.class, "generating tables");
             generateTable();
+            ServerLogger.log(AddAnnotation.class, "done adding annotation");
         } catch (Exception e){
-            System.err.println("ERROR ADDING ANNOTATION");
-            e.printStackTrace();
+            ServerLogger.log(AddAnnotation.class, "error adding annotation");
         }       
     }
     
