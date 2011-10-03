@@ -1,8 +1,9 @@
 package org.ut.biolab.medsavant.db.util.query;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.broad.tabix.TabixReader;
+import org.broad.tabix1.TabixReader;
 import org.xml.sax.SAXException;
 
 /**
@@ -11,12 +12,11 @@ import org.xml.sax.SAXException;
  */
 public class Annotation {
         
-        final private int id;
-        final private String program;
-        final private String version;
-        final private String reference;
-        final private String dataPath;
-        final private String formatPath;
+    final private int id;
+    final private String program;
+    final private String version;
+    final private String reference;
+    final private String dataPath;
     private TabixReader reader;
 
     public Annotation(int id, String program, String version, String reference, String dataPath, String formatPath) {
@@ -25,15 +25,10 @@ public class Annotation {
         this.version = version;
         this.reference = reference;
         this.dataPath = dataPath;
-        this.formatPath = formatPath;
-    }
-
-    public String getFormatPath() {
-        return formatPath;
     }
     
-    public AnnotationFormat getAnnotationFormat() throws IOException, SAXException, ParserConfigurationException {
-        return new AnnotationFormat(this.formatPath);
+    public AnnotationFormat getAnnotationFormat() throws SQLException, IOException, ParserConfigurationException, SAXException {
+        return AnnotationQueryUtil.getAnnotationFormat(id); 
     }
 
     public int getId() {

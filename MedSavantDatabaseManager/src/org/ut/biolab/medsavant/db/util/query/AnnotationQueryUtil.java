@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
+import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -97,7 +98,7 @@ public class AnnotationQueryUtil {
         return result;
     }
     
-    public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
+    /*public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
         Connection conn = ConnectionController.connect();
         
         ResultSet rs = conn.createStatement().executeQuery(
@@ -105,6 +106,42 @@ public class AnnotationQueryUtil {
         
         rs.next();
         return new AnnotationFormat(rs.getString("format"));
+    }*/
+    
+    public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
+        
+        Connection conn = ConnectionController.connect();
+        
+        ResultSet rs1 = conn.createStatement().executeQuery(
+                "SELECT * " + 
+                "FROM " + DBSettings.TABLENAME_ANNOTATION + " " + 
+                "WHERE annotation_id=" + annotationId + ";");
+        rs1.next();
+        
+        String program = rs1.getString("program");
+        String version = rs1.getString("version");
+        int referenceId = rs1.getInt("reference_id");
+        String path = rs1.getString("path");
+        boolean hasRef = rs1.getBoolean("hasRef");
+        boolean hasAlt = rs1.getBoolean("hasAlt");
+        
+        
+        ResultSet rs2 = conn.createStatement().executeQuery(
+                "SELECT * " + 
+                "FROM " + DBUtil.getAnnotationFormatTableName(annotationId) + " " +
+                "ORDER BY `position`");
+        
+        List<AnnotationField> fields = new ArrayList<AnnotationField>();
+        while(rs2.next()){
+            fields.add(new AnnotationField(
+                    rs2.getString("column_name"), 
+                    rs2.getString("column_type"), 
+                    rs2.getBoolean("filterable"), 
+                    rs2.getString("alias"), 
+                    rs2.getString("description")));
+        }
+
+        return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, fields);
     }
     
        

@@ -130,4 +130,8 @@ public class DBUtil {
         return "z_variant_staging_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
     }
     
+    public static String getAnnotationFormatTableName(int annotationId){
+        return "annotation_format" + annotationId;
+    }
+    
 }

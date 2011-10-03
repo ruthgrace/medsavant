@@ -4,7 +4,10 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/*import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+import org.xml.sax.SAXException;*/
 
 /**
  *
@@ -20,7 +23,53 @@ import org.xml.sax.SAXException;
  */
 public class AnnotationFormat {
     
-    private Document doc;
+    private boolean hasRef;
+    private boolean hasAlt;
+    private String program;
+    private String version;
+    private int referenceId;
+    private String path;
+    private List<AnnotationField> fields = new ArrayList<AnnotationField>();
+    
+    public AnnotationFormat(String program, String version, int referenceId, String path, boolean hasRef, boolean hasAlt, List<AnnotationField> fields){
+        this.program = program;
+        this.version = version;
+        this.referenceId = referenceId;
+        this.path = path;
+        this.hasRef = hasRef;
+        this.hasAlt = hasAlt;
+        this.fields = fields;
+    }
+    
+    public String generateSchema(){
+        String result = "";
+        
+        //add custom columns
+        for(int i = 0; i < fields.size(); i++){
+            AnnotationField field = fields.get(i);
+            String columnName = field.getColumnName();
+            String columnType = field.getColumnType();
+            result += "`" + columnName + "` " + columnType + " DEFAULT NULL,";
+        }
+
+        return result;
+    }
+    
+    public int getNumNonDefaultFields(){
+        return fields.size();
+    }
+    
+    public boolean hasRef(){
+        return hasRef;
+    }
+    
+    public boolean hasAlt(){
+        return hasAlt;
+    }
+    
+    
+    
+    /*private Document doc;
     private boolean hasRef = false;
     private boolean hasAlt = false;
     private String version;
@@ -104,6 +153,6 @@ public class AnnotationFormat {
 
     public boolean hasRef() {
         return hasRef;
-    }    
+    }    */
 
 }

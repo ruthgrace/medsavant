@@ -118,7 +118,8 @@ public class Setup {
                 + "`version` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`path` varchar(500) COLLATE latin1_bin NOT NULL DEFAULT '',"
-                + "`format` varchar(10000) COLLATE latin1_bin NOT NULL DEFAULT '',"
+                + "`hasRef` tinyint(1) NOT NULL,"
+                + "`hasAlt` tinyint(1) NOT NULL,"
                 + "PRIMARY KEY (`annotation_id`)"
                 + ") ENGINE=MyISAM;");
 

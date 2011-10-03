@@ -4,17 +4,17 @@
  */
 package org.ut.biolab.medsavant.db.admin;
 
-import java.io.File;
+/*import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import net.sf.samtools.util.AsciiLineReader;
 import net.sf.samtools.util.BlockCompressedOutputStream;
-import org.broad.tabix.TabixWriter;
+import org.broad.tabix1.TabixWriter;
 import org.ut.biolab.medsavant.db.util.query.AnnotationFormat;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
-import org.broad.tabix.TabixWriter.Conf;
-import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
+import org.broad.tabix1.TabixWriter.Conf;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;*/
 
 /**
  *
@@ -22,7 +22,7 @@ import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
  */
 public class ImportAnnotation {
     
-    public static void main(String[] args) throws SQLException{
+    /*public static void main(String[] args) throws SQLException{
         
         if(args.length != 5) {
             setError("Usage: ImportAnnotation program version reference_name file_path format_path");
@@ -66,7 +66,7 @@ public class ImportAnnotation {
         }
 
         //add annotation
-        AnnotationQueryUtil.addAnnotation(program, version, referenceId, tabixFile.getAbsolutePath().replaceAll("\\\\", "/"), formatFile.getAbsolutePath().replaceAll("\\\\", "/"));
+        //Manage.addAnnotation(program, version, referenceId, tabixFile.getAbsolutePath().replaceAll("\\\\", "/"), formatFile.getAbsolutePath().replaceAll("\\\\", "/"));
     }
     
     public static void setError(String errorString){
@@ -139,6 +139,6 @@ class ColumnMapping {
 
     public Conf getTabixConf(){
         return new Conf(0, index_chrom+1, index_position+1, index_position+1, '#', 0);
-    }
+    }*/
 
 }
