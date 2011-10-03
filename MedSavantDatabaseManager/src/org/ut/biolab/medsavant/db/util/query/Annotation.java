@@ -3,7 +3,7 @@ package org.ut.biolab.medsavant.db.util.query;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.broad.tabix1.TabixReader;
+import org.broad.tabix.TabixReader;
 import org.xml.sax.SAXException;
 
 /**
