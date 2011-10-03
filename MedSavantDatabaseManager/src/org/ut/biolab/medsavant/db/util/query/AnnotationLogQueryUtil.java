@@ -10,9 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
+import org.ut.biolab.medsavant.db.util.DBUtil;
 
 /**
  *
@@ -85,11 +87,11 @@ public class AnnotationLogQueryUtil {
     }
     
     public static int addAnnotationLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
-        java.sql.Timestamp sqlDate = new java.sql.Timestamp((new Date()).getTime());
+        Timestamp sqlDate = DBUtil.getCurrentTimestamp();
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
                 " (project_id, reference_id, action, status, timestamp) VALUES" + 
-                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + "," + sqlDate + ");";
+                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + ",\"" + sqlDate + "\");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -114,6 +116,14 @@ public class AnnotationLogQueryUtil {
         conn.createStatement().executeUpdate(
                 "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
                 " SET status=" + statusToInt(status) + 
+                " WHERE update_id=" + updateId);
+    }
+    
+    public static void setAnnotationLogStatus(int updateId, Status status, Timestamp sqlDate) throws SQLException {
+        Connection conn = ConnectionController.connect();
+        conn.createStatement().executeUpdate(
+                "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                " SET status=" + statusToInt(status) + ", `timestamp`=\"" + sqlDate + "\"" +  
                 " WHERE update_id=" + updateId);
     }
     

@@ -14,7 +14,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import javax.sql.DataSource;
@@ -134,4 +136,7 @@ public class DBUtil {
         return "annotation_format" + annotationId;
     }
     
+    public static Timestamp getCurrentTimestamp(){
+        return new Timestamp((new Date()).getTime());
+    }
 }
