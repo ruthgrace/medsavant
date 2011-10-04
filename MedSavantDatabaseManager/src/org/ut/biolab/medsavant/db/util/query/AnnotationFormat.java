@@ -23,15 +23,44 @@ import org.xml.sax.SAXException;*/
  */
 public class AnnotationFormat {
     
+    public static enum AnnotationType {POSITION, INTERVAL};
+    
+    public static AnnotationType intToAnnotationType(int type){
+        switch(type){
+            case 0:
+                return AnnotationType.POSITION;
+            case 1:
+                return AnnotationType.INTERVAL;
+            default:
+                return null;
+        }
+    }
+    
+    public static int annotationTypeToInt(AnnotationType type){
+        switch(type){
+            case POSITION:
+                return 0;
+            case INTERVAL:
+                return 1;
+            default:
+                return -1;
+        }
+    }
+    
+    public static int annotationTypeToInt(String type){
+        return annotationTypeToInt(AnnotationType.valueOf(type.toUpperCase()));
+    }
+    
     private boolean hasRef;
     private boolean hasAlt;
     private String program;
     private String version;
     private int referenceId;
     private String path;
+    private AnnotationType type;
     private List<AnnotationField> fields = new ArrayList<AnnotationField>();
     
-    public AnnotationFormat(String program, String version, int referenceId, String path, boolean hasRef, boolean hasAlt, List<AnnotationField> fields){
+    public AnnotationFormat(String program, String version, int referenceId, String path, boolean hasRef, boolean hasAlt, AnnotationType type, List<AnnotationField> fields){
         this.program = program;
         this.version = version;
         this.referenceId = referenceId;
@@ -39,6 +68,7 @@ public class AnnotationFormat {
         this.hasRef = hasRef;
         this.hasAlt = hasAlt;
         this.fields = fields;
+        this.type = type;
     }
     
     public String generateSchema(){

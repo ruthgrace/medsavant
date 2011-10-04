@@ -13,6 +13,7 @@ import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
+import org.ut.biolab.medsavant.db.util.query.AnnotationFormat.AnnotationType;
 import org.xml.sax.SAXException;
 
 /**
@@ -124,6 +125,7 @@ public class AnnotationQueryUtil {
         String path = rs1.getString("path");
         boolean hasRef = rs1.getBoolean("hasRef");
         boolean hasAlt = rs1.getBoolean("hasAlt");
+        AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt("type"));
         
         
         ResultSet rs2 = conn.createStatement().executeQuery(
@@ -141,7 +143,7 @@ public class AnnotationQueryUtil {
                     rs2.getString("description")));
         }
 
-        return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, fields);
+        return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, type, fields);
     }
     
        

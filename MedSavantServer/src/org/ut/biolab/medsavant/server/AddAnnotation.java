@@ -26,6 +26,8 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationField;
+import org.ut.biolab.medsavant.db.util.query.AnnotationFormat;
+import org.ut.biolab.medsavant.db.util.query.AnnotationFormat.AnnotationType;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
@@ -45,6 +47,7 @@ public class AddAnnotation {
     private static String prefix;
     private static String referenceName;
     private static int referenceId;
+    private static int annotationType;
     
     private static String path;
     private static String tabixPath;
@@ -95,8 +98,8 @@ public class AddAnnotation {
         //insert into annotations table and get annotation_id
         String query = 
                 "INSERT INTO " + DBSettings.TABLENAME_ANNOTATION + 
-                " (program, version, reference_id, path, hasRef, hasAlt) VALUES" + 
-                " (\"" + program + "\",\"" + version + "\"," + referenceId + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/") + "\"," + (hasRef ? "1" : "0") + "," + (hasAlt ? "1" : "0") + ");";
+                " (program, version, reference_id, path, hasRef, hasAlt, type) VALUES" + 
+                " (\"" + program + "\",\"" + version + "\"," + referenceId + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/") + "\"," + (hasRef ? "1" : "0") + "," + (hasAlt ? "1" : "0") + "," + annotationType + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -144,6 +147,7 @@ public class AddAnnotation {
         version = doc.getDocumentElement().getAttribute("version"); 
         program = doc.getDocumentElement().getAttribute("program"); 
         referenceName = doc.getDocumentElement().getAttribute("reference");
+        annotationType = AnnotationFormat.annotationTypeToInt(doc.getDocumentElement().getAttribute("type"));
         
         prefix = program + "_" + version.replaceAll("\\.", "_") + "_"; 
         
