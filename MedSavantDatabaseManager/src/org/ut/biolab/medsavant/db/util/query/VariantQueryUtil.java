@@ -30,7 +30,7 @@ public class VariantQueryUtil {
         return getVariants(projectId, referenceId, new ArrayList(), limit);
     }
     
-    public static Vector getVariants(int projectId, int referenceId, List conditions, int limit) throws SQLException {            
+    public static Vector getVariants(int projectId, int referenceId, List<List> conditions, int limit) throws SQLException {            
         
         String query = 
                 "SELECT *" + 
@@ -38,7 +38,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
-        query += conditionsToString(conditions);
+        query += conditionsToStringOr(conditions);
         query += " LIMIT " + limit;
         
         Connection conn = ConnectionController.connect();
@@ -59,12 +59,45 @@ public class VariantQueryUtil {
         return result;
     }
     
-    private static String conditionsToString(List conditions){
+    /*private static String conditionsToString(List conditions){
         String s = "";
         for(int i = 0; i < conditions.size(); i++){
             s += conditions.get(i).toString();
             if(i != conditions.size()-1){
                 s += " AND ";
+            }
+        }
+        return s;
+    }*/
+    
+    private static String conditionsToStringOr(List<List> conditions){
+        String s = "";
+        for(int i = 0; i < conditions.size(); i++){
+            List subset = conditions.get(i);
+            s += "(";
+            boolean somethingWritten = false;
+            boolean andWritten = false;
+            for(int j = 0; j < subset.size(); j++){
+                String current = subset.get(j).toString();
+                if(current.equals("")){
+                    if(j == subset.size()-1 && andWritten){
+                        s += "1=1"; //ensure no unclosed AND
+                    }
+                    continue;
+                }
+                somethingWritten = true;
+                s += subset.get(j).toString();
+                if(j != subset.size()-1){
+                    s += " AND ";
+                    andWritten = true;
+                }
+            }
+            if(!somethingWritten){
+                s += "1=2"; //ensure no unclosed OR
+            }
+            s += ")";
+            if(i != conditions.size()-1){
+                s += " OR ";
             }
         }
         return s;
@@ -107,7 +140,7 @@ public class VariantQueryUtil {
         return getNumFilteredVariants(projectId, referenceId, new ArrayList());
     }
     
-    public static int getNumFilteredVariants(int projectId, int referenceId, List conditions) throws SQLException {
+    public static int getNumFilteredVariants(int projectId, int referenceId, List<List> conditions) throws SQLException {
         
         String query = 
                 "SELECT COUNT(*)" + 
@@ -115,7 +148,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             query += "WHERE ";
         }
-        query += conditionsToString(conditions);
+        query += conditionsToStringOr(conditions);
         
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(query);
@@ -124,7 +157,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);
     }
     
-    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List conditions, String column, double min, double max) throws SQLException {
+    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List> conditions, String column, double min, double max) throws SQLException {
         
         String query = 
                 "SELECT COUNT(*)" + 
@@ -133,7 +166,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             query += " AND ";
         }
-        query += conditionsToString(conditions);
+        query += conditionsToStringOr(conditions);
         
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(query);
@@ -142,7 +175,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);        
     }
     
-    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List conditions, String column) throws SQLException {
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List> conditions, String column) throws SQLException {
         
         String query = 
                 "SELECT `" + column + "`, COUNT(*)" + 
@@ -150,7 +183,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
-        query += conditionsToString(conditions);
+        query += conditionsToStringOr(conditions);
         query += " GROUP BY `" + column + "`";
                 
         Connection conn = ConnectionController.connect();
@@ -165,7 +198,7 @@ public class VariantQueryUtil {
         return map;     
     }
     
-    public static int getNumVariantsInRange(int projectId, int referenceId, List conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
+    public static int getNumVariantsInRange(int projectId, int referenceId, List<List> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
         String query = 
                 "SELECT COUNT(*)" + 
@@ -174,7 +207,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             query += " AND ";
         }
-        query += conditionsToString(conditions);
+        query += conditionsToStringOr(conditions);
         
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(query);
@@ -183,7 +216,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);
     }
     
-    public static int[] getNumVariantsForBins(int projectId, int referenceId, List conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
+    public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
         String queryBase = 
                 "SELECT `position`" +
@@ -192,7 +225,7 @@ public class VariantQueryUtil {
         if(!conditions.isEmpty()){
             queryBase += " AND ";
         }
-        queryBase += conditionsToString(conditions);
+        queryBase += conditionsToStringOr(conditions);
         
         
         String query = "select y.range as `range`, count(*) as `number of occurences` "
