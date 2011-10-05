@@ -123,19 +123,7 @@ public class DBUtil {
             return -1;
         }
     }
-    
-    public static String getVariantTableName(int projectId, int referenceId){
-        return "z_variant_proj" + projectId + "_ref" + referenceId;
-    }
-    
-    public static String getVariantStagingTableName(int projectId, int referenceId, int updateId){
-        return "z_variant_staging_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
-    }
-    
-    public static String getAnnotationFormatTableName(int annotationId){
-        return "annotation_format" + annotationId;
-    }
-    
+
     public static Timestamp getCurrentTimestamp(){
         return new Timestamp((new Date()).getTime());
     }

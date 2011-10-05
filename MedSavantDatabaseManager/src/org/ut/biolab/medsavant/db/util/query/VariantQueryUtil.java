@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
+import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 
 /**
@@ -34,7 +35,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT *" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0";  
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0";  
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
@@ -144,7 +145,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0 ";  
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0 ";  
         if(!conditions.isEmpty()){
             query += "WHERE ";
         }
@@ -161,7 +162,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" +
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" +
                 " WHERE `" + column + "`>=" + min + " AND `" + column + "`<" + max;
         if(!conditions.isEmpty()){
             query += " AND ";
@@ -179,7 +180,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT `" + column + "`, COUNT(*)" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0";
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0";
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
@@ -202,7 +203,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" + 
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" + 
                 " WHERE `chrom`=\"" + chrom + "\" AND `position`>=" + start + " AND `position`<" + end;
         if(!conditions.isEmpty()){
             query += " AND ";
@@ -220,7 +221,7 @@ public class VariantQueryUtil {
         
         String queryBase = 
                 "SELECT `position`" +
-                " FROM " + DBUtil.getVariantTableName(projectId, referenceId) + " t0" + 
+                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" + 
                 " WHERE `chrom`=\"" + chrom + "\"";
         if(!conditions.isEmpty()){
             queryBase += " AND ";

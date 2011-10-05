@@ -121,14 +121,14 @@ public class AnnotationQueryUtil {
         String version = rs1.getString("version");
         int referenceId = rs1.getInt("reference_id");
         String path = rs1.getString("path");
-        boolean hasRef = rs1.getBoolean("hasRef");
-        boolean hasAlt = rs1.getBoolean("hasAlt");
+        boolean hasRef = rs1.getBoolean("has_ref");
+        boolean hasAlt = rs1.getBoolean("has_alt");
         AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt("type"));
         
         
         ResultSet rs2 = conn.createStatement().executeQuery(
                 "SELECT * " + 
-                "FROM " + DBUtil.getAnnotationFormatTableName(annotationId) + " " +
+                "FROM " + DBSettings.getAnnotationFormatTableName(annotationId) + " " +
                 "ORDER BY `position`");
         
         List<AnnotationField> fields = new ArrayList<AnnotationField>();

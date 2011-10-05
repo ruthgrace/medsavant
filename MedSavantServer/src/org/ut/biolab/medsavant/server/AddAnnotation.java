@@ -108,7 +108,7 @@ public class AddAnnotation {
         int id = rs.getInt(1);
         
         //create format table
-        String tableName = DBUtil.getAnnotationFormatTableName(id);
+        String tableName = DBSettings.getAnnotationFormatTableName(id);
         query = 
                 "CREATE TABLE " + tableName + " (" +
                 "`position` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
