@@ -277,4 +277,21 @@ public class ProjectQueryUtil {
         AnnotationLogQueryUtil.addAnnotationLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
     
+    public static List<ProjectDetails> getProjectDetails(int projectId) throws SQLException {
+        
+        ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
+                        "SELECT * FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO
+                        + " LEFT JOIN " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + " ON "
+                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO + ".reference_id = "
+                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + ".reference_id "
+                        + "WHERE project_id=" + projectId + ";");
+        
+        List<ProjectDetails> result = new ArrayList<ProjectDetails>();
+        while(rs.next()){
+            result.add(new ProjectDetails(rs.getInt("reference_id"), rs.getString("name"), rs.getString("annotation_ids")));
+        }
+        
+        return result;
+    }
+
 }

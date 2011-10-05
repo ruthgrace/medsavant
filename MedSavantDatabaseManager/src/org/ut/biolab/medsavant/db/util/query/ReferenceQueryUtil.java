@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -79,5 +81,43 @@ public class ReferenceQueryUtil {
          c.createStatement().execute("DELETE FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE reference_id=" + refid);
          
          return true;
+    }  
+     
+    public static List<String> getReferencesForProject(int projectid) throws SQLException {
+        
+        ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
+                        "SELECT reference.name FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO
+                        + " LEFT JOIN " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + " ON "
+                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO + ".reference_id = "
+                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + ".reference_id "
+                        + "WHERE project_id=" + projectid + ";");
+        
+        List<String> references = new ArrayList<String>();
+        while (rs.next()) {
+            references.add(rs.getString(1));
+        }
+        
+        return references;
     }
+    
+    
+    public static Map<Integer, String> getReferencesWithoutTablesInProject(int projectid) throws SQLException {
+        
+        Connection c = org.ut.biolab.medsavant.db.util.ConnectionController.connect();
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT * FROM " + DBSettings.TABLENAME_REFERENCE
+                + " WHERE reference_id NOT IN "
+                + "(SELECT reference_id FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO
+                + " WHERE project_id=" + projectid + ")");
+        
+        HashMap<Integer,String> result = new HashMap<Integer,String>();
+        
+        while (rs.next()) {
+            result.put(rs.getInt(1), rs.getString(2));
+        }
+        
+        return result;
+        
+    }
+
 }
