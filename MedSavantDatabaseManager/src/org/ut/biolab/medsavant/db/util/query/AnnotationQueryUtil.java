@@ -42,8 +42,7 @@ public class AnnotationQueryUtil {
                     rs.getString("program"),
                     rs.getString("version"),
                     rs.getString("name"),
-                    rs.getString("path"),
-                    rs.getString("format")));
+                    rs.getString("path")));
         }
 
         return results;
@@ -69,8 +68,7 @@ public class AnnotationQueryUtil {
                 rs.getString("program"),
                 rs.getString("version"),
                 rs.getString("name"),
-                rs.getString("path"),
-                rs.getString("format"));
+                rs.getString("path"));
 
         return result;
     }

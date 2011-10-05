@@ -19,7 +19,7 @@ public class Annotation {
     final private String dataPath;
     private TabixReader reader;
 
-    public Annotation(int id, String program, String version, String reference, String dataPath, String formatPath) {
+    public Annotation(int id, String program, String version, String reference, String dataPath) {
         this.id = id;
         this.program = program;
         this.version = version;
