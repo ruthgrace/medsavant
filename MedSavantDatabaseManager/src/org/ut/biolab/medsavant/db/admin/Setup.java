@@ -156,6 +156,13 @@ public class Setup {
                 + "`timestamp` datetime DEFAULT NULL,"
                 + "PRIMARY KEY (`project_id`,`reference_id`, `action`) USING BTREE"
                 + ") ENGINE=MyISAM;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + DBSettings.TABLENAME_ANNOTATIONTABLEMAP + "` ("
+                + "`annotation_id` int(10) unsigned NOT NULL,"
+                + "`format_tablename` varchar(45) COLLATE latin1_bin NOT NULL,"
+                + "PRIMARY KEY (`annotation_id`) USING BTREE"
+                + ") ENGINE=MyISAM;");
 
     }
 
