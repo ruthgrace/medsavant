@@ -22,6 +22,7 @@ import net.sf.samtools.util.AsciiLineReader;
 import net.sf.samtools.util.BlockCompressedOutputStream;
 import org.broad.tabix.TabixWriter;
 import org.broad.tabix.TabixWriter.Conf;
+import org.ut.biolab.medsavant.db.table.AnnotationTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -97,7 +98,7 @@ public class AddAnnotation {
         
         //insert into annotations table and get annotation_id
         String query = 
-                "INSERT INTO " + DBSettings.TABLENAME_ANNOTATION + 
+                "INSERT INTO " + AnnotationTable.TABLENAME + 
                 " (program, version, reference_id, path, hasRef, hasAlt, type) VALUES" + 
                 " (\"" + program + "\",\"" + version + "\"," + referenceId + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/") + "\"," + (hasRef ? "1" : "0") + "," + (hasAlt ? "1" : "0") + "," + annotationType + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);

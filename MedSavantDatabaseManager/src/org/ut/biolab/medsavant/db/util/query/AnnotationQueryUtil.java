@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.log.DBLogger;
+import org.ut.biolab.medsavant.db.table.AnnotationTable;
+import org.ut.biolab.medsavant.db.table.AnnotationTableMapTable;
+import org.ut.biolab.medsavant.db.table.ReferenceTable;
+import org.ut.biolab.medsavant.db.table.VariantTableInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -25,9 +29,9 @@ public class AnnotationQueryUtil {
     public static List<Annotation> getAnnotations() throws SQLException {
 
         Connection conn = ConnectionController.connect();
-
-        String ref = DBSettings.TABLENAME_REFERENCE;
-        String ann = DBSettings.TABLENAME_ANNOTATION;
+     
+        String ref = ReferenceTable.TABLENAME;
+        String ann = AnnotationTable.TABLENAME;
 
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM `" + ann + "` "
@@ -52,8 +56,8 @@ public class AnnotationQueryUtil {
 
         Connection conn = ConnectionController.connect();
 
-        String ref = DBSettings.TABLENAME_REFERENCE;
-        String ann = DBSettings.TABLENAME_ANNOTATION;
+        String ref = ReferenceTable.TABLENAME;
+        String ann = AnnotationTable.TABLENAME;
 
         ResultSet rs = conn.createStatement().executeQuery(
                 "SELECT * FROM `" + ann + "` "
@@ -78,7 +82,7 @@ public class AnnotationQueryUtil {
         Connection conn = ConnectionController.connect();
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT annotation_ids FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO + 
+                "SELECT annotation_ids FROM " + VariantTableInfoTable.TABLENAME + 
                 " WHERE project_id=" + projectId + " AND reference_id=" + referenceId);
 
         rs.next();
@@ -113,7 +117,7 @@ public class AnnotationQueryUtil {
         
         ResultSet rs1 = conn.createStatement().executeQuery(
                 "SELECT * " + 
-                "FROM " + DBSettings.TABLENAME_ANNOTATION + " " + 
+                "FROM " + AnnotationTable.TABLENAME + " " + 
                 "WHERE annotation_id=" + annotationId + ";");
         rs1.next();
         
@@ -150,7 +154,7 @@ public class AnnotationQueryUtil {
         DBLogger.log("Adding annotation...");
         
         String q = "INSERT INTO " 
-                + DBSettings.TABLENAME_ANNOTATION 
+                + AnnotationTable.TABLENAME 
                 + " VALUES (null,'" + program + "','" + version + "'," + referenceid + ",'" + path + "','" + format + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
                 Statement.RETURN_GENERATED_KEYS);
@@ -167,7 +171,7 @@ public class AnnotationQueryUtil {
     public static String getAnnotationFormatTableName(int annotationId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT format_tablename FROM `" + DBSettings.TABLENAME_ANNOTATIONTABLEMAP + "` "
+                "SELECT format_tablename FROM `" + AnnotationTableMapTable.TABLENAME + "` "
                 + "WHERE annotation_id=" + annotationId);
         rs.next();
         return rs.getString(1);

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import javax.sql.DataSource;
+import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 
 /**
@@ -106,7 +107,7 @@ public class DBUtil {
     public static boolean containsReference(String referenceName) throws SQLException {
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + referenceName + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + ReferenceTable.TABLENAME + "` WHERE name=\"" + referenceName + "\"");
         
         return rs1.next();
     }

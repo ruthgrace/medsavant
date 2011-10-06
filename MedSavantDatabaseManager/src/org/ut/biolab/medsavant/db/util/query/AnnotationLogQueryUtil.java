@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import org.ut.biolab.medsavant.db.table.VariantPendingUpdateTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -89,7 +90,7 @@ public class AnnotationLogQueryUtil {
     public static int addAnnotationLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
         Timestamp sqlDate = DBUtil.getCurrentTimestamp();
         String query = 
-                "INSERT INTO " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                "INSERT INTO " + VariantPendingUpdateTable.TABLENAME + 
                 " (project_id, reference_id, action, status, timestamp) VALUES" + 
                 " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + ",\"" + sqlDate + "\");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -104,7 +105,7 @@ public class AnnotationLogQueryUtil {
     public static ResultSet getPendingUpdates() throws SQLException, IOException{
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE
+                "SELECT * FROM " + VariantPendingUpdateTable.TABLENAME
                 + " WHERE status=" + statusToInt(Status.PENDING)
                 + " ORDER BY action, update_id");//always do updates before adds
         
@@ -114,7 +115,7 @@ public class AnnotationLogQueryUtil {
     public static void setAnnotationLogStatus(int updateId, Status status) throws SQLException {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
-                "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                "UPDATE " + VariantPendingUpdateTable.TABLENAME + 
                 " SET status=" + statusToInt(status) + 
                 " WHERE update_id=" + updateId);
     }
@@ -122,7 +123,7 @@ public class AnnotationLogQueryUtil {
     public static void setAnnotationLogStatus(int updateId, Status status, Timestamp sqlDate) throws SQLException {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
-                "UPDATE " + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + 
+                "UPDATE " + VariantPendingUpdateTable.TABLENAME + 
                 " SET status=" + statusToInt(status) + ", `timestamp`=\"" + sqlDate + "\"" +  
                 " WHERE update_id=" + updateId);
     }

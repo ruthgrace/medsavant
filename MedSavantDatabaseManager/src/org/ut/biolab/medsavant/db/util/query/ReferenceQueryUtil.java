@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.ut.biolab.medsavant.db.table.AnnotationTable;
+import org.ut.biolab.medsavant.db.table.ReferenceTable;
+import org.ut.biolab.medsavant.db.table.VariantTableInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -22,7 +25,7 @@ public class ReferenceQueryUtil {
         
         Connection conn = ConnectionController.connect();
         
-        ResultSet rs = conn.createStatement().executeQuery("SELECT name FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE);
+        ResultSet rs = conn.createStatement().executeQuery("SELECT name FROM " + ReferenceTable.TABLENAME);
         
         List<String> results = new ArrayList<String>();
         
@@ -36,7 +39,7 @@ public class ReferenceQueryUtil {
     public static int getReferenceId(String refName) throws SQLException {
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT reference_id FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + refName + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT reference_id FROM `" + ReferenceTable.TABLENAME + "` WHERE name=\"" + refName + "\"");
         
         if (rs1.next()) {
             return rs1.getInt(1);
@@ -48,7 +51,7 @@ public class ReferenceQueryUtil {
      public static boolean containsReference(String name) throws SQLException {
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE name=\"" + name + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + ReferenceTable.TABLENAME + "` WHERE name=\"" + name + "\"");
         
         return rs1.next();
     }
@@ -56,7 +59,7 @@ public class ReferenceQueryUtil {
      
      public static int addReference(String name) throws SQLException {
 
-        String q = "INSERT INTO " + DBSettings.TABLENAME_REFERENCE + " VALUES (null,'" + name + "')";
+        String q = "INSERT INTO " + ReferenceTable.TABLENAME + " VALUES (null,'" + name + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
                 Statement.RETURN_GENERATED_KEYS);
 
@@ -73,12 +76,12 @@ public class ReferenceQueryUtil {
          
          Connection c = ConnectionController.connect();
          
-         ResultSet rs = c.createStatement().executeQuery("SELECT * FROM " + DBSettings.TABLENAME_ANNOTATION + " WHERE reference_id=" + refid);
+         ResultSet rs = c.createStatement().executeQuery("SELECT * FROM " + AnnotationTable.TABLENAME + " WHERE reference_id=" + refid);
          if (rs.next()) { return false; }
-         rs = c.createStatement().executeQuery("SELECT * FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO + " WHERE reference_id=" + refid);
+         rs = c.createStatement().executeQuery("SELECT * FROM " + VariantTableInfoTable.TABLENAME + " WHERE reference_id=" + refid);
          if (rs.next()) { return false; }
          
-         c.createStatement().execute("DELETE FROM `" + DBSettings.TABLENAME_REFERENCE + "` WHERE reference_id=" + refid);
+         c.createStatement().execute("DELETE FROM `" + ReferenceTable.TABLENAME + "` WHERE reference_id=" + refid);
          
          return true;
     }  
@@ -86,10 +89,10 @@ public class ReferenceQueryUtil {
     public static List<String> getReferencesForProject(int projectid) throws SQLException {
         
         ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
-                        "SELECT reference.name FROM " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO
-                        + " LEFT JOIN " + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + " ON "
-                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_VARIANTTABLEINFO + ".reference_id = "
-                        + org.ut.biolab.medsavant.db.util.DBSettings.TABLENAME_REFERENCE + ".reference_id "
+                        "SELECT reference.name FROM " + VariantTableInfoTable.TABLENAME
+                        + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
+                        + VariantTableInfoTable.TABLENAME + ".reference_id = "
+                        + ReferenceTable.TABLENAME + ".reference_id "
                         + "WHERE project_id=" + projectid + ";");
         
         List<String> references = new ArrayList<String>();
@@ -105,9 +108,9 @@ public class ReferenceQueryUtil {
         
         Connection c = org.ut.biolab.medsavant.db.util.ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT * FROM " + DBSettings.TABLENAME_REFERENCE
+                "SELECT * FROM " + ReferenceTable.TABLENAME
                 + " WHERE reference_id NOT IN "
-                + "(SELECT reference_id FROM " + DBSettings.TABLENAME_VARIANTTABLEINFO
+                + "(SELECT reference_id FROM " + VariantTableInfoTable.TABLENAME
                 + " WHERE project_id=" + projectid + ")");
         
         HashMap<Integer,String> result = new HashMap<Integer,String>();

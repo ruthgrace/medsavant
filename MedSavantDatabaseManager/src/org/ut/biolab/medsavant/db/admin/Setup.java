@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.ut.biolab.medsavant.db.table.*;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -20,38 +21,38 @@ public class Setup {
     private static void dropTables() throws SQLException {
 
 
-        if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_USER)) {
-            List<String> userNames = getValuesFromField(DBSettings.TABLENAME_USER, "name");
+        if (DBUtil.tableExists(DBSettings.DBNAME, UserTable.TABLENAME)) {
+            List<String> userNames = getValuesFromField(UserTable.TABLENAME, "name");
             for (String s : userNames) {
                 UserQueryUtil.removeUser(s);
             }
         }
 
-        if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_PATIENTTABLEINFO)) {
-            List<String> patientTables = getValuesFromField(DBSettings.TABLENAME_PATIENTTABLEINFO, "patient_tablename");
+        if (DBUtil.tableExists(DBSettings.DBNAME, PatientTableInfoTable.TABLENAME)) {
+            List<String> patientTables = getValuesFromField(PatientTableInfoTable.TABLENAME, "patient_tablename");
             for (String s : patientTables) {
                 DBUtil.dropTable(s);
             }
         }
-        if (DBUtil.tableExists(DBSettings.DBNAME, DBSettings.TABLENAME_VARIANTTABLEINFO)) {
-            List<String> variantTables = getValuesFromField(DBSettings.TABLENAME_VARIANTTABLEINFO, "variant_tablename");
+        if (DBUtil.tableExists(DBSettings.DBNAME, VariantTableInfoTable.TABLENAME)) {
+            List<String> variantTables = getValuesFromField(VariantTableInfoTable.TABLENAME, "variant_tablename");
             for (String s : variantTables) {
                 DBUtil.dropTable(s);
             }
         }
 
-        DBUtil.dropTable(DBSettings.TABLENAME_SERVELOG);
-        DBUtil.dropTable(DBSettings.TABLENAME_USER);
-        DBUtil.dropTable(DBSettings.TABLENAME_ANNOTATION);
-        DBUtil.dropTable(DBSettings.TABLENAME_REFERENCE);
-        DBUtil.dropTable(DBSettings.TABLENAME_PROJECT);
-        DBUtil.dropTable(DBSettings.TABLENAME_PATIENTTABLEINFO);
-        DBUtil.dropTable(DBSettings.TABLENAME_VARIANTTABLEINFO);
-        DBUtil.dropTable(DBSettings.TABLENAME_REGIONSET);
-        DBUtil.dropTable(DBSettings.TABLENAME_REGIONSETMEMBERSHIP);
-        DBUtil.dropTable(DBSettings.TABLENAME_COHORT);
-        DBUtil.dropTable(DBSettings.TABLENAME_COHORTMEMBERSHIP);
-        DBUtil.dropTable(DBSettings.TABLENAME_VARIANTPENDINGUPDATE);
+        DBUtil.dropTable(ServerLogTable.TABLENAME);
+        DBUtil.dropTable(UserTable.TABLENAME);
+        DBUtil.dropTable(AnnotationTable.TABLENAME);
+        DBUtil.dropTable(ReferenceTable.TABLENAME);
+        DBUtil.dropTable(ProjectTable.TABLENAME);
+        DBUtil.dropTable(PatientTableInfoTable.TABLENAME);
+        DBUtil.dropTable(VariantTableInfoTable.TABLENAME);
+        DBUtil.dropTable(RegionSetTable.TABLENAME);
+        DBUtil.dropTable(RegionSetMembershipTable.TABLENAME);
+        DBUtil.dropTable(CohortTable.TABLENAME);
+        DBUtil.dropTable(CohortMembershipTable.TABLENAME);
+        DBUtil.dropTable(VariantPendingUpdateTable.TABLENAME);
     }
 
     private static void createTables() throws SQLException {
@@ -59,7 +60,7 @@ public class Setup {
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_SERVELOG + "` ("
+                "CREATE TABLE `" + ServerLogTable.TABLENAME + "` ("
                   + "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
                   + "`user` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
                   + "`event` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
@@ -69,7 +70,7 @@ public class Setup {
                 );
         
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_USER + "` ("
+                "CREATE TABLE `" + UserTable.TABLENAME + "` ("
                 + "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
                 + "`name` varchar(50) COLLATE latin1_bin NOT NULL DEFAULT '',"
                 + "`is_admin` tinyint(1) NOT NULL DEFAULT '0',"
@@ -78,13 +79,13 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_REGIONSET + "` ("
+                "CREATE TABLE `" + RegionSetTable.TABLENAME + "` ("
                 + "`regionset_id` int(11) NOT NULL AUTO_INCREMENT,"
                 + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
                 + "PRIMARY KEY (`regionset_id`)"
                 + ") ENGINE=MyISAM;");
 
-        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_REGIONSETMEMBERSHIP + "` ("
+        c.createStatement().execute("CREATE TABLE `" + RegionSetMembershipTable.TABLENAME + "` ("
                 + "`regionset_id` int(11) NOT NULL,"
                 + "`genome_id` int(11) NOT NULL,"
                 + "`chrom` varchar(255) COLLATE latin1_bin NOT NULL,"
@@ -93,26 +94,26 @@ public class Setup {
                 + "`description` varchar(255) COLLATE latin1_bin NOT NULL"
                 + ") ENGINE=MyISAM;");
 
-        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_COHORT + "` ("
+        c.createStatement().execute("CREATE TABLE `" + CohortTable.TABLENAME + "` ("
                 + "`cohort_id` int(11) NOT NULL AUTO_INCREMENT,"
                 + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
                 + "PRIMARY KEY (`cohort_id`)"
                 + ") ENGINE=MyISAM;");
 
-        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_COHORTMEMBERSHIP + "` ("
+        c.createStatement().execute("CREATE TABLE `" + CohortMembershipTable.TABLENAME + "` ("
                 + "`cohort_id` int(11) NOT NULL,"
                 + "`hospital_id` varchar(255) CHARACTER SET latin1 NOT NULL"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_REFERENCE + "` ("
+                "CREATE TABLE `" + ReferenceTable.TABLENAME + "` ("
                 + "`reference_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
                 + "`name` varchar(50) COLLATE latin1_bin NOT NULL,"
                 + "PRIMARY KEY (`reference_id`), "
                 + "UNIQUE KEY `name` (`name`)"
                 + ") ENGINE=MyISAM;");
 
-        c.createStatement().execute("CREATE TABLE `" + DBSettings.TABLENAME_ANNOTATION + "` ("
+        c.createStatement().execute("CREATE TABLE `" + AnnotationTable.TABLENAME + "` ("
                 + "`annotation_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
                 + "`program` varchar(100) COLLATE latin1_bin NOT NULL DEFAULT '',"
                 + "`version` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
@@ -124,7 +125,7 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_PROJECT + "` "
+                "CREATE TABLE `" + ProjectTable.TABLENAME + "` "
                 + "(`project_id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
                 + "`name` varchar(50) NOT NULL, "
                 + "PRIMARY KEY (`project_id`), "
@@ -132,14 +133,14 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_PATIENTTABLEINFO + "` ("
+                "CREATE TABLE `" + PatientTableInfoTable.TABLENAME + "` ("
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`patient_tablename` varchar(100) COLLATE latin1_bin NOT NULL,"
                 + "UNIQUE KEY `patient_tablename` (`patient_tablename`,`project_id`)"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
-                "CREATE TABLE `" + DBSettings.TABLENAME_VARIANTTABLEINFO + "` ("
+                "CREATE TABLE `" + VariantTableInfoTable.TABLENAME + "` ("
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`variant_tablename` varchar(100) COLLATE latin1_bin NOT NULL,"
@@ -148,7 +149,7 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
         
         c.createStatement().execute(
-                "CREATE TABLE  `" + DBSettings.TABLENAME_VARIANTPENDINGUPDATE + "` ("
+                "CREATE TABLE  `" + VariantPendingUpdateTable.TABLENAME + "` ("
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`action` int(11) unsigned NOT NULL,"
@@ -158,7 +159,7 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
         
         c.createStatement().execute(
-                "CREATE TABLE  `" + DBSettings.TABLENAME_ANNOTATIONTABLEMAP + "` ("
+                "CREATE TABLE  `" + AnnotationTableMapTable.TABLENAME + "` ("
                 + "`annotation_id` int(10) unsigned NOT NULL,"
                 + "`format_tablename` varchar(45) COLLATE latin1_bin NOT NULL,"
                 + "PRIMARY KEY (`annotation_id`) USING BTREE"
