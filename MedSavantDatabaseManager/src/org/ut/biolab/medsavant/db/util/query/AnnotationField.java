@@ -11,6 +11,7 @@ package org.ut.biolab.medsavant.db.util.query;
 public class AnnotationField {
     
     public static enum FieldType {VARCHAR, FLOAT, INT, BOOLEAN, DECIMAL}
+    public static enum Category {PATIENT, GENOTYPE, PHENOTYPE, ONTOLOGY, PATHWAYS}
     
     private String columnName;
     private String columnType;
@@ -18,13 +19,19 @@ public class AnnotationField {
     private String alias;
     private String description;
     private FieldType fieldType;
+    private Category category;
 
     public AnnotationField(String name, String type, boolean filterable, String alias, String description){
+        this(name, type, filterable, alias, description, Category.PHENOTYPE);
+    }
+    
+    public AnnotationField(String name, String type, boolean filterable, String alias, String description, Category category){
         this.columnName = name;
         this.columnType = type;
         this.filterable = filterable;
         this.alias = alias;
         this.description = description;
+        this.category = category;
         setFieldType(columnType);
     }
 
@@ -46,6 +53,10 @@ public class AnnotationField {
 
     public boolean isFilterable() {
         return filterable;
+    }
+    
+    public Category getCategory() {
+        return category;
     }
     
     private void setFieldType(String type){
