@@ -130,7 +130,7 @@ public class DBSettings {
     }
     
     public static String getAnnotationFormatTableName(int annotationId){
-        return "annotation_format" + annotationId;
+        return "z_annotation_format" + annotationId;
     }
 
 }
