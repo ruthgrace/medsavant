@@ -20,6 +20,7 @@ public class DBSettings {
     public static String TABLENAME_COHORTMEMBERSHIP = "cohort_membership";
     public static String TABLENAME_VARIANTPENDINGUPDATE = "variant_pending_update";
     public static String TABLENAME_SERVELOG = "server_log";
+    public static String TABLENAME_ANNOTATIONTABLEMAP = "annotation_tablemap";
 
     
     
@@ -119,17 +120,20 @@ public class DBSettings {
     public static String FIELDNAME_VARIANT_VALIDATED = "validated";
     public static String FIELDNAME_VARIANT_CUSTOMINFO = "custom_info";
     
+    public static String FIELDNAME_ANNOTATION_TABLEMAP_ID = "annotation_id";
+    public static String FIELDNAME_ANNOTATION_TABLEMAP_TABLENAME = "format_tablename";
     
     
-    public static String getVariantTableName(int projectId, int referenceId){
+    
+    public static String createVariantTableName(int projectId, int referenceId){
         return "z_variant_proj" + projectId + "_ref" + referenceId;
     }
     
-    public static String getVariantStagingTableName(int projectId, int referenceId, int updateId){
+    public static String createVariantStagingTableName(int projectId, int referenceId, int updateId){
         return "z_variant_staging_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
     }
     
-    public static String getAnnotationFormatTableName(int annotationId){
+    public static String createAnnotationFormatTableName(int annotationId){
         return "z_annotation_format" + annotationId;
     }
 

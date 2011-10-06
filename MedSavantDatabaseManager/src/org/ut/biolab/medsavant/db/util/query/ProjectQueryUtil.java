@@ -90,7 +90,7 @@ public class ProjectQueryUtil {
 
     public static String createVariantTable(int projectid, int referenceid, int updateid, int[] annotationIds, boolean isStaging, boolean addToTableMap) throws SQLException {
         
-        String variantTableInfoName = isStaging ? DBSettings.getVariantStagingTableName(projectid, referenceid, updateid) : DBSettings.getVariantTableName(projectid, referenceid);
+        String variantTableInfoName = isStaging ? DBSettings.createVariantStagingTableName(projectid, referenceid, updateid) : DBSettings.createVariantTableName(projectid, referenceid);
 
         Connection c = (ConnectionController.connect(DBSettings.DBNAME));
    
@@ -162,7 +162,7 @@ public class ProjectQueryUtil {
         return DBUtil.getNumRecordsInTable(variantTableName);
     }
 
-    private static String getVariantTable(int projectid, int refid) throws SQLException {
+    public static String getVariantTable(int projectid, int refid) throws SQLException {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(

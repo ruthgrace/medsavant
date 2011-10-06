@@ -30,12 +30,12 @@ public class VariantQueryUtil {
     public static Vector getVariants(int projectId, int referenceId, int limit) throws SQLException {       
         return getVariants(projectId, referenceId, new ArrayList(), limit);
     }
-    
+   
     public static Vector getVariants(int projectId, int referenceId, List<List> conditions, int limit) throws SQLException {            
         
         String query = 
                 "SELECT *" + 
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0";  
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0";  
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
@@ -145,7 +145,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0 ";  
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0 ";  
         if(!conditions.isEmpty()){
             query += "WHERE ";
         }
@@ -162,7 +162,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" +
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" +
                 " WHERE `" + column + "`>=" + min + " AND `" + column + "`<" + max;
         if(!conditions.isEmpty()){
             query += " AND ";
@@ -180,7 +180,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT `" + column + "`, COUNT(*)" + 
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0";
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0";
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
@@ -203,7 +203,7 @@ public class VariantQueryUtil {
         
         String query = 
                 "SELECT COUNT(*)" + 
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" + 
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" + 
                 " WHERE `chrom`=\"" + chrom + "\" AND `position`>=" + start + " AND `position`<" + end;
         if(!conditions.isEmpty()){
             query += " AND ";
@@ -221,7 +221,7 @@ public class VariantQueryUtil {
         
         String queryBase = 
                 "SELECT `position`" +
-                " FROM " + DBSettings.getVariantTableName(projectId, referenceId) + " t0" + 
+                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" + 
                 " WHERE `chrom`=\"" + chrom + "\"";
         if(!conditions.isEmpty()){
             queryBase += " AND ";

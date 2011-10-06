@@ -38,7 +38,7 @@ public class ImportVariants {
         } catch (SQLException ex) {
             //table already exists?
         }
-        String tableName = DBSettings.getVariantStagingTableName(projectId, referenceId, updateId);
+        String tableName = DBSettings.createVariantStagingTableName(projectId, referenceId, updateId);
         
         //add files to staging table
         for(int i = 0; i < vcfFiles.length; i++){

@@ -128,7 +128,7 @@ public class AnnotationQueryUtil {
         
         ResultSet rs2 = conn.createStatement().executeQuery(
                 "SELECT * " + 
-                "FROM " + DBSettings.getAnnotationFormatTableName(annotationId) + " " +
+                "FROM " + getAnnotationFormatTableName(annotationId) + " " +
                 "ORDER BY `position`");
         
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
@@ -162,6 +162,15 @@ public class AnnotationQueryUtil {
         int annotid = res.getInt(1);
 
         return annotid;
+    }
+    
+    public static String getAnnotationFormatTableName(int annotationId) throws SQLException {
+        Connection c = ConnectionController.connect();
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT format_tablename FROM `" + DBSettings.TABLENAME_ANNOTATIONTABLEMAP + "` "
+                + "WHERE annotation_id=" + annotationId);
+        rs.next();
+        return rs.getString(1);
     }
     
 }
