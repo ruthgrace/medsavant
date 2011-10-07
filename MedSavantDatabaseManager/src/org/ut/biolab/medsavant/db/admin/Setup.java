@@ -95,14 +95,15 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute("CREATE TABLE `" + CohortTable.TABLENAME + "` ("
-                + "`cohort_id` int(11) NOT NULL AUTO_INCREMENT,"
+                + "`cohort_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
+                + "`project_id` int(11) unsigned NOT NULL"
                 + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
-                + "PRIMARY KEY (`cohort_id`)"
+                + "PRIMARY KEY (`cohort_id`,`project_id`) USING BTREE"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute("CREATE TABLE `" + CohortMembershipTable.TABLENAME + "` ("
-                + "`cohort_id` int(11) NOT NULL,"
-                + "`hospital_id` varchar(255) CHARACTER SET latin1 NOT NULL"
+                + "`cohort_id` int(11) unsigned NOT NULL,"
+                + "`patient_id` int(11) unsigned NOT NULL"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
@@ -165,7 +166,7 @@ public class Setup {
                 + "`format_tablename` varchar(45) COLLATE latin1_bin NOT NULL,"
                 + "PRIMARY KEY (`annotation_id`) USING BTREE"
                 + ") ENGINE=MyISAM;");
-
+        
     }
 
     public static void main(String[] argv) throws SQLException {

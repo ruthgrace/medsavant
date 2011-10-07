@@ -238,6 +238,13 @@ public class ProjectQueryUtil {
         
         //remove from variant tablemap
         c.createStatement().execute("DELETE FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
+
+        //remove cohort entries
+        List<Integer> cohortIds = CohortQueryUtil.getCohortIds(projectid);
+        for(Integer cohortId : cohortIds){
+            CohortQueryUtil.removeCohort(cohortId);
+        }
+        
     }
     
     

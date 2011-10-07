@@ -27,5 +27,5 @@ public class DBSettings {
     public static String createPatientFormatTableName(int projectId){
         return "z_patient_format" + projectId;
     }
-
+    
 }

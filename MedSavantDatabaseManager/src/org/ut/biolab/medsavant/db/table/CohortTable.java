@@ -13,5 +13,6 @@ public class CohortTable {
     public static String TABLENAME = "cohort";
     
     public static String FIELDNAME_ID = "cohort_id";
+    public static String FIELDNAME_PROJECTID = "project_id";
     public static String FIELDNAME_NAME = "name";
 }

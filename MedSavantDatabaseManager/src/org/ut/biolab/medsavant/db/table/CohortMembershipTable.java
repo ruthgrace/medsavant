@@ -13,5 +13,5 @@ public class CohortMembershipTable {
     public static String TABLENAME = "cohort_membership";
     
     public static String FIELDNAME_COHORTID = "cohort_id";
-    public static String FIELDNAME_HOSPITALID = "hospital_id";
+    public static String FIELDNAME_PATIENTID = "patient_id";
 }
