@@ -1,5 +1,6 @@
 package org.ut.biolab.medsavant.db.util.query;
 
+import org.ut.biolab.medsavant.db.format.AnnotationField;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,15 +10,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.table.AnnotationTable;
-import org.ut.biolab.medsavant.db.table.AnnotationTableMapTable;
+import org.ut.biolab.medsavant.db.table.AnnotationMapTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantTableInfoTable;
+import org.ut.biolab.medsavant.db.table.VariantInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
-import org.ut.biolab.medsavant.db.util.query.AnnotationFormat.AnnotationType;
+import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
 import org.xml.sax.SAXException;
 
 /**
@@ -82,7 +84,7 @@ public class AnnotationQueryUtil {
         Connection conn = ConnectionController.connect();
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT annotation_ids FROM " + VariantTableInfoTable.TABLENAME + 
+                "SELECT annotation_ids FROM " + VariantInfoTable.TABLENAME + 
                 " WHERE project_id=" + projectId + " AND reference_id=" + referenceId);
 
         rs.next();
@@ -171,7 +173,7 @@ public class AnnotationQueryUtil {
     public static String getAnnotationFormatTableName(int annotationId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT format_tablename FROM `" + AnnotationTableMapTable.TABLENAME + "` "
+                "SELECT format_tablename FROM `" + AnnotationMapTable.TABLENAME + "` "
                 + "WHERE annotation_id=" + annotationId);
         rs.next();
         return rs.getString(1);

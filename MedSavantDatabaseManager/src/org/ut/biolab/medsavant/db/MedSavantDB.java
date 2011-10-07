@@ -25,7 +25,7 @@ public class MedSavantDB {
         
         //Manage manage = new Manage();
         
-        UserQueryUtil.addUser("mfiume","", true);
+        /*UserQueryUtil.addUser("mfiume","", true);
         UserQueryUtil.addUser("abrook","", true);
         UserQueryUtil.addUser("misko","", false);
         int refid = ReferenceQueryUtil.addReference("hg19");
@@ -44,6 +44,6 @@ public class MedSavantDB {
         
         ProjectQueryUtil.setAnnotations(projectid,refid,"1,2");
         
-        ProjectQueryUtil.addProject("FORGE");
+        ProjectQueryUtil.addProject("FORGE");*/
     }
 }

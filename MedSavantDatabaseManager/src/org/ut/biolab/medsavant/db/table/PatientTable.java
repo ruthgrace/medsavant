@@ -11,6 +11,12 @@ package org.ut.biolab.medsavant.db.table;
 public class PatientTable {
     
     public static String FIELDNAME_ID = "patient_id";
-    public static String FIELDNAME_FIRSTNAME = "first_name";
-    public static String FIELDNAME_LASTNAME = "last_name";   
+    public static String FIELDNAME_FAMILYID = "family_id";
+    public static String FIELDNAME_PEDIGREEID = "pedigree_id";  
+    public static String FIELDNAME_HOSPITALID = "hospital_id";
+    
+    public static String ALIAS_ID = "Patient ID";
+    public static String ALIAS_FAMILYID = "Family ID";
+    public static String ALIAS_PEDIGREEID = "Pedigree ID";
+    public static String ALIAS_HOSPITALID = "Hospital ID";
 }

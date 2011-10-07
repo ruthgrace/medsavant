@@ -8,7 +8,7 @@ package org.ut.biolab.medsavant.db.table;
  *
  * @author Andrew
  */
-public class AnnotationTableMapTable {
+public class AnnotationMapTable {
     
     public static String TABLENAME = "annotation_tablemap";
     

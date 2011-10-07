@@ -1,5 +1,9 @@
 package org.ut.biolab.medsavant.db.util.query;
 
+import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,23 +11,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.ut.biolab.medsavant.db.table.PatientTableInfoTable;
+import org.ut.biolab.medsavant.db.table.PatientInfoTable;
 import org.ut.biolab.medsavant.db.table.ProjectTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantTableInfoTable;
+import org.ut.biolab.medsavant.db.table.VariantInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author mfiume
  */
 public class ProjectQueryUtil {
-    
-    private static final String PATIENT_TABLE_PREFIX = "z_patient";
     
     public static List<String> getProjectNames() throws SQLException {
         
@@ -66,14 +69,14 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT variant_tablename FROM `" + VariantTableInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT variant_tablename FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
         
         while (rs1.next()) {
             String tableName = rs1.getString(1);
             DBUtil.dropTable(tableName);
         }
         
-        c.createStatement().execute("DELETE FROM `" + VariantTableInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        c.createStatement().execute("DELETE FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
     }
 
     public static String getProjectName(int projectid) throws SQLException {
@@ -142,7 +145,7 @@ public class ProjectQueryUtil {
         c.createStatement().execute(query);
 
         if(!isStaging && addToTableMap){
-            String q = "INSERT INTO " + VariantTableInfoTable.TABLENAME + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
+            String q = "INSERT INTO " + VariantInfoTable.TABLENAME + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
             c.createStatement().execute(q);
         }
 
@@ -170,14 +173,14 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT variant_tablename FROM `" + VariantTableInfoTable.TABLENAME + "` "
+                "SELECT variant_tablename FROM `" + VariantInfoTable.TABLENAME + "` "
                 + "WHERE project_id=" + projectid + " AND reference_id=" + refid);
         rs.next();
         return rs.getString(1);
     }
     
     
-    public static int addProject(String name) throws SQLException {
+    public static int addProject(String name, File patientFormatFile) throws SQLException, ParserConfigurationException, SAXException, IOException {
 
         String projectQuery = "INSERT INTO " + ProjectTable.TABLENAME + " VALUES (null,'" + name + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(projectQuery,
@@ -189,47 +192,12 @@ public class ProjectQueryUtil {
 
         int projectid = res.getInt(1);
 
-        String patientTableName = createPatientTable(projectid);
-
-        String patientQuery = "INSERT INTO " + PatientTableInfoTable.TABLENAME + " VALUES (" + projectid + ",'" + patientTableName + "')";
-        (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(patientQuery);
+        PatientQueryUtil.createPatientTable(projectid, patientFormatFile);
 
         return projectid;
     }
 
-    
-    private static String createPatientTable(int projectid) throws SQLException {
-
-        String patientTableName = PATIENT_TABLE_PREFIX + "_proj" + projectid;
-
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
-
-        c.createStatement().execute(
-                "CREATE TABLE `" + patientTableName + "` ("
-                + "`patient_id` int(11) unsigned NOT NULL,"
-                + "`first_name` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
-                + "`last_name` varchar(50) COLLATE latin1_bin DEFAULT NULL,"
-                + "PRIMARY KEY (`patient_id`)"
-                + ") ENGINE=MyISAM;");
-
-        return patientTableName;
-    }
-    /*
-     public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
-        //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
-        //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
-        
-        
-        String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
-                + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
-        
-        (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
-        
-        LogQueryUtil.addLogEntry(projectid, refid, Action.UPDATE_TABLE);
-    }
-    */
-
-      public static void removeProject(String projectName) throws SQLException {
+    public static void removeProject(String projectName) throws SQLException {
         
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         ResultSet rs = c.createStatement().executeQuery("SELECT project_id FROM `" + ProjectTable.TABLENAME + "` WHERE name=\"" + projectName + "\"");
@@ -245,27 +213,31 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         
-        c.createStatement().execute("DELETE FROM `" + ProjectTable.TABLENAME + "` WHERE project_id=" + projectid);
+        //remove from project table
+        c.createStatement().execute("DELETE FROM `" + ProjectTable.TABLENAME + "` WHERE project_id=" + projectid);    
         
+        //remove patient table and patient format table
         ResultSet rs1 = c.createStatement().executeQuery(
-        "SELECT patient_tablename FROM " + PatientTableInfoTable.TABLENAME + " WHERE project_id=" + projectid);
-    
+            "SELECT patient_tablename, format_tablename FROM " + PatientInfoTable.TABLENAME + " WHERE project_id=" + projectid);    
         rs1.next();
-        String patientTableName = rs1.getString(1);
-        
+        String patientTableName = rs1.getString("patient_tablename");
+        String patientFormatTableName = rs1.getString("format_tablename");
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientTableName);
+        c.createStatement().execute("DROP TABLE IF EXISTS " + patientFormatTableName);
         
-        c.createStatement().execute("DELETE FROM `" + PatientTableInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
+        //remove from patient tablemap
+        c.createStatement().execute("DELETE FROM `" + PatientInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
         
+        //remove variant tables
         ResultSet rs2 = c.createStatement().executeQuery(
-        "SELECT variant_tablename FROM " + VariantTableInfoTable.TABLENAME + " WHERE project_id=" + projectid);
-    
+            "SELECT variant_tablename FROM " + VariantInfoTable.TABLENAME + " WHERE project_id=" + projectid);   
         while(rs2.next()) {
             String variantTableName = rs2.getString(1);
             c.createStatement().execute("DROP TABLE IF EXISTS " + variantTableName);
         }
         
-        c.createStatement().execute("DELETE FROM `" + VariantTableInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
+        //remove from variant tablemap
+        c.createStatement().execute("DELETE FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
     }
     
     
@@ -273,7 +245,7 @@ public class ProjectQueryUtil {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
         
-        String q = "UPDATE " + VariantTableInfoTable.TABLENAME + " SET annotation_ids=\"" + annotation_ids + "\" "
+        String q = "UPDATE " + VariantInfoTable.TABLENAME + " SET annotation_ids=\"" + annotation_ids + "\" "
                 + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
         
         (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
@@ -284,9 +256,9 @@ public class ProjectQueryUtil {
     public static List<ProjectDetails> getProjectDetails(int projectId) throws SQLException {
         
         ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
-                        "SELECT * FROM " + VariantTableInfoTable.TABLENAME
+                        "SELECT * FROM " + VariantInfoTable.TABLENAME
                         + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
-                        + VariantTableInfoTable.TABLENAME + ".reference_id = "
+                        + VariantInfoTable.TABLENAME + ".reference_id = "
                         + ReferenceTable.TABLENAME + ".reference_id "
                         + "WHERE project_id=" + projectId + ";");
         

@@ -2,36 +2,29 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ut.biolab.medsavant.db.util.query;
+package org.ut.biolab.medsavant.db.format;
 
 /**
  *
  * @author Andrew
  */
-public class AnnotationField {
+public class CustomField {
     
-    public static enum FieldType {VARCHAR, FLOAT, INT, BOOLEAN, DECIMAL}
-    public static enum Category {PATIENT, GENOTYPE, PHENOTYPE, ONTOLOGY, PATHWAYS}
-    
+    public static enum FieldType {VARCHAR, FLOAT, INT, BOOLEAN, DECIMAL, DATE, TIMESTAMP}
+
     private String columnName;
     private String columnType;
     private boolean filterable;
     private String alias;
     private String description;
-    private FieldType fieldType;
-    private Category category;
-
-    public AnnotationField(String name, String type, boolean filterable, String alias, String description){
-        this(name, type, filterable, alias, description, Category.PHENOTYPE);
-    }
+    private FieldType fieldType;   
     
-    public AnnotationField(String name, String type, boolean filterable, String alias, String description, Category category){
+    public CustomField(String name, String type, boolean filterable, String alias, String description){
         this.columnName = name;
         this.columnType = type;
         this.filterable = filterable;
         this.alias = alias;
         this.description = description;
-        this.category = category;
         setFieldType(columnType);
     }
 
@@ -55,10 +48,6 @@ public class AnnotationField {
         return filterable;
     }
     
-    public Category getCategory() {
-        return category;
-    }
-    
     private void setFieldType(String type){
         String typeLower = type.toLowerCase();
         if (typeLower.contains("float")){
@@ -73,6 +62,10 @@ public class AnnotationField {
             }
         } else if (typeLower.contains("boolean")){
             fieldType = FieldType.BOOLEAN;
+        } else if (typeLower.contains("date")){
+            fieldType = FieldType.DATE;
+        } else if (typeLower.contains("timestamp")){
+            fieldType = FieldType.TIMESTAMP;
         } else {
             fieldType = FieldType.VARCHAR;
         }
@@ -82,5 +75,12 @@ public class AnnotationField {
         return fieldType;
     }
     
+    public String generateSchema(){
+        return "`" + columnName + "` " + columnType + " DEFAULT NULL,";
+    }
     
+    @Override
+    public String toString(){
+        return alias;
+    }
 }

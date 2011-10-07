@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import org.ut.biolab.medsavant.db.table.AnnotationTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantTableInfoTable;
+import org.ut.biolab.medsavant.db.table.VariantInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -78,7 +78,7 @@ public class ReferenceQueryUtil {
          
          ResultSet rs = c.createStatement().executeQuery("SELECT * FROM " + AnnotationTable.TABLENAME + " WHERE reference_id=" + refid);
          if (rs.next()) { return false; }
-         rs = c.createStatement().executeQuery("SELECT * FROM " + VariantTableInfoTable.TABLENAME + " WHERE reference_id=" + refid);
+         rs = c.createStatement().executeQuery("SELECT * FROM " + VariantInfoTable.TABLENAME + " WHERE reference_id=" + refid);
          if (rs.next()) { return false; }
          
          c.createStatement().execute("DELETE FROM `" + ReferenceTable.TABLENAME + "` WHERE reference_id=" + refid);
@@ -89,9 +89,9 @@ public class ReferenceQueryUtil {
     public static List<String> getReferencesForProject(int projectid) throws SQLException {
         
         ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
-                        "SELECT reference.name FROM " + VariantTableInfoTable.TABLENAME
+                        "SELECT reference.name FROM " + VariantInfoTable.TABLENAME
                         + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
-                        + VariantTableInfoTable.TABLENAME + ".reference_id = "
+                        + VariantInfoTable.TABLENAME + ".reference_id = "
                         + ReferenceTable.TABLENAME + ".reference_id "
                         + "WHERE project_id=" + projectid + ";");
         
@@ -110,7 +110,7 @@ public class ReferenceQueryUtil {
         ResultSet rs = c.createStatement().executeQuery(
                 "SELECT * FROM " + ReferenceTable.TABLENAME
                 + " WHERE reference_id NOT IN "
-                + "(SELECT reference_id FROM " + VariantTableInfoTable.TABLENAME
+                + "(SELECT reference_id FROM " + VariantInfoTable.TABLENAME
                 + " WHERE project_id=" + projectid + ")");
         
         HashMap<Integer,String> result = new HashMap<Integer,String>();

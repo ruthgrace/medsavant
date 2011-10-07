@@ -19,5 +19,13 @@ public class DBSettings {
     public static String createAnnotationFormatTableName(int annotationId){
         return "z_annotation_format" + annotationId;
     }
+    
+    public static String createPatientTableName(int projectId){
+        return "z_patient_proj" + projectId;
+    }
+    
+    public static String createPatientFormatTableName(int projectId){
+        return "z_patient_format" + projectId;
+    }
 
 }
