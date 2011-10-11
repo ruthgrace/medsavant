@@ -1,10 +1,11 @@
-package org.ut.biolab.medsavant.db.util.query;
+package org.ut.biolab.medsavant.db.util;
 
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.broad.tabix.TabixReader;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 import org.xml.sax.SAXException;
 
 /**

@@ -1,5 +1,6 @@
 package org.ut.biolab.medsavant.db.util.query;
 
+import org.ut.biolab.medsavant.db.util.Annotation;
 import org.ut.biolab.medsavant.db.format.AnnotationField;
 import java.io.IOException;
 import java.sql.Connection;
