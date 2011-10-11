@@ -14,9 +14,13 @@ public class PatientTable {
     public static String FIELDNAME_FAMILYID = "family_id";
     public static String FIELDNAME_PEDIGREEID = "pedigree_id";  
     public static String FIELDNAME_HOSPITALID = "hospital_id";
+    public static String FIELDNAME_DNAIDS = "dna_ids";
+    public static String FIELDNAME_ACTIVEDNAID = "active_dna_id";
     
     public static String ALIAS_ID = "Patient ID";
     public static String ALIAS_FAMILYID = "Family ID";
     public static String ALIAS_PEDIGREEID = "Pedigree ID";
     public static String ALIAS_HOSPITALID = "Hospital ID";
+    public static String ALIAS_DNAIDS = "DNA IDs";
+    public static String ALIAS_ACTIVEDNAID = "Active DNA ID";
 }

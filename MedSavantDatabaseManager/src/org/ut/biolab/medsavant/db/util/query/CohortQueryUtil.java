@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.table.CohortMembershipTable;
 import org.ut.biolab.medsavant.db.table.CohortTable;
+import org.ut.biolab.medsavant.db.table.PatientInfoTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -31,6 +32,28 @@ public class CohortQueryUtil {
         List<Integer> result = new ArrayList<Integer>();
         while(rs.next()){
             result.add(rs.getInt(1));
+        }
+        return result;
+    }
+    
+    public static List<String> getDNAIdsInCohort(int cohortId) throws SQLException {
+
+        Connection c = ConnectionController.connect();
+        
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT patient_tablename"
+                + " FROM " + PatientInfoTable.TABLENAME + " t0, " + CohortTable.TABLENAME + " t1"
+                + " WHERE t1.cohort_id=" + cohortId + " AND t1.project_id=t0.project_id");
+        rs.next();
+        String patientTablename = rs.getString(1);
+        
+        rs = c.createStatement().executeQuery(
+                "SELECT active_dna_id"
+                + " FROM " + CohortMembershipTable.TABLENAME + " t0, " + patientTablename + " t1"
+                + " WHERE t0.cohort_id=" + cohortId + " AND t0.patient_id=t1.patient_id");
+        List<String> result = new ArrayList<String>();
+        while(rs.next()){
+            result.add(rs.getString(1));
         }
         return result;
     }

@@ -106,7 +106,7 @@ public class ProjectQueryUtil {
                 + "`upload_id` int(11) NOT NULL,"
                 + "`file_id` int(11) NOT NULL,"
                 + "`variant_id` int(11) NOT NULL,"
-                + "`dna_id` varchar(10) COLLATE latin1_bin NOT NULL,"
+                + "`dna_id` varchar(100) COLLATE latin1_bin NOT NULL,"
                 + "`chrom` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
                 + "`position` int(11) NOT NULL,"
                 + "`dbsnp_id` varchar(45) COLLATE latin1_bin DEFAULT NULL,"
