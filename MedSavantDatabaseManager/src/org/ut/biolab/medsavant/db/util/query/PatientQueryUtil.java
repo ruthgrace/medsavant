@@ -183,7 +183,7 @@ public class PatientQueryUtil {
         c.createStatement().execute(query);
  
         //create format table
-        String formatTableName = DBSettings.createAnnotationFormatTableName(projectid);
+        String formatTableName = DBSettings.createPatientFormatTableName(projectid);
         query = 
                 "CREATE TABLE " + formatTableName + " (" +
                 "`position` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
