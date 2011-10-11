@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.table.PatientTable;
-import org.ut.biolab.medsavant.db.table.PatientInfoTable;
+import org.ut.biolab.medsavant.db.table.PatientMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -131,8 +131,8 @@ public class PatientQueryUtil {
     public static String getPatientTablename(int projectId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientInfoTable.FIELDNAME_PATIENTTABLENAME + " FROM `" + PatientInfoTable.TABLENAME + "` "
-                + "WHERE " + PatientInfoTable.FIELDNAME_PROJECTID + "=" + projectId);
+                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME + " FROM `" + PatientMapTable.TABLENAME + "` "
+                + "WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectId);
         rs.next();
         return rs.getString(1);
     }
@@ -211,7 +211,7 @@ public class PatientQueryUtil {
         
         //add to tablemap
         c.createStatement().execute(
-                "INSERT INTO " + PatientInfoTable.TABLENAME + 
+                "INSERT INTO " + PatientMapTable.TABLENAME + 
                 " (project_id, patient_tablename, format_tablename)" + 
                 " VALUES (" + projectid + ",'" + patientTableName + "','" + formatTableName + "')");
         
@@ -220,7 +220,7 @@ public class PatientQueryUtil {
     public static String getPatientFormatTableName(int projectId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT format_tablename FROM `" + PatientInfoTable.TABLENAME + "` "
+                "SELECT format_tablename FROM `" + PatientMapTable.TABLENAME + "` "
                 + "WHERE project_id=" + projectId);
         rs.next();
         return rs.getString(1);

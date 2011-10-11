@@ -16,7 +16,7 @@ import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.table.AnnotationTable;
 import org.ut.biolab.medsavant.db.table.AnnotationMapTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantInfoTable;
+import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -85,7 +85,7 @@ public class AnnotationQueryUtil {
         Connection conn = ConnectionController.connect();
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT annotation_ids FROM " + VariantInfoTable.TABLENAME + 
+                "SELECT annotation_ids FROM " + VariantMapTable.TABLENAME + 
                 " WHERE project_id=" + projectId + " AND reference_id=" + referenceId);
 
         rs.next();

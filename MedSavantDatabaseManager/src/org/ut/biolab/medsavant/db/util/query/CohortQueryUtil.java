@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.table.CohortMembershipTable;
 import org.ut.biolab.medsavant.db.table.CohortTable;
-import org.ut.biolab.medsavant.db.table.PatientInfoTable;
+import org.ut.biolab.medsavant.db.table.PatientMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -43,7 +43,7 @@ public class CohortQueryUtil {
         
         ResultSet rs = c.createStatement().executeQuery(
                 "SELECT patient_tablename"
-                + " FROM " + PatientInfoTable.TABLENAME + " t0, " + CohortTable.TABLENAME + " t1"
+                + " FROM " + PatientMapTable.TABLENAME + " t0, " + CohortTable.TABLENAME + " t1"
                 + " WHERE t1.cohort_id=" + cohortId + " AND t1.project_id=t0.project_id");
         rs.next();
         String patientTablename = rs.getString(1);

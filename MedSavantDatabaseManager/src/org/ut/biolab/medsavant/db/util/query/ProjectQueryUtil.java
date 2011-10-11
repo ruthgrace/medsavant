@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.ut.biolab.medsavant.db.table.PatientInfoTable;
+import org.ut.biolab.medsavant.db.table.PatientMapTable;
 import org.ut.biolab.medsavant.db.table.ProjectTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantInfoTable;
+import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -69,14 +69,14 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT variant_tablename FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        ResultSet rs1 = c.createStatement().executeQuery("SELECT variant_tablename FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
         
         while (rs1.next()) {
             String tableName = rs1.getString(1);
             DBUtil.dropTable(tableName);
         }
         
-        c.createStatement().execute("DELETE FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        c.createStatement().execute("DELETE FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
     }
 
     public static String getProjectName(int projectid) throws SQLException {
@@ -145,7 +145,7 @@ public class ProjectQueryUtil {
         c.createStatement().execute(query);
 
         if(!isStaging && addToTableMap){
-            String q = "INSERT INTO " + VariantInfoTable.TABLENAME + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
+            String q = "INSERT INTO " + VariantMapTable.TABLENAME + " VALUES (" + projectid + ",'" + referenceid + "','" + variantTableInfoName + "',null)";
             c.createStatement().execute(q);
         }
 
@@ -173,7 +173,7 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT variant_tablename FROM `" + VariantInfoTable.TABLENAME + "` "
+                "SELECT variant_tablename FROM `" + VariantMapTable.TABLENAME + "` "
                 + "WHERE project_id=" + projectid + " AND reference_id=" + refid);
         rs.next();
         return rs.getString(1);
@@ -218,7 +218,7 @@ public class ProjectQueryUtil {
         
         //remove patient table and patient format table
         ResultSet rs1 = c.createStatement().executeQuery(
-            "SELECT patient_tablename, format_tablename FROM " + PatientInfoTable.TABLENAME + " WHERE project_id=" + projectid);    
+            "SELECT patient_tablename, format_tablename FROM " + PatientMapTable.TABLENAME + " WHERE project_id=" + projectid);    
         rs1.next();
         String patientTableName = rs1.getString("patient_tablename");
         String patientFormatTableName = rs1.getString("format_tablename");
@@ -226,18 +226,18 @@ public class ProjectQueryUtil {
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientFormatTableName);
         
         //remove from patient tablemap
-        c.createStatement().execute("DELETE FROM `" + PatientInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
+        c.createStatement().execute("DELETE FROM `" + PatientMapTable.TABLENAME + "` WHERE project_id=" + projectid);
         
         //remove variant tables
         ResultSet rs2 = c.createStatement().executeQuery(
-            "SELECT variant_tablename FROM " + VariantInfoTable.TABLENAME + " WHERE project_id=" + projectid);   
+            "SELECT variant_tablename FROM " + VariantMapTable.TABLENAME + " WHERE project_id=" + projectid);   
         while(rs2.next()) {
             String variantTableName = rs2.getString(1);
             c.createStatement().execute("DROP TABLE IF EXISTS " + variantTableName);
         }
         
         //remove from variant tablemap
-        c.createStatement().execute("DELETE FROM `" + VariantInfoTable.TABLENAME + "` WHERE project_id=" + projectid);
+        c.createStatement().execute("DELETE FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + projectid);
 
         //remove cohort entries
         List<Integer> cohortIds = CohortQueryUtil.getCohortIds(projectid);
@@ -252,7 +252,7 @@ public class ProjectQueryUtil {
         //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
         //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
         
-        String q = "UPDATE " + VariantInfoTable.TABLENAME + " SET annotation_ids=\"" + annotation_ids + "\" "
+        String q = "UPDATE " + VariantMapTable.TABLENAME + " SET annotation_ids=\"" + annotation_ids + "\" "
                 + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
         
         (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
@@ -263,9 +263,9 @@ public class ProjectQueryUtil {
     public static List<ProjectDetails> getProjectDetails(int projectId) throws SQLException {
         
         ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
-                        "SELECT * FROM " + VariantInfoTable.TABLENAME
+                        "SELECT * FROM " + VariantMapTable.TABLENAME
                         + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
-                        + VariantInfoTable.TABLENAME + ".reference_id = "
+                        + VariantMapTable.TABLENAME + ".reference_id = "
                         + ReferenceTable.TABLENAME + ".reference_id "
                         + "WHERE project_id=" + projectId + ";");
         
