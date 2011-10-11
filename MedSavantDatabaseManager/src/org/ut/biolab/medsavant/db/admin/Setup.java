@@ -113,7 +113,7 @@ public class Setup {
         c.createStatement().execute(
                 "CREATE TABLE `" + CohortTable.TABLENAME + "` ("
                 + "`cohort_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
-                + "`project_id` int(11) unsigned NOT NULL"
+                + "`project_id` int(11) unsigned NOT NULL,"
                 + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
                 + "PRIMARY KEY (`cohort_id`,`project_id`) USING BTREE"
                 + ") ENGINE=MyISAM;");
