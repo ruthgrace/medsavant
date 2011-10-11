@@ -103,7 +103,8 @@ public class Setup {
 
         c.createStatement().execute("CREATE TABLE `" + CohortMembershipTable.TABLENAME + "` ("
                 + "`cohort_id` int(11) unsigned NOT NULL,"
-                + "`patient_id` int(11) unsigned NOT NULL"
+                + "`patient_id` int(11) unsigned NOT NULL,"
+                + "PRIMARY KEY (`patient_id`,`cohort_id`)"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(

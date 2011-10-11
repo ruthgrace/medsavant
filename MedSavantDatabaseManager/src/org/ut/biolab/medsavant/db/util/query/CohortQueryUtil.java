@@ -4,6 +4,7 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,12 +35,38 @@ public class CohortQueryUtil {
         return result;
     }
     
-    public static void addPatientToCohort(int patientId, int cohortId) throws SQLException {
+    public static void addPatientsToCohort(int[] patientIds, int cohortId) throws SQLException {
         
         Connection c = ConnectionController.connect();
-        c.createStatement().executeUpdate(
-                "INSERT INTO " + CohortMembershipTable.TABLENAME
-                + " (cohort_id, patient_id) VALUES (" + cohortId + "," + patientId + ")");
+        c.setAutoCommit(false);
+        
+        for(int id : patientIds){
+            try {
+                c.createStatement().executeUpdate(
+                        "INSERT INTO " + CohortMembershipTable.TABLENAME
+                        + " (cohort_id, patient_id) VALUES (" + cohortId + "," + id + ")");
+            } catch (MySQLIntegrityConstraintViolationException e){
+                //duplicate entry, ignore
+            }
+        }
+ 
+        c.commit();
+        c.setAutoCommit(true);
+    }
+    
+    public static void removePatientsFromCohort(int[] patientIds, int cohortId) throws SQLException {
+        
+        Connection c = ConnectionController.connect();
+        c.setAutoCommit(false);
+        
+        for(int id : patientIds){
+            c.createStatement().executeUpdate(
+                    "DELETE FROM " + CohortMembershipTable.TABLENAME
+                    + " WHERE cohort_id=" + cohortId + " AND patient_id=" + id);
+        }
+ 
+        c.commit();
+        c.setAutoCommit(true);
     }
     
     public static List<Cohort> getCohorts(int projectId) throws SQLException {
@@ -79,6 +106,12 @@ public class CohortQueryUtil {
                 " WHERE cohort_id=" + cohortId);
     }
     
+    public static void removeCohorts(Cohort[] cohorts) throws SQLException {
+        for(Cohort c : cohorts){
+            removeCohort(c.getId());
+        }
+    }
+    
     public static List<Integer> getCohortIds(int projectId) throws SQLException {
         
         Connection c = ConnectionController.connect();
@@ -93,4 +126,16 @@ public class CohortQueryUtil {
         return result;
     }
     
+    public static void removePatientReferences(int projectId, int patientId) throws SQLException {
+        
+        List<Integer> cohortIds = getCohortIds(projectId);
+        
+        Connection c = ConnectionController.connect();
+        for(Integer cohortId : cohortIds){
+            c.createStatement().executeUpdate(
+                    "DELETE FROM " + CohortMembershipTable.TABLENAME +
+                    " WHERE cohort_id=" + cohortId + " AND patient_id=" + patientId);
+        }
+    }
+
 }

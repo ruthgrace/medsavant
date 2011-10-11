@@ -80,7 +80,7 @@ public class PatientQueryUtil {
         ResultSet rs = c.createStatement().executeQuery(
                 "SELECT alias" + 
                 " FROM " + tablename + 
-                " ORDER BY position");
+                " ORDER BY `position`");
         
         List<String> result = new ArrayList<String>();
         result.add(PatientTable.ALIAS_ID);
@@ -226,10 +226,14 @@ public class PatientQueryUtil {
         
         Connection c = ConnectionController.connect();
         c.setAutoCommit(false);       
-        for(int i : patientIds){
+        for(int id : patientIds){
+            //remove all references
+            CohortQueryUtil.removePatientReferences(projectId, id); 
+            
+            //remove from patient table
             c.createStatement().executeUpdate(
                     "DELETE FROM " + tablename + 
-                    " WHERE " + PatientTable.FIELDNAME_ID + "=" + i);
+                    " WHERE " + PatientTable.FIELDNAME_ID + "=" + id);
         }
         c.commit();
         c.setAutoCommit(true);
@@ -268,5 +272,5 @@ public class PatientQueryUtil {
         Connection c = ConnectionController.connect();
         c.createStatement().executeUpdate(query);
     }
-    
+
 }
