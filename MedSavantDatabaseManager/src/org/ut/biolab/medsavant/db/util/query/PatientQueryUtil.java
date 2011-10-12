@@ -39,7 +39,7 @@ public class PatientQueryUtil {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientTable.FIELDNAME_ID + "," + PatientTable.FIELDNAME_FAMILYID + "," + PatientTable.FIELDNAME_PEDIGREEID + "," + PatientTable.FIELDNAME_HOSPITALID + "," + PatientTable.FIELDNAME_DNAIDS + "," + PatientTable.FIELDNAME_ACTIVEDNAID + " " +
+                "SELECT " + PatientTable.FIELDNAME_ID + "," + PatientTable.FIELDNAME_FAMILYID + "," + PatientTable.FIELDNAME_PEDIGREEID + "," + PatientTable.FIELDNAME_HOSPITALID + "," + PatientTable.FIELDNAME_DNAIDS + " " +
                 "FROM " + tablename);
         
         List<Vector> result = new ArrayList<Vector>();
@@ -88,7 +88,6 @@ public class PatientQueryUtil {
         result.add(PatientTable.ALIAS_PEDIGREEID);
         result.add(PatientTable.ALIAS_HOSPITALID);
         result.add(PatientTable.ALIAS_DNAIDS);
-        result.add(PatientTable.ALIAS_ACTIVEDNAID);
         while(rs.next()){
             result.add(rs.getString(1));
         }
@@ -115,7 +114,6 @@ public class PatientQueryUtil {
         result.add(new CustomField(PatientTable.FIELDNAME_PEDIGREEID, "varchar(100)", false, PatientTable.ALIAS_PEDIGREEID, ""));
         result.add(new CustomField(PatientTable.FIELDNAME_HOSPITALID, "varchar(100)", false, PatientTable.ALIAS_HOSPITALID, ""));
         result.add(new CustomField(PatientTable.FIELDNAME_DNAIDS, "varchar(1000)", false, PatientTable.ALIAS_DNAIDS, ""));
-        result.add(new CustomField(PatientTable.FIELDNAME_ACTIVEDNAID, "varchar(100)", false, PatientTable.ALIAS_ACTIVEDNAID, ""));
         
         while(rs.next()){
             result.add(new CustomField(
@@ -150,8 +148,7 @@ public class PatientQueryUtil {
                 + "`family_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
                 + "`pedigree_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
                 + "`hospital_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`dna_ids` varchar(1000) COLLATE latin1_bin DEFAULT NULL,"
-                + "`active_dna_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,";
+                + "`dna_ids` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
         
         //add any extra fields
         List<CustomField> customFields = new ArrayList<CustomField>();

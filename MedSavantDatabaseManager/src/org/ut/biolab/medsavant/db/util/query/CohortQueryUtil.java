@@ -14,6 +14,7 @@ import java.util.List;
 import org.ut.biolab.medsavant.db.table.CohortMembershipTable;
 import org.ut.biolab.medsavant.db.table.CohortTable;
 import org.ut.biolab.medsavant.db.table.PatientMapTable;
+import org.ut.biolab.medsavant.db.table.PatientTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -49,12 +50,17 @@ public class CohortQueryUtil {
         String patientTablename = rs.getString(1);
         
         rs = c.createStatement().executeQuery(
-                "SELECT active_dna_id"
+                "SELECT " + PatientTable.FIELDNAME_DNAIDS
                 + " FROM " + CohortMembershipTable.TABLENAME + " t0, " + patientTablename + " t1"
                 + " WHERE t0.cohort_id=" + cohortId + " AND t0.patient_id=t1.patient_id");
         List<String> result = new ArrayList<String>();
-        while(rs.next()){
-            result.add(rs.getString(1));
+        while(rs.next()){          
+            String[] dnaIds = rs.getString(1).split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }
         }
         return result;
     }
