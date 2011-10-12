@@ -29,6 +29,7 @@ import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.format.AnnotationField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
+import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
@@ -98,9 +99,22 @@ public class AddAnnotation {
         
         //insert into annotations table and get annotation_id
         String query = 
-                "INSERT INTO " + AnnotationTable.TABLENAME + 
-                " (program, version, reference_id, path, hasRef, hasAlt, type) VALUES" + 
-                " (\"" + program + "\",\"" + version + "\"," + referenceId + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/") + "\"," + (hasRef ? "1" : "0") + "," + (hasAlt ? "1" : "0") + "," + annotationType + ");";
+                "INSERT INTO " + AnnotationTable.TABLENAME + " ("
+                + AnnotationTable.FIELDNAME_PROGRAM + ", "
+                + AnnotationTable.FIELDNAME_VERSION + ", "
+                + AnnotationTable.FIELDNAME_REFERENCEID + ", "
+                + AnnotationTable.FIELDNAME_PATH + ", "
+                + AnnotationTable.FIELDNAME_HASREF + ", "
+                + AnnotationTable.FIELDNAME_HASALT + ", " 
+                + AnnotationTable.FIELDNAME_TYPE
+                + ") VALUES (" 
+                + "\"" + program 
+                + "\",\"" + version 
+                + "\"," + referenceId 
+                + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/")
+                + "\"," + (hasRef ? "1" : "0")
+                + "," + (hasAlt ? "1" : "0") 
+                + "," + annotationType + ");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -112,13 +126,13 @@ public class AddAnnotation {
         String tableName = DBSettings.createAnnotationFormatTableName(id);
         query = 
                 "CREATE TABLE " + tableName + " (" +
-                "`position` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
-                "`column_name` VARCHAR(200) NOT NULL," +
-                "`column_type` VARCHAR(45) NOT NULL," + 
-                "`filterable` BOOLEAN NOT NULL," +
-                "`alias` VARCHAR(200) NOT NULL," +
-                "`description` VARCHAR(500) NOT NULL," +
-                "PRIMARY KEY (`position`)" +
+                "`" + AnnotationFormatTable.FIELDNAME_POSITION + "` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
+                "`" + AnnotationFormatTable.FIELDNAME_COLUMNNAME + "` VARCHAR(200) NOT NULL," +
+                "`" + AnnotationFormatTable.FIELDNAME_COLUMNTYPE + "` VARCHAR(45) NOT NULL," + 
+                "`" + AnnotationFormatTable.FIELDNAME_FILTERABLE + "` BOOLEAN NOT NULL," +
+                "`" + AnnotationFormatTable.FIELDNAME_ALIAS + "` VARCHAR(200) NOT NULL," +
+                "`" + AnnotationFormatTable.FIELDNAME_DESCRIPTION + "` VARCHAR(500) NOT NULL," +
+                "PRIMARY KEY (`" + AnnotationFormatTable.FIELDNAME_POSITION + "`)" +
                 ") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_bin;";
         ConnectionController.connect().createStatement().execute(query);
         
@@ -128,9 +142,18 @@ public class AddAnnotation {
         for(int i = 0; i < annotationFields.size(); i++){
             AnnotationField a = annotationFields.get(i);
             conn.createStatement().executeUpdate(
-                    "INSERT INTO " + tableName + " " + 
-                    "(column_name, column_type, filterable, alias, description) VALUES " + 
-                    "(\"" + a.getColumnName() + "\",\"" + a.getColumnType() + "\"," + (a.isFilterable() ? "1" : "0") + ",\"" + a.getAlias() + "\",\"" + a.getDescription() + "\");");
+                    "INSERT INTO " + tableName + " ("
+                    + AnnotationFormatTable.FIELDNAME_COLUMNNAME + ", " 
+                    + AnnotationFormatTable.FIELDNAME_COLUMNTYPE + ", " 
+                    + AnnotationFormatTable.FIELDNAME_FILTERABLE + ", " 
+                    + AnnotationFormatTable.FIELDNAME_ALIAS + ", " 
+                    + AnnotationFormatTable.FIELDNAME_DESCRIPTION 
+                    + ") VALUES (" 
+                    + "\"" + a.getColumnName() 
+                    + "\",\"" + a.getColumnType() 
+                    + "\"," + (a.isFilterable() ? "1" : "0") 
+                    + ",\"" + a.getAlias() 
+                    + "\",\"" + a.getDescription() + "\");");
         }
         conn.commit();
         conn.setAutoCommit(true);

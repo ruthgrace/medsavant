@@ -11,10 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Date;
 import org.ut.biolab.medsavant.db.table.VariantPendingUpdateTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 
 /**
@@ -90,9 +88,18 @@ public class AnnotationLogQueryUtil {
     public static int addAnnotationLogEntry(int projectId, int referenceId, Action action, Status status) throws SQLException {
         Timestamp sqlDate = DBUtil.getCurrentTimestamp();
         String query = 
-                "INSERT INTO " + VariantPendingUpdateTable.TABLENAME + 
-                " (project_id, reference_id, action, status, timestamp) VALUES" + 
-                " (" + projectId + "," + referenceId + "," + actionToInt(action) + "," + statusToInt(status) + ",\"" + sqlDate + "\");";
+                "INSERT INTO " + VariantPendingUpdateTable.TABLENAME + " (" + 
+                VariantPendingUpdateTable.FIELDNAME_PROJECTID + "," + 
+                VariantPendingUpdateTable.FIELDNAME_REFERENCEID + "," + 
+                VariantPendingUpdateTable.FIELDNAME_ACTION + "," + 
+                VariantPendingUpdateTable.FIELDNAME_STATUS + "," + 
+                VariantPendingUpdateTable.FIELDNAME_TIMESTAMP + 
+                ") VALUES (" + 
+                projectId + "," + 
+                referenceId + "," + 
+                actionToInt(action) + "," + 
+                statusToInt(status) + ",\"" + 
+                sqlDate + "\");";
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
@@ -105,9 +112,10 @@ public class AnnotationLogQueryUtil {
     public static ResultSet getPendingUpdates() throws SQLException, IOException{
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM " + VariantPendingUpdateTable.TABLENAME
-                + " WHERE status=" + statusToInt(Status.PENDING)
-                + " ORDER BY action, update_id");//always do updates before adds
+                "SELECT *"
+                + " FROM " + VariantPendingUpdateTable.TABLENAME
+                + " WHERE " + VariantPendingUpdateTable.FIELDNAME_STATUS + "=" + statusToInt(Status.PENDING)
+                + " ORDER BY " + VariantPendingUpdateTable.FIELDNAME_ACTION + ", " + VariantPendingUpdateTable.FIELDNAME_UPDATEID);//always do updates before adds
         
         return rs;
     }
@@ -116,16 +124,16 @@ public class AnnotationLogQueryUtil {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
                 "UPDATE " + VariantPendingUpdateTable.TABLENAME + 
-                " SET status=" + statusToInt(status) + 
-                " WHERE update_id=" + updateId);
+                " SET " + VariantPendingUpdateTable.FIELDNAME_STATUS + "=" + statusToInt(status) + 
+                " WHERE " + VariantPendingUpdateTable.FIELDNAME_UPDATEID + "=" + updateId);
     }
     
     public static void setAnnotationLogStatus(int updateId, Status status, Timestamp sqlDate) throws SQLException {
         Connection conn = ConnectionController.connect();
         conn.createStatement().executeUpdate(
                 "UPDATE " + VariantPendingUpdateTable.TABLENAME + 
-                " SET status=" + statusToInt(status) + ", `timestamp`=\"" + sqlDate + "\"" +  
-                " WHERE update_id=" + updateId);
+                " SET " + VariantPendingUpdateTable.FIELDNAME_STATUS + "=" + statusToInt(status) + ", `" + VariantPendingUpdateTable.FIELDNAME_TIMESTAMP + "`=\"" + sqlDate + "\"" +  
+                " WHERE " + VariantPendingUpdateTable.FIELDNAME_UPDATEID + "=" + updateId);
     }
     
 }

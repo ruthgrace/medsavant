@@ -24,12 +24,12 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
 public class CohortQueryUtil {
     
     public static List<Integer> getIndividualsInCohort(int cohortId) throws SQLException {
-        
+               
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT patient_id" +
+                "SELECT " + CohortMembershipTable.FIELDNAME_PATIENTID + 
                 " FROM " + CohortMembershipTable.TABLENAME + 
-                " WHERE cohort_id=" + cohortId);
+                " WHERE " + CohortMembershipTable.FIELDNAME_COHORTID + "=" + cohortId);
         
         List<Integer> result = new ArrayList<Integer>();
         while(rs.next()){
@@ -42,17 +42,21 @@ public class CohortQueryUtil {
 
         Connection c = ConnectionController.connect();
         
+        //get patient tablename
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT patient_tablename"
+                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME
                 + " FROM " + PatientMapTable.TABLENAME + " t0, " + CohortTable.TABLENAME + " t1"
-                + " WHERE t1.cohort_id=" + cohortId + " AND t1.project_id=t0.project_id");
+                + " WHERE t1." + CohortTable.FIELDNAME_ID + "=" + cohortId 
+                + " AND t1." + CohortTable.FIELDNAME_PROJECTID + "=t0." + PatientMapTable.FIELDNAME_PROJECTID);
         rs.next();
         String patientTablename = rs.getString(1);
         
+        //get dna id lists
         rs = c.createStatement().executeQuery(
                 "SELECT " + PatientTable.FIELDNAME_DNAIDS
                 + " FROM " + CohortMembershipTable.TABLENAME + " t0, " + patientTablename + " t1"
-                + " WHERE t0.cohort_id=" + cohortId + " AND t0.patient_id=t1.patient_id");
+                + " WHERE t0." + CohortMembershipTable.FIELDNAME_COHORTID + "=" + cohortId 
+                + " AND t0." + CohortMembershipTable.FIELDNAME_PATIENTID + "=t1." + PatientTable.FIELDNAME_ID);
         List<String> result = new ArrayList<String>();
         while(rs.next()){          
             String[] dnaIds = rs.getString(1).split(",");
@@ -74,7 +78,8 @@ public class CohortQueryUtil {
             try {
                 c.createStatement().executeUpdate(
                         "INSERT INTO " + CohortMembershipTable.TABLENAME
-                        + " (cohort_id, patient_id) VALUES (" + cohortId + "," + id + ")");
+                        + " (" + CohortMembershipTable.FIELDNAME_COHORTID + ", " + CohortMembershipTable.FIELDNAME_PATIENTID + ")"
+                        + " VALUES (" + cohortId + "," + id + ")");
             } catch (MySQLIntegrityConstraintViolationException e){
                 //duplicate entry, ignore
             }
@@ -92,7 +97,8 @@ public class CohortQueryUtil {
         for(int id : patientIds){
             c.createStatement().executeUpdate(
                     "DELETE FROM " + CohortMembershipTable.TABLENAME
-                    + " WHERE cohort_id=" + cohortId + " AND patient_id=" + id);
+                    + " WHERE " + CohortMembershipTable.FIELDNAME_COHORTID + "=" + cohortId 
+                    + " AND " + CohortMembershipTable.FIELDNAME_PATIENTID + "=" + id);
         }
  
         c.commit();
@@ -104,11 +110,11 @@ public class CohortQueryUtil {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
                 "SELECT * FROM " + CohortTable.TABLENAME + 
-                " WHERE project_id=" + projectId);
+                " WHERE " + CohortTable.FIELDNAME_PROJECTID + "=" + projectId);
         
         List<Cohort> result = new ArrayList<Cohort>();
         while(rs.next()){
-            result.add(new Cohort(rs.getInt("cohort_id"), rs.getString("name")));
+            result.add(new Cohort(rs.getInt(CohortTable.FIELDNAME_ID), rs.getString(CohortTable.FIELDNAME_NAME)));
         }
         return result;
     }
@@ -118,7 +124,8 @@ public class CohortQueryUtil {
         Connection c = ConnectionController.connect();
         c.createStatement().executeUpdate(
                 "INSERT INTO " + CohortTable.TABLENAME + 
-                " (project_id, `name`) VALUES (" + projectId + ",'" + name + "')");
+                " (" + CohortTable.FIELDNAME_PROJECTID + ", `" + CohortTable.FIELDNAME_NAME + "`)"
+                + " VALUES (" + projectId + ",'" + name + "')");
     }
     
     public static void removeCohort(int cohortId) throws SQLException {
@@ -128,12 +135,12 @@ public class CohortQueryUtil {
         //remove all entries from membership
         c.createStatement().executeUpdate(
                 "DELETE FROM " + CohortMembershipTable.TABLENAME + 
-                " WHERE cohort_id=" + cohortId);
+                " WHERE " + CohortMembershipTable.FIELDNAME_COHORTID + "=" + cohortId);
         
         //remove from cohorts
         c.createStatement().executeUpdate(
                 "DELETE FROM " + CohortTable.TABLENAME + 
-                " WHERE cohort_id=" + cohortId);
+                " WHERE " + CohortTable.FIELDNAME_ID + "=" + cohortId);
     }
     
     public static void removeCohorts(Cohort[] cohorts) throws SQLException {
@@ -147,8 +154,9 @@ public class CohortQueryUtil {
         Connection c = ConnectionController.connect();
         
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT cohort_id FROM " + CohortTable.TABLENAME + 
-                " WHERE project_id=" + projectId);
+                "SELECT " + CohortTable.FIELDNAME_ID + 
+                " FROM " + CohortTable.TABLENAME + 
+                " WHERE " + CohortTable.FIELDNAME_PROJECTID + "=" + projectId);
         List<Integer> result = new ArrayList<Integer>();
         while(rs.next()){
             result.add(rs.getInt(1));
@@ -164,7 +172,8 @@ public class CohortQueryUtil {
         for(Integer cohortId : cohortIds){
             c.createStatement().executeUpdate(
                     "DELETE FROM " + CohortMembershipTable.TABLENAME +
-                    " WHERE cohort_id=" + cohortId + " AND patient_id=" + patientId);
+                    " WHERE " + CohortMembershipTable.FIELDNAME_COHORTID + "=" + cohortId + 
+                    " AND " + CohortMembershipTable.FIELDNAME_PATIENTID + "=" + patientId);
         }
     }
 

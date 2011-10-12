@@ -21,7 +21,9 @@ public class UserQueryUtil {
         
         Connection conn = ConnectionController.connect();
         
-        ResultSet rs = conn.createStatement().executeQuery("SELECT name FROM " + UserTable.TABLENAME);
+        ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT " + UserTable.FIELDNAME_NAME
+                + " FROM " + UserTable.TABLENAME);
         
         List<String> results = new ArrayList<String>();
         
@@ -36,7 +38,10 @@ public class UserQueryUtil {
         
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + UserTable.TABLENAME + "` WHERE name=\"" + username + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery(
+                "SELECT *"
+                + " FROM `" + UserTable.TABLENAME + "`"
+                + " WHERE " + UserTable.FIELDNAME_NAME + "=\"" + username + "\"");
         
         return rs1.next();
     }
@@ -68,7 +73,10 @@ public class UserQueryUtil {
     public static boolean isUserAdmin(String username) throws SQLException {
         if (userExists(username)) {
             
-            ResultSet rs = ConnectionController.connect().createStatement().executeQuery("SELECT is_admin FROM " + UserTable.TABLENAME + " WHERE name=\"" + username + "\"");
+            ResultSet rs = ConnectionController.connect().createStatement().executeQuery(
+                    "SELECT " + UserTable.FIELDNAME_ISADMIN 
+                    + " FROM " + UserTable.TABLENAME 
+                    + " WHERE " + UserTable.FIELDNAME_NAME + "=\"" + username + "\"");
             rs.next();
             return rs.getBoolean(1);
             
@@ -83,7 +91,9 @@ public class UserQueryUtil {
                 "DROP USER '"+name+"'@'localhost';");
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         
-        c.createStatement().execute("DELETE FROM `" + UserTable.TABLENAME + "` WHERE name='" + name +"'");
+        c.createStatement().execute(
+                "DELETE FROM `" + UserTable.TABLENAME 
+                + "` WHERE " + UserTable.FIELDNAME_NAME + "='" + name +"'");
     }
 
 }

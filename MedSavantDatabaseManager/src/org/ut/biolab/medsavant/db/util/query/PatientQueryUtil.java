@@ -78,9 +78,9 @@ public class PatientQueryUtil {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT alias" + 
+                "SELECT " + PatientFormatTable.FIELDNAME_ALIAS + 
                 " FROM " + tablename + 
-                " ORDER BY `position`");
+                " ORDER BY `" + PatientFormatTable.FIELDNAME_POSITION + "`");
         
         List<String> result = new ArrayList<String>();
         result.add(PatientTable.ALIAS_ID);
@@ -129,8 +129,9 @@ public class PatientQueryUtil {
     public static String getPatientTablename(int projectId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME + " FROM `" + PatientMapTable.TABLENAME + "` "
-                + "WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectId);
+                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME 
+                + " FROM `" + PatientMapTable.TABLENAME + "`"
+                + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectId);
         rs.next();
         return rs.getString(1);
     }
@@ -144,11 +145,11 @@ public class PatientQueryUtil {
         //create basic fields
         String query = 
                 "CREATE TABLE `" + patientTableName + "` ("
-                + "`patient_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
-                + "`family_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`pedigree_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`hospital_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`dna_ids` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
+                + "`" + PatientTable.FIELDNAME_ID + "` int(11) unsigned NOT NULL AUTO_INCREMENT,"
+                + "`" + PatientTable.FIELDNAME_FAMILYID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + PatientTable.FIELDNAME_PEDIGREEID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + PatientTable.FIELDNAME_HOSPITALID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + PatientTable.FIELDNAME_DNAIDS + "` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
         
         //add any extra fields
         List<CustomField> customFields = new ArrayList<CustomField>();
@@ -173,7 +174,7 @@ public class PatientQueryUtil {
             }        
         }
         
-        query += "PRIMARY KEY (`patient_id`)"
+        query += "PRIMARY KEY (`" + PatientTable.FIELDNAME_ID + "`)"
                 + ") ENGINE=MyISAM;";
         
         //create table
@@ -183,14 +184,14 @@ public class PatientQueryUtil {
         String formatTableName = DBSettings.createPatientFormatTableName(projectid);
         query = 
                 "CREATE TABLE " + formatTableName + " (" +
-                "`position` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
-                "`column_name` VARCHAR(200) NOT NULL," +
-                "`column_type` VARCHAR(45) NOT NULL," + 
-                "`filterable` BOOLEAN NOT NULL," +
-                "`alias` VARCHAR(200) NOT NULL," +
-                "`description` VARCHAR(500) NOT NULL," +
-                "PRIMARY KEY (`position`)" +
-                ") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_bin;";
+                "`" + PatientFormatTable.FIELDNAME_POSITION + "` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
+                "`" + PatientFormatTable.FIELDNAME_COLUMNNAME + "` VARCHAR(200) NOT NULL," +
+                "`" + PatientFormatTable.FIELDNAME_COLUMNTYPE + "` VARCHAR(45) NOT NULL," + 
+                "`" + PatientFormatTable.FIELDNAME_FILTERABLE + "` BOOLEAN NOT NULL," +
+                "`" + PatientFormatTable.FIELDNAME_ALIAS + "` VARCHAR(200) NOT NULL," +
+                "`" + PatientFormatTable.FIELDNAME_DESCRIPTION + "` VARCHAR(500) NOT NULL," +
+                "PRIMARY KEY (`" + PatientFormatTable.FIELDNAME_POSITION + "`)" +
+                ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;";
         c.createStatement().execute(query);
         
         //populate format table
@@ -198,9 +199,18 @@ public class PatientQueryUtil {
         for(int i = 0; i < customFields.size(); i++){
             CustomField a = customFields.get(i);
             c.createStatement().executeUpdate(
-                    "INSERT INTO " + formatTableName + " " + 
-                    "(column_name, column_type, filterable, alias, description) VALUES " + 
-                    "(\"" + a.getColumnName() + "\",\"" + a.getColumnType() + "\"," + (a.isFilterable() ? "1" : "0") + ",\"" + a.getAlias() + "\",\"" + a.getDescription() + "\");");
+                    "INSERT INTO " + formatTableName + " (" + 
+                    PatientFormatTable.FIELDNAME_COLUMNNAME + ", " + 
+                    PatientFormatTable.FIELDNAME_COLUMNTYPE + ", " + 
+                    PatientFormatTable.FIELDNAME_FILTERABLE + ", " + 
+                    PatientFormatTable.FIELDNAME_ALIAS + ", " + 
+                    PatientFormatTable.FIELDNAME_DESCRIPTION +
+                    ") VALUES (" + 
+                    "\"" + a.getColumnName() + 
+                    "\",\"" + a.getColumnType() + 
+                    "\"," + (a.isFilterable() ? "1" : "0") + 
+                    ",\"" + a.getAlias() + 
+                    "\",\"" + a.getDescription() + "\");");
         }
         c.commit();
         c.setAutoCommit(true);   
@@ -209,7 +219,7 @@ public class PatientQueryUtil {
         //add to tablemap
         c.createStatement().execute(
                 "INSERT INTO " + PatientMapTable.TABLENAME + 
-                " (project_id, patient_tablename, format_tablename)" + 
+                " (" + PatientMapTable.FIELDNAME_PROJECTID + ", " + PatientMapTable.FIELDNAME_PATIENTTABLENAME + ", " + PatientMapTable.FIELDNAME_FORMATTABLENAME + ")" + 
                 " VALUES (" + projectid + ",'" + patientTableName + "','" + formatTableName + "')");
         
     }
@@ -217,8 +227,9 @@ public class PatientQueryUtil {
     public static String getPatientFormatTableName(int projectId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT format_tablename FROM `" + PatientMapTable.TABLENAME + "` "
-                + "WHERE project_id=" + projectId);
+                "SELECT " + PatientMapTable.FIELDNAME_FORMATTABLENAME
+                + " FROM `" + PatientMapTable.TABLENAME + "`"
+                + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectId);
         rs.next();
         return rs.getString(1);
     }

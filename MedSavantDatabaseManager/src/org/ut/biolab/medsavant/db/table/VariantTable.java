@@ -12,7 +12,7 @@ public class VariantTable {
     
     public static String FIELDNAME_UPLOADID = "upload_id";
     public static String FIELDNAME_FILEID = "file_id";
-    public static String FIELDNAME_ID = "variant_id";
+    public static String FIELDNAME_VARIANTID = "variant_id";
     public static String FIELDNAME_DNAID = "dna_id";
     public static String FIELDNAME_CHROM = "chrom";
     public static String FIELDNAME_POSITION = "position";

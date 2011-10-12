@@ -4,8 +4,6 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
-//import com.healthmarketscience.sqlbuilder.Condition;
-import com.healthmarketscience.sqlbuilder.Condition;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,9 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
+import org.ut.biolab.medsavant.db.table.VariantTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
-import org.ut.biolab.medsavant.db.util.DBUtil;
 
 /**
  *
@@ -59,17 +56,6 @@ public class VariantQueryUtil {
         
         return result;
     }
-    
-    /*private static String conditionsToString(List conditions){
-        String s = "";
-        for(int i = 0; i < conditions.size(); i++){
-            s += conditions.get(i).toString();
-            if(i != conditions.size()-1){
-                s += " AND ";
-            }
-        }
-        return s;
-    }*/
     
     private static String conditionsToStringOr(List<List> conditions){
         String s = "";
@@ -202,9 +188,11 @@ public class VariantQueryUtil {
     public static int getNumVariantsInRange(int projectId, int referenceId, List<List> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
         String query = 
-                "SELECT COUNT(*)" + 
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" + 
-                " WHERE `chrom`=\"" + chrom + "\" AND `position`>=" + start + " AND `position`<" + end;
+                "SELECT COUNT(*)"
+                + " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0"
+                + " WHERE `" + VariantTable.FIELDNAME_CHROM + "`=\"" + chrom + "\""
+                + " AND `" + VariantTable.FIELDNAME_POSITION + "`>=" + start 
+                + " AND `" + VariantTable.FIELDNAME_POSITION + "`<" + end;
         if(!conditions.isEmpty()){
             query += " AND ";
         }
@@ -220,9 +208,9 @@ public class VariantQueryUtil {
     public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
         String queryBase = 
-                "SELECT `position`" +
+                "SELECT `" + VariantTable.FIELDNAME_POSITION + "`" +
                 " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" + 
-                " WHERE `chrom`=\"" + chrom + "\"";
+                " WHERE `" + VariantTable.FIELDNAME_CHROM + "`=\"" + chrom + "\"";
         if(!conditions.isEmpty()){
             queryBase += " AND ";
         }
@@ -234,7 +222,7 @@ public class VariantQueryUtil {
                 + "select case ";
         int pos = 0;
         for(int i = 0; i < numbins; i++){
-            query += "when `position` between " + pos + " and " + (pos+binsize) + " then " + i + " ";
+            query += "when `" + VariantTable.FIELDNAME_POSITION + "` between " + pos + " and " + (pos+binsize) + " then " + i + " ";
             pos += binsize;
         }
         

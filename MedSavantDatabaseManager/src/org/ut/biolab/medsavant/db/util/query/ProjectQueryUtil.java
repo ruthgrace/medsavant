@@ -1,5 +1,6 @@
 package org.ut.biolab.medsavant.db.util.query;
 
+import org.ut.biolab.medsavant.db.util.ProjectDetails;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +16,7 @@ import org.ut.biolab.medsavant.db.table.PatientMapTable;
 import org.ut.biolab.medsavant.db.table.ProjectTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.VariantMapTable;
+import org.ut.biolab.medsavant.db.table.VariantTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -32,7 +34,9 @@ public class ProjectQueryUtil {
         
         Connection conn = ConnectionController.connect();
         
-        ResultSet rs = conn.createStatement().executeQuery("SELECT name FROM " + ProjectTable.TABLENAME);
+        ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT " + ProjectTable.FIELDNAME_NAME 
+                + " FROM " + ProjectTable.TABLENAME);
         
         List<String> results = new ArrayList<String>();
         
@@ -48,7 +52,10 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + ProjectTable.TABLENAME + "` WHERE name=\"" + projectName + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery(
+                "SELECT *"
+                + " FROM `" + ProjectTable.TABLENAME + "`"
+                + " WHERE " + ProjectTable.FIELDNAME_NAME + "=\"" + projectName + "\"");
         
         return rs1.next();
     }
@@ -56,7 +63,10 @@ public class ProjectQueryUtil {
     public static int getProjectId(String projectName) throws SQLException {
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT project_id FROM `" + ProjectTable.TABLENAME + "` WHERE name=\"" + projectName + "\"");
+        ResultSet rs1 = c.createStatement().executeQuery(
+                "SELECT " + ProjectTable.FIELDNAME_ID
+                + " FROM `" + ProjectTable.TABLENAME + "`"
+                + " WHERE " + ProjectTable.FIELDNAME_NAME + "=\"" + projectName + "\"");
         
         if (rs1.next()) {
             return rs1.getInt(1);
@@ -69,20 +79,30 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT variant_tablename FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        ResultSet rs1 = c.createStatement().executeQuery(
+                "SELECT " + VariantMapTable.FIELDNAME_VARIANTTABLENAME
+                + " FROM `" + VariantMapTable.TABLENAME + "`"
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + project_id 
+                + " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + ref_id);
         
         while (rs1.next()) {
             String tableName = rs1.getString(1);
             DBUtil.dropTable(tableName);
         }
         
-        c.createStatement().execute("DELETE FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + project_id + " AND reference_id=" + ref_id);
+        c.createStatement().execute(
+                "DELETE FROM `" + VariantMapTable.TABLENAME + "`"
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + project_id 
+                + " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + ref_id);
     }
 
     public static String getProjectName(int projectid) throws SQLException {
         Connection c = ConnectionController.connect();
         
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT name FROM `" + ProjectTable.TABLENAME + "` WHERE project_id=" + projectid );
+        ResultSet rs1 = c.createStatement().executeQuery(
+                "SELECT " + ProjectTable.FIELDNAME_NAME
+                + " FROM `" + ProjectTable.TABLENAME + "`"
+                + " WHERE " + ProjectTable.FIELDNAME_ID + "=" + projectid );
         
         if (rs1.next()) {
             return rs1.getString(1);
@@ -103,34 +123,34 @@ public class ProjectQueryUtil {
    
         String query = 
                 "CREATE TABLE `" + variantTableInfoName + "` ("
-                + "`upload_id` int(11) NOT NULL,"
-                + "`file_id` int(11) NOT NULL,"
-                + "`variant_id` int(11) NOT NULL,"
-                + "`dna_id` varchar(100) COLLATE latin1_bin NOT NULL,"
-                + "`chrom` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
-                + "`position` int(11) NOT NULL,"
-                + "`dbsnp_id` varchar(45) COLLATE latin1_bin DEFAULT NULL,"
-                + "`ref` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
-                + "`alt` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
-                + "`qual` float(10,0) DEFAULT NULL,"
-                + "`filter` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`aa` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`ac` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`af` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`an` int(11) DEFAULT NULL,"
-                + "`bq` float DEFAULT NULL,"
-                + "`cigar` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`db` int(1) DEFAULT NULL,"
-                + "`dp` int(11) DEFAULT NULL,"
-                + "`end` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`h2` int(1) DEFAULT NULL,"
-                + "`mq` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`mq0` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`ns` int(11) DEFAULT NULL,"
-                + "`sb` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
-                + "`somatic` int(1) DEFAULT NULL,"
-                + "`validated` int(1) DEFAULT NULL,"
-                + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL,";
+                + "`" + VariantTable.FIELDNAME_UPLOADID + "` int(11) NOT NULL,"
+                + "`" + VariantTable.FIELDNAME_FILEID + "` int(11) NOT NULL,"
+                + "`" + VariantTable.FIELDNAME_VARIANTID + "` int(11) NOT NULL,"
+                + "`" + VariantTable.FIELDNAME_DNAID + "` varchar(100) COLLATE latin1_bin NOT NULL,"
+                + "`" + VariantTable.FIELDNAME_CHROM + "` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
+                + "`" + VariantTable.FIELDNAME_POSITION + "` int(11) NOT NULL,"
+                + "`" + VariantTable.FIELDNAME_DBSNPID + "` varchar(45) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_REF + "` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_ALT + "` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_QUAL + "` float(10,0) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_FILTER + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_AA + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_AC + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_AF + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_AN + "` int(11) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_BQ + "` float DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_CIGAR + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_DB + "` int(1) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_DP + "` int(11) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_END + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_H2 + "` int(1) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_MQ + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_MQ0 + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_NS + "` int(11) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_SB + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_SOMATIC + "` int(1) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_VALIDATED + "` int(1) DEFAULT NULL,"
+                + "`" + VariantTable.FIELDNAME_CUSTOMINFO + "` varchar(500) COLLATE latin1_bin DEFAULT NULL,";
         
         //add each annotation
         if(annotationIds != null){
@@ -173,8 +193,10 @@ public class ProjectQueryUtil {
         
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT variant_tablename FROM `" + VariantMapTable.TABLENAME + "` "
-                + "WHERE project_id=" + projectid + " AND reference_id=" + refid);
+                "SELECT variant_tablename"
+                + " FROM `" + VariantMapTable.TABLENAME + "`"
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectid 
+                + " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + refid);
         rs.next();
         return rs.getString(1);
     }
@@ -200,7 +222,10 @@ public class ProjectQueryUtil {
     public static void removeProject(String projectName) throws SQLException {
         
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
-        ResultSet rs = c.createStatement().executeQuery("SELECT project_id FROM `" + ProjectTable.TABLENAME + "` WHERE name=\"" + projectName + "\"");
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT project_id"
+                + " FROM `" + ProjectTable.TABLENAME + "`"
+                + " WHERE " + ProjectTable.FIELDNAME_NAME + "=\"" + projectName + "\"");
         
         if (rs.next()) {
             removeProject(rs.getInt(1));
@@ -214,30 +239,40 @@ public class ProjectQueryUtil {
         Connection c = ConnectionController.connect(DBSettings.DBNAME);
         
         //remove from project table
-        c.createStatement().execute("DELETE FROM `" + ProjectTable.TABLENAME + "` WHERE project_id=" + projectid);    
+        c.createStatement().execute(
+                "DELETE FROM `" + ProjectTable.TABLENAME + "`"
+                + " WHERE " + ProjectTable.FIELDNAME_ID + "=" + projectid);    
         
         //remove patient table and patient format table
         ResultSet rs1 = c.createStatement().executeQuery(
-            "SELECT patient_tablename, format_tablename FROM " + PatientMapTable.TABLENAME + " WHERE project_id=" + projectid);    
+                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME + ", " + PatientMapTable.FIELDNAME_FORMATTABLENAME 
+                + " FROM " + PatientMapTable.TABLENAME 
+                + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectid);    
         rs1.next();
-        String patientTableName = rs1.getString("patient_tablename");
-        String patientFormatTableName = rs1.getString("format_tablename");
+        String patientTableName = rs1.getString(PatientMapTable.FIELDNAME_PATIENTTABLENAME);
+        String patientFormatTableName = rs1.getString(PatientMapTable.FIELDNAME_FORMATTABLENAME);
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientTableName);
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientFormatTableName);
         
         //remove from patient tablemap
-        c.createStatement().execute("DELETE FROM `" + PatientMapTable.TABLENAME + "` WHERE project_id=" + projectid);
+        c.createStatement().execute(
+                "DELETE FROM `" + PatientMapTable.TABLENAME + "`"
+                + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectid);
         
         //remove variant tables
         ResultSet rs2 = c.createStatement().executeQuery(
-            "SELECT variant_tablename FROM " + VariantMapTable.TABLENAME + " WHERE project_id=" + projectid);   
+                "SELECT " + VariantMapTable.FIELDNAME_VARIANTTABLENAME
+                + " FROM " + VariantMapTable.TABLENAME 
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectid);   
         while(rs2.next()) {
             String variantTableName = rs2.getString(1);
             c.createStatement().execute("DROP TABLE IF EXISTS " + variantTableName);
         }
         
         //remove from variant tablemap
-        c.createStatement().execute("DELETE FROM `" + VariantMapTable.TABLENAME + "` WHERE project_id=" + projectid);
+        c.createStatement().execute(
+                "DELETE FROM `" + VariantMapTable.TABLENAME + "`"
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectid);
 
         //remove cohort entries
         List<Integer> cohortIds = CohortQueryUtil.getCohortIds(projectid);
@@ -249,13 +284,12 @@ public class ProjectQueryUtil {
     
     
     public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
-        //String q = "UPDATE " + DBSettings.TABLENAME_VARIANTTABLEINFO + " SET annotation_ids=\"" + annotation_ids + "\" "
-        //        + "WHERE (project_id=" + projectid + " AND reference_id=" + refid + ")";
         
-        String q = "UPDATE " + VariantMapTable.TABLENAME + " SET annotation_ids=\"" + annotation_ids + "\" "
-                + "WHERE (project_id=" + (projectid)  + " AND reference_id=" + (refid) + ")";
-        
-        (ConnectionController.connect(DBSettings.DBNAME)).createStatement().execute(q);
+        (ConnectionController.connect()).createStatement().execute(
+                "UPDATE " + VariantMapTable.TABLENAME 
+                + " SET " + VariantMapTable.FIELDNAME_ANNOTATIONIDS + "=\"" + annotation_ids + "\""
+                + " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectid  
+                + " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + refid);
         
         AnnotationLogQueryUtil.addAnnotationLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
@@ -263,15 +297,19 @@ public class ProjectQueryUtil {
     public static List<ProjectDetails> getProjectDetails(int projectId) throws SQLException {
         
         ResultSet rs = org.ut.biolab.medsavant.db.util.ConnectionController.connect().createStatement().executeQuery(
-                        "SELECT * FROM " + VariantMapTable.TABLENAME
-                        + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
-                        + VariantMapTable.TABLENAME + ".reference_id = "
-                        + ReferenceTable.TABLENAME + ".reference_id "
-                        + "WHERE project_id=" + projectId + ";");
+                "SELECT *"
+                + " FROM " + VariantMapTable.TABLENAME
+                + " LEFT JOIN " + ReferenceTable.TABLENAME + " ON "
+                + VariantMapTable.TABLENAME + "." + VariantMapTable.FIELDNAME_REFERENCEID + " = "
+                + ReferenceTable.TABLENAME + "." + ReferenceTable.FIELDNAME_ID
+                + " WHERE project_id=" + projectId + ";");
         
         List<ProjectDetails> result = new ArrayList<ProjectDetails>();
         while(rs.next()){
-            result.add(new ProjectDetails(rs.getInt("reference_id"), rs.getString("name"), rs.getString("annotation_ids")));
+            result.add(new ProjectDetails(
+                    rs.getInt(VariantMapTable.FIELDNAME_REFERENCEID), 
+                    rs.getString(ReferenceTable.FIELDNAME_NAME), 
+                    rs.getString(VariantMapTable.FIELDNAME_ANNOTATIONIDS)));
         }
         
         return result;

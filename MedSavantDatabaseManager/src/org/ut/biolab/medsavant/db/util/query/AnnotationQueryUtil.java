@@ -19,8 +19,8 @@ import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
-import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
+import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,19 +37,20 @@ public class AnnotationQueryUtil {
         String ann = AnnotationTable.TABLENAME;
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM `" + ann + "` "
+                "SELECT * "
+                + "FROM `" + ann + "` "
                 + "LEFT JOIN `" + ref + "` "
-                + "ON " + ann + ".`reference_id` = " + ref + ".`reference_id`");
+                + "ON " + ann + ".`" + AnnotationTable.FIELDNAME_REFERENCEID + "` = " + ref + ".`" + ReferenceTable.FIELDNAME_ID + "`");
 
         List<Annotation> results = new ArrayList<Annotation>();
 
         while (rs.next()) {
             results.add(new Annotation(
-                    rs.getInt("annotation_id"),
-                    rs.getString("program"),
-                    rs.getString("version"),
-                    rs.getString("name"),
-                    rs.getString("path")));
+                    rs.getInt(AnnotationTable.FIELDNAME_ID),
+                    rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
+                    rs.getString(AnnotationTable.FIELDNAME_VERSION),
+                    rs.getString(ReferenceTable.FIELDNAME_NAME),
+                    rs.getString(AnnotationTable.FIELDNAME_PATH)));
         }
 
         return results;
@@ -63,19 +64,20 @@ public class AnnotationQueryUtil {
         String ann = AnnotationTable.TABLENAME;
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * FROM `" + ann + "` "
+                "SELECT * "
+                + "FROM `" + ann + "` "
                 + "LEFT JOIN `" + ref + "` "
-                + "ON " + ann + ".`reference_id` = " + ref + ".`reference_id` "
-                + "WHERE annotation_id=" + annotation_id);
+                + "ON " + ann + ".`" + AnnotationTable.FIELDNAME_REFERENCEID + "` = " + ref + ".`" + ReferenceTable.FIELDNAME_ID + "` "
+                + "WHERE " + AnnotationTable.FIELDNAME_ID + "=" + annotation_id);
 
 
         rs.next();
         Annotation result = new Annotation(
-                rs.getInt("annotation_id"),
-                rs.getString("program"),
-                rs.getString("version"),
-                rs.getString("name"),
-                rs.getString("path"));
+                    rs.getInt(AnnotationTable.FIELDNAME_ID),
+                    rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
+                    rs.getString(AnnotationTable.FIELDNAME_VERSION),
+                    rs.getString(ReferenceTable.FIELDNAME_NAME),
+                    rs.getString(AnnotationTable.FIELDNAME_PATH));
 
         return result;
     }
@@ -85,11 +87,13 @@ public class AnnotationQueryUtil {
         Connection conn = ConnectionController.connect();
 
         ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT annotation_ids FROM " + VariantMapTable.TABLENAME + 
-                " WHERE project_id=" + projectId + " AND reference_id=" + referenceId);
+                "SELECT " + VariantMapTable.FIELDNAME_ANNOTATIONIDS + 
+                " FROM " + VariantMapTable.TABLENAME + 
+                " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectId + 
+                " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + referenceId);
 
         rs.next();
-        String annotationString = rs.getString("annotation_ids");
+        String annotationString = rs.getString(VariantMapTable.FIELDNAME_ANNOTATIONIDS);
 
         if (annotationString == null || annotationString.isEmpty()) {
             return new int[0];
@@ -103,17 +107,7 @@ public class AnnotationQueryUtil {
 
         return result;
     }
-    
-    /*public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
-        Connection conn = ConnectionController.connect();
-        
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT format FROM " + DBSettings.TABLENAME_ANNOTATION + " WHERE annotation_id=" + annotationId);
-        
-        rs.next();
-        return new AnnotationFormat(rs.getString("format"));
-    }*/
-    
+
     public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
         
         Connection conn = ConnectionController.connect();
@@ -121,31 +115,31 @@ public class AnnotationQueryUtil {
         ResultSet rs1 = conn.createStatement().executeQuery(
                 "SELECT * " + 
                 "FROM " + AnnotationTable.TABLENAME + " " + 
-                "WHERE annotation_id=" + annotationId + ";");
+                "WHERE " + AnnotationTable.FIELDNAME_ID + "=" + annotationId + ";");
         rs1.next();
         
-        String program = rs1.getString("program");
-        String version = rs1.getString("version");
-        int referenceId = rs1.getInt("reference_id");
-        String path = rs1.getString("path");
-        boolean hasRef = rs1.getBoolean("has_ref");
-        boolean hasAlt = rs1.getBoolean("has_alt");
-        AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt("type"));
+        String program = rs1.getString(AnnotationTable.FIELDNAME_PROGRAM);
+        String version = rs1.getString(AnnotationTable.FIELDNAME_VERSION);
+        int referenceId = rs1.getInt(AnnotationTable.FIELDNAME_REFERENCEID);
+        String path = rs1.getString(AnnotationTable.FIELDNAME_PATH);
+        boolean hasRef = rs1.getBoolean(AnnotationTable.FIELDNAME_HASREF);
+        boolean hasAlt = rs1.getBoolean(AnnotationTable.FIELDNAME_HASALT);
+        AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt(AnnotationTable.FIELDNAME_TYPE));
         
         
         ResultSet rs2 = conn.createStatement().executeQuery(
                 "SELECT * " + 
                 "FROM " + getAnnotationFormatTableName(annotationId) + " " +
-                "ORDER BY `position`");
+                "ORDER BY `" + AnnotationFormatTable.FIELDNAME_POSITION + "`");
         
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
         while(rs2.next()){
             fields.add(new AnnotationField(
-                    rs2.getString("column_name"), 
-                    rs2.getString("column_type"), 
-                    rs2.getBoolean("filterable"), 
-                    rs2.getString("alias"), 
-                    rs2.getString("description")));
+                    rs2.getString(AnnotationFormatTable.FIELDNAME_COLUMNNAME), 
+                    rs2.getString(AnnotationFormatTable.FIELDNAME_COLUMNTYPE), 
+                    rs2.getBoolean(AnnotationFormatTable.FIELDNAME_FILTERABLE), 
+                    rs2.getString(AnnotationFormatTable.FIELDNAME_ALIAS), 
+                    rs2.getString(AnnotationFormatTable.FIELDNAME_DESCRIPTION)));
         }
 
         return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, type, fields);
@@ -156,8 +150,7 @@ public class AnnotationQueryUtil {
         
         DBLogger.log("Adding annotation...");
         
-        String q = "INSERT INTO " 
-                + AnnotationTable.TABLENAME 
+        String q = "INSERT INTO " + AnnotationTable.TABLENAME 
                 + " VALUES (null,'" + program + "','" + version + "'," + referenceid + ",'" + path + "','" + format + "')";
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
                 Statement.RETURN_GENERATED_KEYS);
@@ -174,8 +167,9 @@ public class AnnotationQueryUtil {
     public static String getAnnotationFormatTableName(int annotationId) throws SQLException {
         Connection c = ConnectionController.connect();
         ResultSet rs = c.createStatement().executeQuery(
-                "SELECT format_tablename FROM `" + AnnotationMapTable.TABLENAME + "` "
-                + "WHERE annotation_id=" + annotationId);
+                "SELECT " + AnnotationMapTable.FIELDNAME_TABLENAME 
+                + " FROM `" + AnnotationMapTable.TABLENAME + "`"
+                + " WHERE " + AnnotationMapTable.FIELDNAME_ID + "=" + annotationId);
         rs.next();
         return rs.getString(1);
     }
