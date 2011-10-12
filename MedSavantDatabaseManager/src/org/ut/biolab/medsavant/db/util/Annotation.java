@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.broad.tabix.TabixReader;
+import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
 import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 import org.xml.sax.SAXException;
 
@@ -19,14 +20,16 @@ public class Annotation {
     final private String version;
     final private String reference;
     final private String dataPath;
+    final private AnnotationType type;
     private TabixReader reader;
 
-    public Annotation(int id, String program, String version, String reference, String dataPath) {
+    public Annotation(int id, String program, String version, String reference, String dataPath, AnnotationType type) {
         this.id = id;
         this.program = program;
         this.version = version;
         this.reference = reference;
         this.dataPath = dataPath;
+        this.type = type;
     }
     
     public AnnotationFormat getAnnotationFormat() throws SQLException, IOException, ParserConfigurationException, SAXException {
@@ -51,6 +54,10 @@ public class Annotation {
 
     public String getVersion() {
         return version;
+    }
+    
+    public boolean isInterval() {
+        return type == AnnotationType.INTERVAL;
     }
     
     public TabixReader getReader() throws IOException {

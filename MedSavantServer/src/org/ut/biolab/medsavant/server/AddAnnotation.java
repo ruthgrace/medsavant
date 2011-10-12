@@ -30,6 +30,7 @@ import org.ut.biolab.medsavant.db.format.AnnotationField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
 import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
+import org.ut.biolab.medsavant.db.table.AnnotationMapTable;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
@@ -60,7 +61,7 @@ public class AddAnnotation {
     public static void main(String[] args){
         
         if(args.length != 2){
-            System.err.println("Usage: AddAnnotation.jar tabixFile formatFile");
+            System.err.println("Usage: AddAnnotation.jar annotationFilePath formatFilePath");
             return;
         }
         
@@ -76,14 +77,25 @@ public class AddAnnotation {
             ServerLogger.log(AddAnnotation.class, "done adding annotation");
         } catch (Exception e){
             ServerLogger.log(AddAnnotation.class, "error adding annotation");
+            e.printStackTrace();
         }       
     }
     
     private static String[] getFieldNames(){
-        String[] result = new String[2 + (hasRef ? 1 : 0) + (hasAlt ? 1 : 0) + annotationFields.size()];
+        String[] result = new String[
+                1 + //chrom
+                (AnnotationFormat.intToAnnotationType(annotationType) == AnnotationType.INTERVAL ? 2 : 1) + // position or start/end
+                (hasRef ? 1 : 0) + //ref
+                (hasAlt ? 1 : 0) + //alt
+                annotationFields.size()]; //numfields
         int pos = 0;
         result[pos++] = "chrom";
-        result[pos++] = "position";
+        if(AnnotationFormat.intToAnnotationType(annotationType) == AnnotationType.POSITION){
+            result[pos++] = "position";
+        } else {
+            result[pos++] = "start";
+            result[pos++] = "end";
+        }
         if(hasRef) result[pos++] = "ref";
         if(hasAlt) result[pos++] = "alt";
         for(int i = 0; i < annotationFields.size(); i++){
@@ -158,6 +170,11 @@ public class AddAnnotation {
         conn.commit();
         conn.setAutoCommit(true);
         
+        //add entry to annotation_tablemap
+        conn.createStatement().executeUpdate(
+                "INSERT INTO " + AnnotationMapTable.TABLENAME
+                + " VALUES (" + id + "," + tableName + ")");
+        
     }
     
     private static void parseFormat(String path) throws SAXException, ParserConfigurationException, IOException{
@@ -216,7 +233,9 @@ public class AddAnnotation {
 class ColumnMapping {
 
     private int index_chrom;
-    private int index_position;
+    //private int index_position;
+    private int index_start;
+    private int index_end;    
     private String[] columnNames;
 
     public ColumnMapping(String[] columnNames){
@@ -226,12 +245,18 @@ class ColumnMapping {
             if (col.equals("chrom")){
                 index_chrom = i;
             } else if (col.equals("position")){
-                index_position = i;
+                //index_position = i;
+                index_start = i;
+                index_end = i;
+            } else if (col.equals("start")){
+                index_start = i;
+            } else if (col.equals("end")){
+                index_end = i;
             }
         }
     }
 
-    public String getColumnName(int index){
+    /*public String getColumnName(int index){
         return columnNames[index];
     }
 
@@ -241,10 +266,10 @@ class ColumnMapping {
 
     public int getIndexPosition(){
         return index_position;
-    }
+    }*/
 
     public Conf getTabixConf(){
-        return new Conf(0, index_chrom+1, index_position+1, index_position+1, '#', 0);
+        return new Conf(0, index_chrom+1, index_start+1, index_end+1, '#', 0);
     }
 
 }

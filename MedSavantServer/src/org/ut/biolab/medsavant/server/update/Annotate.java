@@ -26,22 +26,28 @@ import org.ut.biolab.medsavant.server.log.ServerLogger;
  */
 public class Annotate {
 
-    private static final int ANNOT_INDEX_OF_CHR = 0;
-    private static final int ANNOT_INDEX_OF_POS = 1;
-    private static final int ANNOT_INDEX_OF_REF = 2;
-    private static final int ANNOT_INDEX_OF_ALT = 3;
+    private static final int POS_ANNOT_INDEX_OF_CHR = 0;
+    private static final int POS_ANNOT_INDEX_OF_POS = 1;
+    private static final int POS_ANNOT_INDEX_OF_REF = 2;
+    private static final int POS_ANNOT_INDEX_OF_ALT = 3;
+    
+    private static final int INT_ANNOT_INDEX_OF_CHR = 0;
+    private static final int INT_ANNOT_INDEX_OF_START = 1;
+    private static final int INT_ANNOT_INDEX_OF_END = 2;
+    
     private static final int VARIANT_INDEX_OF_CHR = 4;
     private static final int VARIANT_INDEX_OF_POS = 5;
     private static final int VARIANT_INDEX_OF_REF = 7;
     private static final int VARIANT_INDEX_OF_ALT = 8;
+    
     private static File variantFile = new File("/Users/mfiume/Desktop/temp_proj10_ref1_update20");
     private static final int JUMP_DISTANCE = 100000;
 
-    private static VariantRecord annotateForChromosome(String chrom, VariantRecord currentVariant, CSVReader recordReader, TabixReader annotationReader, CSVWriter writer, boolean annotationHasRef, boolean annotationHasAlt, int numFieldsInOutputFile) throws EOFException, IOException {
+    private static VariantRecord annotateForChromosome(String chrom, VariantRecord currentVariant, CSVReader recordReader, TabixReader annotationReader, CSVWriter writer, boolean annotationHasRef, boolean annotationHasAlt, int numFieldsInOutputFile, boolean isInterval) throws EOFException, IOException {
 
         String[] outLine = new String[numFieldsInOutputFile];
 
-        AnnotationRecord currentAnnotation = new AnnotationRecord(annotationHasRef, annotationHasAlt);
+        AnnotationRecord currentAnnotation = new AnnotationRecord(annotationHasRef, annotationHasAlt, isInterval);
 
         // CASE 1: this chrom cannot be annotated
         if (!isChrAnnotatable(chrom, annotationReader)) {
@@ -53,7 +59,7 @@ public class Annotate {
         int lastPosition = -1;
 
         TabixReader.Iterator it = annotationReader.query(currentVariant.chrom);
-
+        
         while (lastChr.equals(currentVariant.chrom)) {
 
             if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
@@ -76,8 +82,9 @@ public class Annotate {
             }
 
             // update annotation pointer
-            while (currentAnnotation.position < currentVariant.position) {
-
+            //while (currentAnnotation.position < currentVariant.position) {
+            while (currentAnnotation.isBefore(currentVariant.position)){ 
+            
                 String nextannot = readNextFromIterator(it);
 
                 // happens when there are no more annotations for this chrom
@@ -90,7 +97,7 @@ public class Annotate {
                 currentAnnotation.setFromLine(nextannot.split("\t"));
             }
 
-            // CASE 2A: We hit the end of the annotations for this chromsome.
+            // CASE 2A: We hit the end of the annotations for this chromosome.
             // We can't annotate the variants in the rest of the chromosome
             if (annotationHitEnd) {
                 return skipToNextChr(currentVariant, recordReader, writer, outLine);
@@ -99,29 +106,32 @@ public class Annotate {
             // CASE 2B: We found the first annotation position >= current variant position
 
             // CASE 2B(i): There is no annotation at this position
-            if (currentAnnotation.position > currentVariant.position) {
+            //if (currentAnnotation.position > currentVariant.position) {
+            if (currentAnnotation.isAfter(currentVariant.position)) {
                 numLinesWritten++;
                 writer.writeNext(copyArray(currentVariant.line, outLine));
 
                 // CASE 2B(ii): There is an annotation at this position
             } else {
-
+                
                 // has both
-                if (annotationHasRef && annotationHasAlt) {
+                if (isInterval || (annotationHasRef && annotationHasAlt)) {
 
                     boolean annotationHitEnd1 = false;
                     boolean foundMatch = false;
 
                     // look for a matching ref / alt pair
                     while (true) {
-
+                       
                         // found a match
-                        if (currentVariant.ref.equals(currentAnnotation.ref)
-                                && currentVariant.alt.equals(currentAnnotation.alt)) {
+                        //if (currentVariant.ref.equals(currentAnnotation.ref)
+                        //        && currentVariant.alt.equals(currentAnnotation.alt)) {
+                        if(currentAnnotation.matchesRefAlt(currentVariant.ref, currentVariant.alt)){
                             foundMatch = true;
                             break;
                             // no match exists
-                        } else if (currentAnnotation.position != currentVariant.position) {
+                        //} else if (currentAnnotation.position != currentVariant.position) {
+                        } else if (!currentAnnotation.matchesPosition(currentVariant.position)){
                             foundMatch = false;
                             break;
                             // not sure, keep looking
@@ -150,14 +160,14 @@ public class Annotate {
                         numMatches++;
                         //log("Matched " + currentVariant + " with " + currentAnnotation);
                         // write current line with current annotation
-                        writer.writeNext(copyArraysExcludingEntries(currentVariant.line, currentAnnotation.line, outLine, 4));
+                        writer.writeNext(copyArraysExcludingEntries(currentVariant.line, currentAnnotation.line, outLine, currentAnnotation.getNumRelevantFields()));
                     } else {
                         // write current line without annotation
                         writer.writeNext(copyArray(currentVariant.line, outLine));
                     }
 
                     // has neither
-                } else if (!annotationHasRef && !annotationHasAlt) {
+                /*} else if (!annotationHasRef && !annotationHasAlt) {
                     throw new UnsupportedOperationException("We don't support annotations which don't have ref yet");
                     // has only ref
                 } else if (annotationHasRef) {
@@ -165,6 +175,9 @@ public class Annotate {
                     // has only alt
                 } else if (annotationHasAlt) {
                     throw new UnsupportedOperationException("We don't support annotations which only have alt yet");
+                }*/
+                } else {
+                    throw new UnsupportedOperationException("We don't support annotations which don't have both alt and ref yet");
                 }
             }
 
@@ -397,7 +410,7 @@ public class Annotate {
                 numMatches = 0;
                 numLinesWritten = 0;
 
-                nextPosition = annotateForChromosome(nextPosition.chrom, nextPosition, recordReader, annotationReader, writer, annotationHasRef, annotationHasAlt, numFieldsInOutputFile);
+                nextPosition = annotateForChromosome(nextPosition.chrom, nextPosition, recordReader, annotationReader, writer, annotationHasRef, annotationHasAlt, numFieldsInOutputFile, annot.isInterval());
                 ServerLogger.log(Annotate.class,"Done annotating this chromosome; " + numMatches + " matches found, " + numLinesWritten + " written");
 
                 totalLinesWritten += numLinesWritten;
@@ -458,36 +471,100 @@ public class Annotate {
 
         public String chrom;
         public int position;
+        public int start;
+        public int end;
         public String ref;
         public String alt;
         public String[] line;
         private final boolean hasRef;
         private final boolean hasAlt;
+        private final boolean isInterval;
 
-        public AnnotationRecord(boolean hasRef, boolean hasAlt) {
+        public AnnotationRecord(boolean hasRef, boolean hasAlt, boolean isInterval) {
             this.hasRef = hasRef;
             this.hasAlt = hasAlt;
+            this.isInterval = isInterval;
         }
-
+        
         public void setFromLine(String[] line) {
             this.line = line;
-            chrom = line[ANNOT_INDEX_OF_CHR];
-            position = Integer.parseInt(line[ANNOT_INDEX_OF_POS]);
+            if(isInterval){
+                setFromLineInterval(line);
+            } else {
+                setFromLinePosition(line);
+            }
+        }
+
+        private void setFromLinePosition(String[] line) {
+            chrom = line[POS_ANNOT_INDEX_OF_CHR];
+            position = Integer.parseInt(line[POS_ANNOT_INDEX_OF_POS]);
             if (hasRef) {
-                ref = line[ANNOT_INDEX_OF_REF];
+                ref = line[POS_ANNOT_INDEX_OF_REF];
             } else {
                 ref = null;
             }
             if (hasAlt) {
-                alt = line[ANNOT_INDEX_OF_ALT];
+                alt = line[POS_ANNOT_INDEX_OF_ALT];
             } else {
                 alt = null;
+            }
+        }
+        
+        private void setFromLineInterval(String[] line) {
+            chrom = line[INT_ANNOT_INDEX_OF_CHR];
+            start = Integer.parseInt(line[INT_ANNOT_INDEX_OF_START]);
+            end = Integer.parseInt(line[INT_ANNOT_INDEX_OF_END]);
+            ref = null;
+            alt = null;
+        }
+        
+        public int getNumRelevantFields(){
+            if(isInterval){
+                return 3;
+            } else {
+                return 4;
+            }
+        }
+        
+        public boolean isBefore(int position){
+            if(isInterval){
+                return this.end <= position;
+            } else {
+                return this.position < position;
+            }
+        }
+        
+        public boolean isAfter(int position){
+            if(isInterval){
+                return this.start > position;
+            } else {
+                return this.position > position;
             }
         }
 
         @Override
         public String toString() {
-            return "AnnotationRecord{" + "chrom=" + chrom + ", position=" + position + ", ref=" + ref + ", alt=" + alt + '}';
+            if(isInterval){
+                return "AnnotationRecord{" + "chrom=" + chrom + ", start=" + start + ", end=" + end + '}';
+            } else {
+                return "AnnotationRecord{" + "chrom=" + chrom + ", position=" + position + ", ref=" + ref + ", alt=" + alt + '}';
+            }
+        }
+
+        public boolean matchesRefAlt(String ref, String alt) {
+            if(isInterval){
+                return true;
+            } else {
+                return (!hasRef || this.ref.equals(ref)) && (!hasAlt || this.alt.equals(alt));
+            }
+        }
+        
+        public boolean matchesPosition(int position) {
+            if(isInterval){
+                return this.start <= position && this.end > position;
+            } else {
+                return this.position == position;
+            }
         }
     }
 
@@ -534,9 +611,9 @@ public class Annotate {
     /**
      * MAIN
      */
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         ServerLogger.setMailRecipient("marcfiume@gmail.com");
         Annotate annot = new Annotate(variantFile.getAbsolutePath(), variantFile.getAbsolutePath() + ".annot", new int[]{3});
         annot.annotate();
-    }
+    }*/
 }

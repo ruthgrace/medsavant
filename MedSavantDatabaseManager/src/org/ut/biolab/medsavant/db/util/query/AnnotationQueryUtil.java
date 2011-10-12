@@ -50,7 +50,8 @@ public class AnnotationQueryUtil {
                     rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
                     rs.getString(AnnotationTable.FIELDNAME_VERSION),
                     rs.getString(ReferenceTable.FIELDNAME_NAME),
-                    rs.getString(AnnotationTable.FIELDNAME_PATH)));
+                    rs.getString(AnnotationTable.FIELDNAME_PATH),
+                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTable.FIELDNAME_TYPE))));
         }
 
         return results;
@@ -77,7 +78,8 @@ public class AnnotationQueryUtil {
                     rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
                     rs.getString(AnnotationTable.FIELDNAME_VERSION),
                     rs.getString(ReferenceTable.FIELDNAME_NAME),
-                    rs.getString(AnnotationTable.FIELDNAME_PATH));
+                    rs.getString(AnnotationTable.FIELDNAME_PATH),
+                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTable.FIELDNAME_TYPE)));
 
         return result;
     }
