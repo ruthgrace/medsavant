@@ -190,10 +190,18 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
         
     }
+    
+    private static void addRootUser() throws SQLException {
+        Connection c = ConnectionController.connect();
+        c.createStatement().executeUpdate(
+                "INSERT INTO `" + UserTable.TABLENAME + "` "
+                + "(`name`, is_admin) VALUES ('root', 1)");
+    }
 
     public static void main(String[] argv) throws SQLException {
         dropTables();
         createTables();
+        addRootUser();
     }
 
     private static List<String> getValuesFromField(String tablename, String fieldname) throws SQLException {
