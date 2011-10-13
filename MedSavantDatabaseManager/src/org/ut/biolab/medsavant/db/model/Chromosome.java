@@ -20,9 +20,14 @@ public class Chromosome {
 
     public Chromosome(String name, String shortname, long centromerepos, long length) {
         this.name = name;
-        this.shortname = shortname;
         this.length = length;
         this.centromerepos = centromerepos;
+        
+        if(shortname == null && name != null){
+            this.shortname = generateShortname(name);
+        } else {
+            this.shortname = shortname;
+        }
     }
 
     public long getCentromerepos() {
@@ -39,6 +44,10 @@ public class Chromosome {
 
     public String getShortname() {
         return shortname;
+    }
+    
+    private String generateShortname(String name){
+        return  name.toLowerCase().replace("chr", "").replace("contig", "");      
     }
     
     public static List<Chromosome> getDefaultChromosomes(){
