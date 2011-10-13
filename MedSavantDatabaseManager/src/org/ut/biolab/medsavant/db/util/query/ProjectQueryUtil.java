@@ -21,7 +21,7 @@ import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
-import org.ut.biolab.medsavant.db.util.ProjectDetails;
+import org.ut.biolab.medsavant.db.model.ProjectDetails;
 import org.xml.sax.SAXException;
 
 /**

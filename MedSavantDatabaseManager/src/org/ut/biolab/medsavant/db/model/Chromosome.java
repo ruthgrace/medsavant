@@ -2,52 +2,46 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ut.biolab.medsavant.view.genetics;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+package org.ut.biolab.medsavant.db.model;
+
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import org.ut.biolab.medsavant.controller.ProjectController;
-import org.ut.biolab.medsavant.view.subview.SectionView;
-import org.ut.biolab.medsavant.view.subview.SubSectionView;
-import org.ut.biolab.medsavant.db.model.Chromosome;
-import org.ut.biolab.medsavant.model.record.Genome;
-import org.ut.biolab.medsavant.view.util.PeekingPanel;
-import org.ut.biolab.medsavant.view.dialog.SavantExportForm;
 
 /**
  *
  * @author mfiume
  */
-public class GeneticsTablePage extends SubSectionView {
+public class Chromosome {
+    private final long centromerepos;
+    private final String name;
+    private final String shortname;
+    private final long length;
 
-    private JPanel panel;
+    public Chromosome(String name, String shortname, long centromerepos, long length) {
+        this.name = name;
+        this.shortname = shortname;
+        this.length = length;
+        this.centromerepos = centromerepos;
+    }
 
-    public GeneticsTablePage(SectionView parent) { 
-        super(parent);       
+    public long getCentromerepos() {
+        return centromerepos;
+    }
+
+    public long getLength() {
+        return length;
     }
 
     public String getName() {
-        return "  Table";
+        return name;
     }
 
-    public JPanel getView(boolean update) {
-        if (panel == null || update) {
-            setPanel();
-        }
-        return panel;
+    public String getShortname() {
+        return shortname;
     }
-
-    private void setPanel() {
-        panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        
-        GenomeContainer gp = new GenomeContainer();
+    
+    public static List<Chromosome> getDefaultChromosomes(){
         List<Chromosome> chrs = new ArrayList<Chromosome>();
         chrs.add(new Chromosome("chr1", "1", 125000000, 249250621));
         chrs.add(new Chromosome("chr2", "2", 93300000, 243199373));
@@ -73,25 +67,7 @@ public class GeneticsTablePage extends SubSectionView {
         chrs.add(new Chromosome("chr22", "22", 14700000, 51304566));
         chrs.add(new Chromosome("chrX", "X", 60600000, 155270560));
         chrs.add(new Chromosome("chrY", "Y", 12500000, 59373566));
-        Genome g = new Genome(chrs);
-        gp.setGenome(g);
-        PeekingPanel genomeView = new PeekingPanel("Genome", BorderLayout.SOUTH, gp, true,225);
-        panel.add(genomeView, BorderLayout.NORTH);
-        
-        panel.add(new TablePanel(), BorderLayout.CENTER);
-    }
-
-    public Component[] getBanner() {
-        return null;
-    }
-    
-    
-    @Override
-    public void viewDidLoad() {
-    }
-
-    @Override
-    public void viewDidUnload() {
+        return chrs;
     }
 
 }

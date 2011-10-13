@@ -4,7 +4,7 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
-import org.ut.biolab.medsavant.db.util.Cohort;
+import org.ut.biolab.medsavant.db.model.Cohort;
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.sql.Connection;
 import java.sql.ResultSet;

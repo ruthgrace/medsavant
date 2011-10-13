@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.ut.biolab.medsavant.db.model.Chromosome;
 import org.ut.biolab.medsavant.db.table.AnnotationTable;
+import org.ut.biolab.medsavant.db.table.ChromosomeTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -65,17 +67,30 @@ public class ReferenceQueryUtil {
     }
     
      
-     public static int addReference(String name) throws SQLException {
+     public static int addReference(String name, List<Chromosome> contigs) throws SQLException {
+         
+        Connection c = ConnectionController.connect();
 
+        //add reference
         String q = "INSERT INTO " + ReferenceTable.TABLENAME + " VALUES (null,'" + name + "')";
-        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
-                Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement stmt = c.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
 
         stmt.execute();
         ResultSet res = stmt.getGeneratedKeys();
         res.next();
 
         int refid = res.getInt(1);
+        
+        //add contigs
+        c.setAutoCommit(false);
+        for(int i = 0; i < contigs.size(); i++){
+            Chromosome chrom = contigs.get(i);
+            c.createStatement().executeUpdate(
+                    "INSERT INTO " + ChromosomeTable.TABLENAME
+                    + " VALUE (" + refid + "," + i + ",'" + chrom.getName() + "'," + chrom.getLength() + "," + chrom.getCentromerepos() + ")");
+        }
+        c.commit();
+        c.setAutoCommit(true);
         
         return refid;
     }
@@ -95,7 +110,12 @@ public class ReferenceQueryUtil {
                  + " WHERE " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + refid);
          if (rs.next()) { return false; }
          
-         c.createStatement().execute("DELETE FROM `" + ReferenceTable.TABLENAME + "` WHERE reference_id=" + refid);
+         c.createStatement().execute(
+                 "DELETE FROM `" + ReferenceTable.TABLENAME 
+                 + "` WHERE " + ReferenceTable.FIELDNAME_ID + "=" + refid);
+         c.createStatement().execute(
+                 "DELETE FROM " + ChromosomeTable.TABLENAME 
+                 + " WHERE " + ChromosomeTable.FIELDNAME_REFERENCEID + "=" + refid);
          
          return true;
     }  

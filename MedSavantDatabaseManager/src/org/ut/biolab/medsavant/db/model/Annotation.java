@@ -1,4 +1,4 @@
-package org.ut.biolab.medsavant.db.util;
+package org.ut.biolab.medsavant.db.model;
 
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import java.io.IOException;

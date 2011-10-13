@@ -67,6 +67,7 @@ public class Setup {
         DBUtil.dropTable(CohortMembershipTable.TABLENAME);
         DBUtil.dropTable(VariantPendingUpdateTable.TABLENAME);
         DBUtil.dropTable(PatientMapTable.TABLENAME);
+        DBUtil.dropTable(ChromosomeTable.TABLENAME);
     }
 
     private static void createTables() throws SQLException {
@@ -188,6 +189,16 @@ public class Setup {
                 + "`format_tablename` varchar(45) COLLATE latin1_bin NOT NULL,"
                 + "PRIMARY KEY (`annotation_id`) USING BTREE"
                 + ") ENGINE=MyISAM;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + ChromosomeTable.TABLENAME + "` ("
+                + "`reference_id` int(11) unsigned NOT NULL,"
+                + "`contig_id` int(11) unsigned NOT NULL,"
+                + "`contig_name` varchar(100) COLLATE latin1_bin NOT NULL,"
+                + "`contig_length` int(11) unsigned NOT NULL,"
+                + "`centromere_pos` int(11) unsigned NOT NULL,"
+                + "PRIMARY KEY (`reference_id`,`contig_id`) USING BTREE"
+                +") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
         
     }
     
