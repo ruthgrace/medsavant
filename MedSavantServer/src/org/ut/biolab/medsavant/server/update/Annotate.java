@@ -113,72 +113,57 @@ public class Annotate {
 
                 // CASE 2B(ii): There is an annotation at this position
             } else {
-                
-                // has both
-                if (isInterval || (annotationHasRef && annotationHasAlt)) {
 
-                    boolean annotationHitEnd1 = false;
-                    boolean foundMatch = false;
+                boolean annotationHitEnd1 = false;
+                boolean foundMatch = false;
 
-                    // look for a matching ref / alt pair
-                    while (true) {
-                       
-                        // found a match
-                        //if (currentVariant.ref.equals(currentAnnotation.ref)
-                        //        && currentVariant.alt.equals(currentAnnotation.alt)) {
-                        if(currentAnnotation.matchesRefAlt(currentVariant.ref, currentVariant.alt)){
-                            foundMatch = true;
-                            break;
-                            // no match exists
-                        //} else if (currentAnnotation.position != currentVariant.position) {
-                        } else if (!currentAnnotation.matchesPosition(currentVariant.position)){
-                            foundMatch = false;
-                            break;
-                            // not sure, keep looking
-                        } else {
-                            String nextannot = readNextFromIterator(it);
+                // look for a matching ref / alt pair
+                while (true) {
 
-                            // happens when there are no more annotations for this chrom
-                            if (nextannot == null) {
-                                ServerLogger.log(Annotate.class,"Annotation hit end; skipping chrom");
-                                annotationHitEnd1 = true;
-                                break;
-                            }
-
-                            currentAnnotation.setFromLine(nextannot.split("\t"));
-                        }
-                    }
-
-                    // We hit the end of the annotations for this chromsome.
-                    // We can't annotate the variants in the rest of the chromosome
-                    if (annotationHitEnd1) {
-                        return skipToNextChr(currentVariant, recordReader, writer, outLine);
-                    }
-
-                    numLinesWritten++;
-                    if (foundMatch) {
-                        numMatches++;
-                        //log("Matched " + currentVariant + " with " + currentAnnotation);
-                        // write current line with current annotation
-                        writer.writeNext(copyArraysExcludingEntries(currentVariant.line, currentAnnotation.line, outLine, currentAnnotation.getNumRelevantFields()));
+                    // found a match
+                    if((isInterval || (!annotationHasRef && !annotationHasAlt)) ||
+                            (annotationHasRef && annotationHasAlt && currentAnnotation.matchesRef(currentVariant.ref) && currentAnnotation.matchesAlt(currentVariant.alt)) ||
+                            (annotationHasRef && !annotationHasAlt && currentAnnotation.matchesRef(currentVariant.ref)) ||
+                            (!annotationHasRef && annotationHasAlt && currentAnnotation.matchesAlt(currentVariant.alt))){
+                        foundMatch = true;
+                        break;
+                        // no match exists
+                    //} else if (currentAnnotation.position != currentVariant.position) {
+                    } else if (!currentAnnotation.matchesPosition(currentVariant.position)){
+                        foundMatch = false;
+                        break;
+                        // not sure, keep looking
                     } else {
-                        // write current line without annotation
-                        writer.writeNext(copyArray(currentVariant.line, outLine));
-                    }
+                        String nextannot = readNextFromIterator(it);
 
-                    // has neither
-                /*} else if (!annotationHasRef && !annotationHasAlt) {
-                    throw new UnsupportedOperationException("We don't support annotations which don't have ref yet");
-                    // has only ref
-                } else if (annotationHasRef) {
-                    throw new UnsupportedOperationException("We don't support annotations which only have ref yet");
-                    // has only alt
-                } else if (annotationHasAlt) {
-                    throw new UnsupportedOperationException("We don't support annotations which only have alt yet");
-                }*/
-                } else {
-                    throw new UnsupportedOperationException("We don't support annotations which don't have both alt and ref yet");
+                        // happens when there are no more annotations for this chrom
+                        if (nextannot == null) {
+                            ServerLogger.log(Annotate.class,"Annotation hit end; skipping chrom");
+                            annotationHitEnd1 = true;
+                            break;
+                        }
+
+                        currentAnnotation.setFromLine(nextannot.split("\t"));
+                    }
                 }
+
+                // We hit the end of the annotations for this chromsome.
+                // We can't annotate the variants in the rest of the chromosome
+                if (annotationHitEnd1) {
+                    return skipToNextChr(currentVariant, recordReader, writer, outLine);
+                }
+
+                numLinesWritten++;
+                if (foundMatch) {
+                    numMatches++;
+                    //log("Matched " + currentVariant + " with " + currentAnnotation);
+                    // write current line with current annotation
+                    writer.writeNext(copyArraysExcludingEntries(currentVariant.line, currentAnnotation.line, outLine, currentAnnotation.getNumRelevantFields()));
+                } else {
+                    // write current line without annotation
+                    writer.writeNext(copyArray(currentVariant.line, outLine));
+                }
+
             }
 
             lastChr = currentVariant.chrom;
@@ -551,12 +536,12 @@ public class Annotate {
             }
         }
 
-        public boolean matchesRefAlt(String ref, String alt) {
-            if(isInterval){
-                return true;
-            } else {
-                return (!hasRef || this.ref.equals(ref)) && (!hasAlt || this.alt.equals(alt));
-            }
+        public boolean matchesRef(String ref){
+            return this.ref != null && this.ref.equals(ref);
+        }
+        
+        public boolean matchesAlt(String alt){
+            return this.alt != null && this.alt.equals(alt);
         }
         
         public boolean matchesPosition(int position) {
