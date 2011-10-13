@@ -12,6 +12,6 @@ public class RegionSetTable {
     
     public static String TABLENAME = "region_set";
     
-    public static String FIELDNAME_ID = "regionset_id";
+    public static String FIELDNAME_ID = "region_set_id";
     public static String FIELDNAME_NAME = "name";
 }

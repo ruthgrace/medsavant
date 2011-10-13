@@ -95,9 +95,9 @@ public class Setup {
 
         c.createStatement().execute(
                 "CREATE TABLE `" + RegionSetTable.TABLENAME + "` ("
-                + "`regionset_id` int(11) NOT NULL AUTO_INCREMENT,"
+                + "`region_set_id` int(11) NOT NULL AUTO_INCREMENT,"
                 + "`name` varchar(255) CHARACTER SET latin1 NOT NULL,"
-                + "PRIMARY KEY (`regionset_id`)"
+                + "PRIMARY KEY (`region_set_id`)"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(

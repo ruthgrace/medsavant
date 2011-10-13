@@ -12,7 +12,7 @@ public class RegionSetMembershipTable {
     
     public static String TABLENAME = "region_set_membership";
     
-    public static String FIELDNAME_REGIONSETID = "regionset_id";
+    public static String FIELDNAME_REGIONSETID = "region_set_id";
     public static String FIELDNAME_GENOMEID = "genome_id";
     public static String FIELDNAME_CHROM = "chrom";
     public static String FIELDNAME_START = "start";
