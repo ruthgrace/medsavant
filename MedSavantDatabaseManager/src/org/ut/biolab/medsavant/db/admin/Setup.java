@@ -33,10 +33,6 @@ public class Setup {
             for (String s : patientTables) {
                 DBUtil.dropTable(s);
             }
-            List<String> formatTables = getValuesFromField(PatientMapTable.TABLENAME, "format_tablename");
-            for (String s : formatTables) {
-                DBUtil.dropTable(s);
-            }
         }
         
         if (DBUtil.tableExists(DBSettings.DBNAME, VariantMapTable.TABLENAME)) {
@@ -45,18 +41,10 @@ public class Setup {
                 DBUtil.dropTable(s);
             }
         }
-        
-        if (DBUtil.tableExists(DBSettings.DBNAME, AnnotationMapTable.TABLENAME)) {
-            List<String> annotationFormatTables = getValuesFromField(AnnotationMapTable.TABLENAME, "format_tablename");
-            for (String s : annotationFormatTables) {
-                DBUtil.dropTable(s);
-            }
-        }
 
         DBUtil.dropTable(ServerLogTable.TABLENAME);
         DBUtil.dropTable(UserTable.TABLENAME);
         DBUtil.dropTable(AnnotationTable.TABLENAME);
-        DBUtil.dropTable(AnnotationMapTable.TABLENAME);
         DBUtil.dropTable(ReferenceTable.TABLENAME);
         DBUtil.dropTable(ProjectTable.TABLENAME);
         DBUtil.dropTable(PatientMapTable.TABLENAME);
@@ -68,6 +56,8 @@ public class Setup {
         DBUtil.dropTable(VariantPendingUpdateTable.TABLENAME);
         DBUtil.dropTable(PatientMapTable.TABLENAME);
         DBUtil.dropTable(ChromosomeTable.TABLENAME);
+        DBUtil.dropTable(PatientFormatTable.TABLENAME);
+        DBUtil.dropTable(AnnotationFormatTable.TABLENAME);
     }
 
     private static void createTables() throws SQLException {
@@ -159,8 +149,7 @@ public class Setup {
                 "CREATE TABLE `" + PatientMapTable.TABLENAME + "` ("
                 + "`project_id` int(11) unsigned NOT NULL,"
                 + "`patient_tablename` varchar(100) COLLATE latin1_bin NOT NULL,"
-                + "`format_tablename` varchar(100) COLLATE latin1_bin NOT NULL,"
-                + "UNIQUE KEY `patient_tablename` (`patient_tablename`,`project_id`)"
+                + "PRIMARY KEY (`project_id`)"
                 + ") ENGINE=MyISAM;");
 
         c.createStatement().execute(
@@ -184,13 +173,6 @@ public class Setup {
                 + ") ENGINE=MyISAM;");
         
         c.createStatement().execute(
-                "CREATE TABLE  `" + AnnotationMapTable.TABLENAME + "` ("
-                + "`annotation_id` int(10) unsigned NOT NULL,"
-                + "`format_tablename` varchar(45) COLLATE latin1_bin NOT NULL,"
-                + "PRIMARY KEY (`annotation_id`) USING BTREE"
-                + ") ENGINE=MyISAM;");
-        
-        c.createStatement().execute(
                 "CREATE TABLE  `" + ChromosomeTable.TABLENAME + "` ("
                 + "`reference_id` int(11) unsigned NOT NULL,"
                 + "`contig_id` int(11) unsigned NOT NULL,"
@@ -199,6 +181,30 @@ public class Setup {
                 + "`centromere_pos` int(11) unsigned NOT NULL,"
                 + "PRIMARY KEY (`reference_id`,`contig_id`) USING BTREE"
                 +") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + AnnotationFormatTable.TABLENAME + "` ("
+                + "`annotation_id` int(11) unsigned NOT NULL,"
+                + "`position` int(11) unsigned NOT NULL,"
+                + "`column_name` varchar(200) COLLATE latin1_bin NOT NULL,"
+                + "`column_type` varchar(45) COLLATE latin1_bin NOT NULL,"
+                + "`filterable` tinyint(1) NOT NULL,"
+                + "`alias` varchar(200) COLLATE latin1_bin NOT NULL,"
+                + "`description` varchar(500) COLLATE latin1_bin NOT NULL,"
+                + "PRIMARY KEY (`annotation_id`,`position`)"
+                + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + PatientFormatTable.TABLENAME + "` ("
+                + "`project_id` int(11) unsigned NOT NULL,"
+                + "`position` int(11) unsigned NOT NULL,"
+                + "`column_name` varchar(200) COLLATE latin1_bin NOT NULL,"
+                + "`column_type` varchar(45) COLLATE latin1_bin NOT NULL,"
+                + "`filterable` tinyint(1) NOT NULL,"
+                + "`alias` varchar(200) COLLATE latin1_bin NOT NULL,"
+                + "`description` varchar(500) COLLATE latin1_bin NOT NULL,"
+                + "PRIMARY KEY (`project_id`,`position`)"
+                + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
         
     }
     

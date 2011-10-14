@@ -1,9 +1,9 @@
-package org.ut.biolab.medsavant.model;
+package org.ut.biolab.medsavant.db.model;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /*
  * To change this template, choose Tools | Templates
@@ -177,7 +177,7 @@ public class Range implements Comparable{
      * @author Nirvana
      */
     public String toString(){
-        return ViewUtil.numToString(min) + " - " + ViewUtil.numToString(max);
+        return NumberFormat.getInstance().format(min) + " - " + NumberFormat.getInstance().format(max);
     }
     
     /**

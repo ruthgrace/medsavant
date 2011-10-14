@@ -10,6 +10,9 @@ package org.ut.biolab.medsavant.db.table;
  */
 public class PatientFormatTable {
     
+    public static String TABLENAME = "patient_format";
+    
+    public static String FIELDNAME_PROJECTID = "project_id";
     public static String FIELDNAME_POSITION = "position";
     public static String FIELDNAME_COLUMNNAME = "column_name";
     public static String FIELDNAME_COLUMNTYPE = "column_type";

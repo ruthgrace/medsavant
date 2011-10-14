@@ -30,7 +30,6 @@ import org.ut.biolab.medsavant.db.format.AnnotationField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
 import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
-import org.ut.biolab.medsavant.db.table.AnnotationMapTable;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
@@ -133,35 +132,25 @@ public class AddAnnotation {
         ResultSet rs = stmt.getGeneratedKeys();
         rs.next();
         int id = rs.getInt(1);
-        
-        //create format table
-        String tableName = DBSettings.createAnnotationFormatTableName(id);
-        query = 
-                "CREATE TABLE " + tableName + " (" +
-                "`" + AnnotationFormatTable.FIELDNAME_POSITION + "` INT(11) unsigned NOT NULL AUTO_INCREMENT," + 
-                "`" + AnnotationFormatTable.FIELDNAME_COLUMNNAME + "` VARCHAR(200) NOT NULL," +
-                "`" + AnnotationFormatTable.FIELDNAME_COLUMNTYPE + "` VARCHAR(45) NOT NULL," + 
-                "`" + AnnotationFormatTable.FIELDNAME_FILTERABLE + "` BOOLEAN NOT NULL," +
-                "`" + AnnotationFormatTable.FIELDNAME_ALIAS + "` VARCHAR(200) NOT NULL," +
-                "`" + AnnotationFormatTable.FIELDNAME_DESCRIPTION + "` VARCHAR(500) NOT NULL," +
-                "PRIMARY KEY (`" + AnnotationFormatTable.FIELDNAME_POSITION + "`)" +
-                ") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_bin;";
-        ConnectionController.connect().createStatement().execute(query);
-        
+  
         //populate
         Connection conn = ConnectionController.connect();
         conn.setAutoCommit(false);
         for(int i = 0; i < annotationFields.size(); i++){
             AnnotationField a = annotationFields.get(i);
             conn.createStatement().executeUpdate(
-                    "INSERT INTO " + tableName + " ("
+                    "INSERT INTO " + AnnotationFormatTable.TABLENAME + " ("
+                    + AnnotationFormatTable.FIELDNAME_ANNOTATIONID + ", "
+                    + AnnotationFormatTable.FIELDNAME_POSITION + ", "
                     + AnnotationFormatTable.FIELDNAME_COLUMNNAME + ", " 
                     + AnnotationFormatTable.FIELDNAME_COLUMNTYPE + ", " 
                     + AnnotationFormatTable.FIELDNAME_FILTERABLE + ", " 
                     + AnnotationFormatTable.FIELDNAME_ALIAS + ", " 
                     + AnnotationFormatTable.FIELDNAME_DESCRIPTION 
                     + ") VALUES (" 
-                    + "\"" + a.getColumnName() 
+                    + id
+                    + "," + i
+                    + ",\"" + a.getColumnName() 
                     + "\",\"" + a.getColumnType() 
                     + "\"," + (a.isFilterable() ? "1" : "0") 
                     + ",\"" + a.getAlias() 
@@ -170,10 +159,6 @@ public class AddAnnotation {
         conn.commit();
         conn.setAutoCommit(true);
         
-        //add entry to annotation_tablemap
-        conn.createStatement().executeUpdate(
-                "INSERT INTO " + AnnotationMapTable.TABLENAME
-                + " VALUES (" + id + "," + tableName + ")");
         
     }
     

@@ -205,4 +205,8 @@ public class TableSchema {
         // IMPORTANT: this assumes the values returned are in order of insert (LinkedHashMap)
         return new ArrayList<DbColumn>(indexToColumn.values());
     }
+    
+    public String getTablename() {
+        return table.getName();
+    }
 }

@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.table.AnnotationTable;
-import org.ut.biolab.medsavant.db.table.AnnotationMapTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -131,7 +130,8 @@ public class AnnotationQueryUtil {
         
         ResultSet rs2 = conn.createStatement().executeQuery(
                 "SELECT * " + 
-                "FROM " + getAnnotationFormatTableName(annotationId) + " " +
+                "FROM " + AnnotationFormatTable.TABLENAME + " " +
+                "WHERE " + AnnotationFormatTable.FIELDNAME_ANNOTATIONID + "=" + annotationId + " " + 
                 "ORDER BY `" + AnnotationFormatTable.FIELDNAME_POSITION + "`");
         
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
@@ -164,16 +164,6 @@ public class AnnotationQueryUtil {
         int annotid = res.getInt(1);
 
         return annotid;
-    }
-    
-    public static String getAnnotationFormatTableName(int annotationId) throws SQLException {
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + AnnotationMapTable.FIELDNAME_TABLENAME 
-                + " FROM `" + AnnotationMapTable.TABLENAME + "`"
-                + " WHERE " + AnnotationMapTable.FIELDNAME_ID + "=" + annotationId);
-        rs.next();
-        return rs.getString(1);
     }
     
 }

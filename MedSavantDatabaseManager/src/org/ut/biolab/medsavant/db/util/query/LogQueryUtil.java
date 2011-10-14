@@ -2,6 +2,7 @@ package org.ut.biolab.medsavant.db.util.query;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.table.ProjectTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.ServerLogTable;

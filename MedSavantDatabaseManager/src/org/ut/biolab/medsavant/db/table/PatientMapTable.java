@@ -14,5 +14,4 @@ public class PatientMapTable {
     
     public static String FIELDNAME_PROJECTID = "project_id";
     public static String FIELDNAME_PATIENTTABLENAME = "patient_tablename";
-    public static String FIELDNAME_FORMATTABLENAME = "format_tablename";
 }

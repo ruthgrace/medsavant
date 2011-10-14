@@ -22,6 +22,7 @@ import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
 import org.ut.biolab.medsavant.db.model.ProjectDetails;
+import org.ut.biolab.medsavant.db.table.PatientFormatTable;
 import org.xml.sax.SAXException;
 
 /**
@@ -243,16 +244,19 @@ public class ProjectQueryUtil {
                 "DELETE FROM `" + ProjectTable.TABLENAME + "`"
                 + " WHERE " + ProjectTable.FIELDNAME_ID + "=" + projectid);    
         
-        //remove patient table and patient format table
+        //remove patient table
         ResultSet rs1 = c.createStatement().executeQuery(
-                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME + ", " + PatientMapTable.FIELDNAME_FORMATTABLENAME 
+                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME
                 + " FROM " + PatientMapTable.TABLENAME 
                 + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectid);    
         rs1.next();
         String patientTableName = rs1.getString(PatientMapTable.FIELDNAME_PATIENTTABLENAME);
-        String patientFormatTableName = rs1.getString(PatientMapTable.FIELDNAME_FORMATTABLENAME);
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientTableName);
-        c.createStatement().execute("DROP TABLE IF EXISTS " + patientFormatTableName);
+        
+        //remove from patient format table
+        c.createStatement().execute(
+                "DELETE FROM `" + PatientFormatTable.TABLENAME + "`"
+                + " WHERE " + PatientFormatTable.FIELDNAME_PROJECTID + "=" + projectid);
         
         //remove from patient tablemap
         c.createStatement().execute(

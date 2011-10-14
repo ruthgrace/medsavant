@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
+import org.ut.biolab.medsavant.db.model.GenomicRegion;
+import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.RegionSet;
 import org.ut.biolab.medsavant.db.table.RegionSetMembershipTable;
 import org.ut.biolab.medsavant.db.table.RegionSetTable;
@@ -104,7 +106,7 @@ public class RegionQueryUtil {
         return rs.getInt(1);
     }
 
-    public static List<String> getRegionsInRegionSet(int regionSetId, int limit) throws SQLException {
+    public static List<String> getRegionNamesInRegionSet(int regionSetId, int limit) throws SQLException {
         Connection c = ConnectionController.connect();
         
         ResultSet rs = c.createStatement().executeQuery(
@@ -115,6 +117,23 @@ public class RegionQueryUtil {
         List<String> result = new ArrayList<String>();
         while(rs.next()){
             result.add(rs.getString(1));
+        }
+        return result;
+    }
+
+    public static List<GenomicRegion> getRegionsInRegionSet(int regionSetId) throws SQLException {
+        Connection c = ConnectionController.connect();
+        
+        ResultSet rs = c.createStatement().executeQuery(
+                "SELECT *"
+                + " FROM " + RegionSetMembershipTable.TABLENAME
+                + " WHERE " + RegionSetMembershipTable.FIELDNAME_REGIONSETID + "=" + regionSetId);
+        
+        List<GenomicRegion> result = new ArrayList<GenomicRegion>();
+        while(rs.next()){
+            result.add(new GenomicRegion(
+                    rs.getString(RegionSetMembershipTable.FIELDNAME_CHROM), 
+                    new Range(rs.getDouble(RegionSetMembershipTable.FIELDNAME_START), rs.getDouble(RegionSetMembershipTable.FIELDNAME_END))));
         }
         return result;
     }

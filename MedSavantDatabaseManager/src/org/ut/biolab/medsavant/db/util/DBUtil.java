@@ -1,27 +1,18 @@
 package org.ut.biolab.medsavant.db.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.ut.biolab.medsavant.db.util.ConnectionController;
-import com.healthmarketscience.sqlbuilder.SelectQuery;
-import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSchema;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbSpec;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
-import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import javax.sql.DataSource;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 
 /**
  *
