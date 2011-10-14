@@ -177,6 +177,12 @@ public class PatientQueryUtil {
         
         //create table
         c.createStatement().execute(query);
+
+        //add to tablemap
+        c.createStatement().executeUpdate(
+                "INSERT INTO " + PatientMapTable.TABLENAME
+                + " (" + PatientMapTable.FIELDNAME_PROJECTID + "," + PatientMapTable.FIELDNAME_PATIENTTABLENAME
+                + ") VALUES (" + projectid + ",'" + patientTableName + "')");
         
         //populate format table
         c.setAutoCommit(false);
