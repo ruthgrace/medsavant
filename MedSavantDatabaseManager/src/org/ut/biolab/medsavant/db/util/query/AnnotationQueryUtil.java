@@ -1,9 +1,13 @@
 package org.ut.biolab.medsavant.db.util.query;
 
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.ComboCondition;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
 import org.ut.biolab.medsavant.db.model.Annotation;
 import org.ut.biolab.medsavant.db.format.AnnotationField;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,12 +17,17 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.log.DBLogger;
-import org.ut.biolab.medsavant.db.table.AnnotationTable;
 import org.ut.biolab.medsavant.db.table.ReferenceTable;
 import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.AnnotationTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.AnnotationformatTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
 import org.xml.sax.SAXException;
 
@@ -29,28 +38,32 @@ import org.xml.sax.SAXException;
 public class AnnotationQueryUtil {
 
     public static List<Annotation> getAnnotations() throws SQLException {
-
-        Connection conn = ConnectionController.connect();
-     
-        String ref = ReferenceTable.TABLENAME;
-        String ann = AnnotationTable.TABLENAME;
-
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * "
-                + "FROM `" + ann + "` "
-                + "LEFT JOIN `" + ref + "` "
-                + "ON " + ann + ".`" + AnnotationTable.FIELDNAME_REFERENCEID + "` = " + ref + ".`" + ReferenceTable.FIELDNAME_ID + "`");
+        
+        TableSchema refTable = MedSavantDatabase.ReferenceTableSchema;
+        TableSchema annTable = MedSavantDatabase.AnnotationTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(annTable.getTable());
+        query.addJoin(
+                SelectQuery.JoinType.LEFT_OUTER, 
+                annTable.getTable(), 
+                refTable.getTable(), 
+                BinaryCondition.equalTo(
+                    annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                    refTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 
         List<Annotation> results = new ArrayList<Annotation>();
 
         while (rs.next()) {
             results.add(new Annotation(
-                    rs.getInt(AnnotationTable.FIELDNAME_ID),
-                    rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
-                    rs.getString(AnnotationTable.FIELDNAME_VERSION),
+                    rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID),
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM),
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_VERSION),
                     rs.getString(ReferenceTable.FIELDNAME_NAME),
-                    rs.getString(AnnotationTable.FIELDNAME_PATH),
-                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTable.FIELDNAME_TYPE))));
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PATH),
+                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_TYPE))));
         }
 
         return results;
@@ -58,41 +71,45 @@ public class AnnotationQueryUtil {
 
     public static Annotation getAnnotation(int annotation_id) throws SQLException {
 
-        Connection conn = ConnectionController.connect();
-
-        String ref = ReferenceTable.TABLENAME;
-        String ann = AnnotationTable.TABLENAME;
-
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT * "
-                + "FROM `" + ann + "` "
-                + "LEFT JOIN `" + ref + "` "
-                + "ON " + ann + ".`" + AnnotationTable.FIELDNAME_REFERENCEID + "` = " + ref + ".`" + ReferenceTable.FIELDNAME_ID + "` "
-                + "WHERE " + AnnotationTable.FIELDNAME_ID + "=" + annotation_id);
-
+        TableSchema refTable = MedSavantDatabase.ReferenceTableSchema;
+        TableSchema annTable = MedSavantDatabase.AnnotationTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(annTable.getTable());
+        query.addJoin(
+                SelectQuery.JoinType.LEFT_OUTER, 
+                annTable.getTable(), 
+                refTable.getTable(), 
+                BinaryCondition.equalTo(
+                    annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                    refTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+        query.addCondition(BinaryCondition.equalTo(annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotation_id));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 
         rs.next();
         Annotation result = new Annotation(
-                    rs.getInt(AnnotationTable.FIELDNAME_ID),
-                    rs.getString(AnnotationTable.FIELDNAME_PROGRAM),
-                    rs.getString(AnnotationTable.FIELDNAME_VERSION),
+                    rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID),
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM),
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_VERSION),
                     rs.getString(ReferenceTable.FIELDNAME_NAME),
-                    rs.getString(AnnotationTable.FIELDNAME_PATH),
-                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTable.FIELDNAME_TYPE)));
+                    rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PATH),
+                    AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_TYPE)));
 
         return result;
     }
 
     public static int[] getAnnotationIds(int projectId, int referenceId) throws SQLException {
-
-        Connection conn = ConnectionController.connect();
-
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT " + VariantMapTable.FIELDNAME_ANNOTATIONIDS + 
-                " FROM " + VariantMapTable.TABLENAME + 
-                " WHERE " + VariantMapTable.FIELDNAME_PROJECTID + "=" + projectId + 
-                " AND " + VariantMapTable.FIELDNAME_REFERENCEID + "=" + referenceId);
-
+        
+        TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addCondition(ComboCondition.and(
+                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
+                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        
         rs.next();
         String annotationString = rs.getString(VariantMapTable.FIELDNAME_ANNOTATIONIDS);
 
@@ -111,29 +128,32 @@ public class AnnotationQueryUtil {
 
     public static AnnotationFormat getAnnotationFormat(int annotationId) throws SQLException, IOException, ParserConfigurationException, SAXException {
         
-        Connection conn = ConnectionController.connect();
+        TableSchema annTable = MedSavantDatabase.AnnotationTableSchema;
+        SelectQuery query1 = new SelectQuery();
+        query1.addFromTable(annTable.getTable());
+        query1.addCondition(BinaryCondition.equalTo(annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         
-        ResultSet rs1 = conn.createStatement().executeQuery(
-                "SELECT * " + 
-                "FROM " + AnnotationTable.TABLENAME + " " + 
-                "WHERE " + AnnotationTable.FIELDNAME_ID + "=" + annotationId + ";");
+        ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query1.toString());
+
         rs1.next();
         
-        String program = rs1.getString(AnnotationTable.FIELDNAME_PROGRAM);
-        String version = rs1.getString(AnnotationTable.FIELDNAME_VERSION);
-        int referenceId = rs1.getInt(AnnotationTable.FIELDNAME_REFERENCEID);
-        String path = rs1.getString(AnnotationTable.FIELDNAME_PATH);
-        boolean hasRef = rs1.getBoolean(AnnotationTable.FIELDNAME_HASREF);
-        boolean hasAlt = rs1.getBoolean(AnnotationTable.FIELDNAME_HASALT);
-        AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt(AnnotationTable.FIELDNAME_TYPE));
+        String program = rs1.getString(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM);
+        String version = rs1.getString(AnnotationTableSchema.COLUMNNAME_OF_VERSION);
+        int referenceId = rs1.getInt(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID);
+        String path = rs1.getString(AnnotationTableSchema.COLUMNNAME_OF_PATH);
+        boolean hasRef = rs1.getBoolean(AnnotationTableSchema.COLUMNNAME_OF_HAS_REF);
+        boolean hasAlt = rs1.getBoolean(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT);
+        AnnotationType type = AnnotationFormat.intToAnnotationType(rs1.getInt(AnnotationTableSchema.COLUMNNAME_OF_TYPE));
         
         
-        ResultSet rs2 = conn.createStatement().executeQuery(
-                "SELECT * " + 
-                "FROM " + AnnotationFormatTable.TABLENAME + " " +
-                "WHERE " + AnnotationFormatTable.FIELDNAME_ANNOTATIONID + "=" + annotationId + " " + 
-                "ORDER BY `" + AnnotationFormatTable.FIELDNAME_POSITION + "`");
+        TableSchema annFormatTable = MedSavantDatabase.AnnotationformatTableSchema;
+        SelectQuery query2 = new SelectQuery();
+        query2.addFromTable(annFormatTable.getTable());
+        query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
+        query2.addOrdering(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
+        ResultSet rs2 = ConnectionController.connect().createStatement().executeQuery(query2.toString());
+
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
         while(rs2.next()){
             fields.add(new AnnotationField(
@@ -148,13 +168,22 @@ public class AnnotationQueryUtil {
     }
     
        
-    public static int addAnnotation(String program, String version, int referenceid, String path, String format) throws SQLException {
+    public static int addAnnotation(String program, String version, int referenceid, String path, String format, boolean hasRef, boolean hasAlt, int type) throws SQLException {
         
         DBLogger.log("Adding annotation...");
         
-        String q = "INSERT INTO " + AnnotationTable.TABLENAME 
-                + " VALUES (null,'" + program + "','" + version + "'," + referenceid + ",'" + path + "','" + format + "')";
-        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(q,
+        TableSchema table = MedSavantDatabase.AnnotationTableSchema;
+        InsertQuery query = new InsertQuery(table.getTable());
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM), program);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_VERSION), version);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceid);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_PATH), path);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_REF), hasRef);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT), hasAlt);
+        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_TYPE), type);
+
+        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(
+                query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 
         stmt.execute();

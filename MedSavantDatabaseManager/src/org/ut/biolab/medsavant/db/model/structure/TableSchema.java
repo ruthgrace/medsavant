@@ -108,9 +108,14 @@ public class TableSchema {
         return this.getColumnType(this.getColumnIndex(c));
     }
 
-    public DbColumn getDBColumn(String alias) {
+    public DbColumn getDBColumnByAlias(String alias) {
         assert (aliasToColumn.containsKey(alias));
         return aliasToColumn.get(alias);
+    }
+    
+    public DbColumn getDbColumn(String columnname) {
+        assert (dbNameToAlias.containsKey(columnname));
+        return getDBColumnByAlias(dbNameToAlias.get(columnname));
     }
     
     public int getFieldIndexInDB(String dbName) {
