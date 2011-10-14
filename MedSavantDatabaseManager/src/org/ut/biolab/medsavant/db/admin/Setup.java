@@ -206,6 +206,47 @@ public class Setup {
                 + "PRIMARY KEY (`project_id`,`position`)"
                 + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
         
+        c.createStatement().execute(
+                "CREATE TABLE  `medsavantkb`.`default_patient` ("
+                + "`patient_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
+                + "`family_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`pedigree_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`hospital_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`dna_ids` varchar(1000) COLLATE latin1_bin DEFAULT NULL,"
+                + "PRIMARY KEY (`patient_id`)"
+                + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `medsavantkb`.`default_variant` ("
+                + "`upload_id` int(11) NOT NULL,"
+                + "`file_id` int(11) NOT NULL,"
+                + "`variant_id` int(11) NOT NULL,"
+                + "`dna_id` varchar(100) COLLATE latin1_bin NOT NULL,"
+                + "`chrom` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT '',"
+                + "`position` int(11) NOT NULL,"
+                + "`dbsnp_id` varchar(45) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ref` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`alt` varchar(30) COLLATE latin1_bin DEFAULT NULL,"
+                + "`qual` float(10,0) DEFAULT NULL,"
+                + "`filter` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`aa` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ac` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`af` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`an` int(11) DEFAULT NULL,"
+                + "`bq` float DEFAULT NULL,"
+                + "`cigar` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`db` int(1) DEFAULT NULL,"
+                + "`dp` int(11) DEFAULT NULL,"
+                + "`end` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`h2` int(1) DEFAULT NULL,"
+                + "`mq` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`mq0` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`ns` int(11) DEFAULT NULL,"
+                + "`sb` varchar(500) COLLATE latin1_bin DEFAULT NULL,"
+                + "`somatic` int(1) DEFAULT NULL,"
+                + "`validated` int(1) DEFAULT NULL,"
+                + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL"
+                + ") ENGINE=BRIGHTHOUSE DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
     }
     
     private static void addRootUser() throws SQLException {
