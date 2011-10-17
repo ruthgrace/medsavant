@@ -208,11 +208,11 @@ public class ProjectQueryUtil {
     }
 
     public static int getNumberOfRecordsInVariantTable(int projectid, int refid) throws SQLException {
-        String variantTableName = ProjectQueryUtil.getVariantTable(projectid,refid);
+        String variantTableName = ProjectQueryUtil.getVariantTablename(projectid,refid);
         return DBUtil.getNumRecordsInTable(variantTableName);
     }
 
-    public static String getVariantTable(int projectid, int refid) throws SQLException {
+    public static String getVariantTablename(int projectid, int refid) throws SQLException {
         
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query = new SelectQuery();

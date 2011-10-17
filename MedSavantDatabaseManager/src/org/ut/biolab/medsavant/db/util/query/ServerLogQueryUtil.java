@@ -1,11 +1,14 @@
 package org.ut.biolab.medsavant.db.util.query;
 
-import java.sql.Connection;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Level;
 import org.ut.biolab.medsavant.db.log.DBLogger;
-import org.ut.biolab.medsavant.db.table.ServerLogTable;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ServerlogTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -23,12 +26,16 @@ public class ServerLogQueryUtil {
     
     public static void addLog(String uname, LogType t, String description) {
         try {
-            Connection c = ConnectionController.connect();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp((new Date()).getTime());
-            String q = 
-                    "INSERT INTO " + ServerLogTable.TABLENAME 
-                    + " VALUES (null,'" + uname + "','" + t.toString() + "','" + description + "','" + sqlDate + "')";
-            c.createStatement().execute(q);
+            Timestamp sqlDate = new java.sql.Timestamp((new Date()).getTime());
+            
+            TableSchema table = MedSavantDatabase.ServerlogTableSchema;
+            InsertQuery query = new InsertQuery(table.getTable());
+            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), uname);
+            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_EVENT), t.toString());
+            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
+            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
+            ConnectionController.connect().createStatement().execute(query.toString());
+            
         } catch (SQLException ex) {
             DBLogger.log(ex.getLocalizedMessage(), Level.SEVERE);
         }

@@ -4,6 +4,10 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.DeleteQuery;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,11 +16,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.GenomicRegion;
 import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.RegionSet;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetmembershipTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.table.RegionSetMembershipTable;
 import org.ut.biolab.medsavant.db.table.RegionSetTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -28,15 +35,16 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
 public class RegionQueryUtil {
     
     public static void addRegionList(String geneListName, Iterator<String[]> i) throws NonFatalDatabaseException, SQLException {
-
-        Connection conn = ConnectionController.connect();
+        
+        Connection conn = ConnectionController.connect();       
+        TableSchema regionSetTable = MedSavantDatabase.RegionsetTableSchema;     
+        TableSchema regionMemberTable = MedSavantDatabase.RegionsetmembershipTableSchema;
         
         //add region set
-        String q = 
-                "INSERT INTO " + RegionSetTable.TABLENAME 
-                + " (" + RegionSetTable.FIELDNAME_NAME + ") VALUES ('" + geneListName + "')";
-        PreparedStatement stmt = conn.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+        InsertQuery query1 = new InsertQuery(regionSetTable.getTable());
+        query1.addColumn(regionSetTable.getDBColumn(RegionsetTableSchema.COLUMNNAME_OF_NAME), geneListName);
         
+        PreparedStatement stmt = conn.prepareStatement(query1.toString(), Statement.RETURN_GENERATED_KEYS);       
         stmt.execute();
         ResultSet rs = stmt.getGeneratedKeys();
         rs.next();
@@ -47,47 +55,48 @@ public class RegionQueryUtil {
         conn.setAutoCommit(false);
         while(i.hasNext()){
             String[] line = i.next();
-            conn.createStatement().executeUpdate(
-                    "INSERT INTO " + RegionSetMembershipTable.TABLENAME + " (" 
-                    + RegionSetMembershipTable.FIELDNAME_GENOMEID + ","
-                    + RegionSetMembershipTable.FIELDNAME_REGIONSETID + ","
-                    + RegionSetMembershipTable.FIELDNAME_CHROM + "," 
-                    + RegionSetMembershipTable.FIELDNAME_START + "," 
-                    + RegionSetMembershipTable.FIELDNAME_END + "," 
-                    + RegionSetMembershipTable.FIELDNAME_DESCRIPTION
-                    + ") VALUES ("
-                    + 1 + ","
-                    + regionSetId + ","
-                    + "'" + line[0] + "',"
-                    + line[1] + ","
-                    + line[2] + ","
-                    + "'" + line[3] + "')");
+            InsertQuery query = new InsertQuery(regionMemberTable.getTable());
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_GENOME_ID), 1);//TODO??
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId);
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), line[0]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), line[1]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_END), line[2]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION), line[3]);
+            
+            conn.createStatement().executeUpdate(query.toString());
         }
         conn.commit();
         conn.setAutoCommit(false);
     }
     
     public static void removeRegionList(int regionSetId) throws SQLException {
+        
+        TableSchema regionMemberTable = MedSavantDatabase.RegionsetmembershipTableSchema;
+        TableSchema regionSetTable = MedSavantDatabase.RegionsetTableSchema;
+
         Connection c = ConnectionController.connect();
         
         //remove members
-        c.createStatement().execute(
-                "DELETE FROM " + RegionSetMembershipTable.TABLENAME
-                + " WHERE " + RegionSetMembershipTable.FIELDNAME_REGIONSETID + "=" + regionSetId);
+        DeleteQuery q1 = new DeleteQuery(regionMemberTable.getTable());
+        q1.addCondition(BinaryCondition.equalTo(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        c.createStatement().execute(q1.toString());
         
-        //remove from region table
-        c.createStatement().execute(
-                "DELETE FROM " + RegionSetTable.TABLENAME
-                + " WHERE " + RegionSetTable.FIELDNAME_ID + "=" + regionSetId);
-        
+        //remove from region regionSetTable
+        DeleteQuery q2 = new DeleteQuery(regionSetTable.getTable());
+        q2.addCondition(BinaryCondition.equalTo(regionSetTable.getDBColumn(RegionsetTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        c.createStatement().execute(q2.toString());
     }
     
     public static List<RegionSet> getRegionSets() throws SQLException {
-        Connection c = ConnectionController.connect();
         
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT *"
-                + " FROM " + RegionSetTable.TABLENAME);
+        TableSchema table = MedSavantDatabase.RegionsetTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        
         List<RegionSet> result = new ArrayList<RegionSet>();
         while(rs.next()){
             result.add(new RegionSet(rs.getInt(RegionSetTable.FIELDNAME_ID), rs.getString(RegionSetTable.FIELDNAME_NAME)));
@@ -96,24 +105,31 @@ public class RegionQueryUtil {
     }
     
     public static int getNumberRegions(int regionSetId) throws SQLException {
-        Connection c = ConnectionController.connect();
         
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT COUNT(*)"
-                + " FROM " + RegionSetMembershipTable.TABLENAME
-                + " WHERE " + RegionSetMembershipTable.FIELDNAME_REGIONSETID + "=" + regionSetId);
+        TableSchema table = MedSavantDatabase.RegionsetmembershipTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        
         rs.next();
         return rs.getInt(1);
     }
 
     public static List<String> getRegionNamesInRegionSet(int regionSetId, int limit) throws SQLException {
-        Connection c = ConnectionController.connect();
         
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + RegionSetMembershipTable.FIELDNAME_DESCRIPTION
-                + " FROM " + RegionSetMembershipTable.TABLENAME
-                + " WHERE " + RegionSetMembershipTable.FIELDNAME_REGIONSETID + "=" + regionSetId
-                + " LIMIT " + limit);
+        TableSchema table = MedSavantDatabase.RegionsetmembershipTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
+
         List<String> result = new ArrayList<String>();
         while(rs.next()){
             result.add(rs.getString(1));
@@ -122,12 +138,15 @@ public class RegionQueryUtil {
     }
 
     public static List<GenomicRegion> getRegionsInRegionSet(int regionSetId) throws SQLException {
-        Connection c = ConnectionController.connect();
         
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT *"
-                + " FROM " + RegionSetMembershipTable.TABLENAME
-                + " WHERE " + RegionSetMembershipTable.FIELDNAME_REGIONSETID + "=" + regionSetId);
+        TableSchema table = MedSavantDatabase.RegionsetmembershipTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<GenomicRegion> result = new ArrayList<GenomicRegion>();
         while(rs.next()){

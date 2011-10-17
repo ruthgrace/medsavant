@@ -4,6 +4,11 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.ComboCondition;
+import com.healthmarketscience.sqlbuilder.Condition;
+import com.healthmarketscience.sqlbuilder.FunctionCall;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
+import org.ut.biolab.medsavant.db.model.structure.CustomTables;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultvariantTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.table.VariantTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -28,19 +36,27 @@ public class VariantQueryUtil {
         return getVariants(projectId, referenceId, new ArrayList(), limit);
     }
    
-    public static Vector getVariants(int projectId, int referenceId, List<List> conditions, int limit) throws SQLException {            
+    public static Vector getVariants(int projectId, int referenceId, List<List<Condition>> conditions, int limit) throws SQLException {            
         
-        String query = 
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        for(int i = 0; i < conditions.size(); i++){
+            query.addCondition(ComboCondition.and(conditions.get(i)));
+        }
+        
+        /*String query = 
                 "SELECT *" + 
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0";  
+                " FROM " + ProjectQueryUtil.getVariantTablename(projectId, referenceId) + " t0";  
         if(!conditions.isEmpty()){
             query += " WHERE ";
         }
         query += conditionsToStringOr(conditions);
-        query += " LIMIT " + limit;
+        query += " LIMIT " + limit;*/
         
         Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+        ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
         ResultSetMetaData rsMetaData = rs.getMetaData();
         int numberColumns = rsMetaData.getColumnCount();
@@ -57,7 +73,7 @@ public class VariantQueryUtil {
         return result;
     }
     
-    private static String conditionsToStringOr(List<List> conditions){
+    /*private static String conditionsToStringOr(List<List> conditions){
         String s = "";
         for(int i = 0; i < conditions.size(); i++){
             List subset = conditions.get(i);
@@ -88,13 +104,18 @@ public class VariantQueryUtil {
             }
         }
         return s;
-    }
+    }*/
     
-    public static double[] getExtremeValuesForColumn(String tablename, String columnname) throws SQLException {      
-        Connection conn = ConnectionController.connect();        
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT MIN(" + columnname + "),MAX(" + columnname + ")" + 
-                " FROM " + tablename);
+    public static double[] getExtremeValuesForColumn(String tablename, String columnname) throws SQLException { 
+        
+        TableSchema table = CustomTables.getVariantTableSchema(tablename);
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addCustomColumns(FunctionCall.min().addColumnParams(table.getDBColumn(columnname)));
+        query.addCustomColumns(FunctionCall.max().addColumnParams(table.getDBColumn(columnname)));
+      
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         double[] result = new double[2];
         rs.next();
@@ -105,10 +126,15 @@ public class VariantQueryUtil {
     }
     
     public static List<String> getDistinctValuesForColumn(String tablename, String columnname) throws SQLException {
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(
-                "SELECT DISTINCT " + columnname + 
-                " FROM " + tablename);
+        
+        TableSchema table = CustomTables.getVariantTableSchema(tablename);
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.setIsDistinct(true);
+        query.addColumns(table.getDBColumn(columnname)); 
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<String> result = new ArrayList<String>();
         while(rs.next()){
@@ -129,16 +155,16 @@ public class VariantQueryUtil {
     
     public static int getNumFilteredVariants(int projectId, int referenceId, List<List> conditions) throws SQLException {
         
-        String query = 
-                "SELECT COUNT(*)" + 
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0 ";  
-        if(!conditions.isEmpty()){
-            query += "WHERE ";
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+               
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns(FunctionCall.countAll());
+        for(int i = 0; i < conditions.size(); i++){
+            q.addCondition(ComboCondition.and(conditions.get(i)));
         }
-        query += conditionsToStringOr(conditions);
-        
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
@@ -146,17 +172,18 @@ public class VariantQueryUtil {
     
     public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List> conditions, String column, double min, double max) throws SQLException {
         
-        String query = 
-                "SELECT COUNT(*)" + 
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" +
-                " WHERE `" + column + "`>=" + min + " AND `" + column + "`<" + max;
-        if(!conditions.isEmpty()){
-            query += " AND ";
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+               
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns(FunctionCall.countAll());
+        q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(column), min, true)); 
+        q.addCondition(BinaryCondition.lessThan(table.getDBColumn(column), max, false)); 
+        for(int i = 0; i < conditions.size(); i++){
+            q.addCondition(ComboCondition.and(conditions.get(i)));
         }
-        query += conditionsToStringOr(conditions);
-        
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);        
@@ -164,17 +191,17 @@ public class VariantQueryUtil {
     
     public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List> conditions, String column) throws SQLException {
         
-        String query = 
-                "SELECT `" + column + "`, COUNT(*)" + 
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0";
-        if(!conditions.isEmpty()){
-            query += " WHERE ";
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+               
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns(FunctionCall.countAll());
+        for(int i = 0; i < conditions.size(); i++){
+            q.addCondition(ComboCondition.and(conditions.get(i)));
         }
-        query += conditionsToStringOr(conditions);
-        query += " GROUP BY `" + column + "`";
-                
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+        q.addGroupings(table.getDBColumn(column));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         Map<String, Integer> map = new HashMap<String, Integer>();
         
@@ -187,19 +214,19 @@ public class VariantQueryUtil {
     
     public static int getNumVariantsInRange(int projectId, int referenceId, List<List> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
-        String query = 
-                "SELECT COUNT(*)"
-                + " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0"
-                + " WHERE `" + VariantTable.FIELDNAME_CHROM + "`=\"" + chrom + "\""
-                + " AND `" + VariantTable.FIELDNAME_POSITION + "`>=" + start 
-                + " AND `" + VariantTable.FIELDNAME_POSITION + "`<" + end;
-        if(!conditions.isEmpty()){
-            query += " AND ";
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+               
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns(FunctionCall.countAll());
+        q.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
+        q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION), start, true));
+        q.addCondition(BinaryCondition.lessThan(table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION), end, false));
+        for(int i = 0; i < conditions.size(); i++){
+            q.addCondition(ComboCondition.and(conditions.get(i)));
         }
-        query += conditionsToStringOr(conditions);
         
-        Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
@@ -207,16 +234,27 @@ public class VariantQueryUtil {
     
     public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
-        String queryBase = 
+        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        
+        SelectQuery queryBase = new SelectQuery();
+        queryBase.addFromTable(table.getTable());
+        queryBase.addColumns(table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION));
+        queryBase.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
+        for(int i = 0; i < conditions.size(); i++){
+            queryBase.addCondition(ComboCondition.and(conditions.get(i)));
+        }
+        
+        /*String queryBase = 
                 "SELECT `" + VariantTable.FIELDNAME_POSITION + "`" +
-                " FROM " + ProjectQueryUtil.getVariantTable(projectId, referenceId) + " t0" + 
+                " FROM " + ProjectQueryUtil.getVariantTablename(projectId, referenceId) + " t0" + 
                 " WHERE `" + VariantTable.FIELDNAME_CHROM + "`=\"" + chrom + "\"";
         if(!conditions.isEmpty()){
             queryBase += " AND ";
         }
-        queryBase += conditionsToStringOr(conditions);
+        queryBase += conditionsToStringOr(conditions);*/
         
         
+        //TODO
         String query = "select y.range as `range`, count(*) as `number of occurences` "
                 + "from ("
                 + "select case ";
@@ -228,7 +266,7 @@ public class VariantQueryUtil {
         
         query += "end as `range` "
                 + "from (";
-        query += queryBase;
+        query += queryBase.toString();
         query += ") x ) y "
                 + "group by y.`range`";
         

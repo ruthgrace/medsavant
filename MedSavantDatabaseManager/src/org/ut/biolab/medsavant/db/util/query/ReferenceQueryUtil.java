@@ -160,12 +160,14 @@ public class ReferenceQueryUtil {
         query.addFromTable(variantMapTable.getTable());
         query.addColumns(refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME));
         query.addJoin(SelectQuery.JoinType.LEFT_OUTER, 
-                refTable.getTable(), 
                 variantMapTable.getTable(), 
+                refTable.getTable(), 
                 BinaryCondition.equalTo(
                         refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        
+        String a = query.toString();
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
