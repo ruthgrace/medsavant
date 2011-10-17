@@ -44,6 +44,7 @@ public class AnnotationQueryUtil {
         
         SelectQuery query = new SelectQuery();
         query.addFromTable(annTable.getTable());
+        query.addAllColumns();
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 annTable.getTable(), 
@@ -76,6 +77,7 @@ public class AnnotationQueryUtil {
         
         SelectQuery query = new SelectQuery();
         query.addFromTable(annTable.getTable());
+        query.addAllColumns();
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 annTable.getTable(), 
@@ -104,10 +106,13 @@ public class AnnotationQueryUtil {
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
+        query.addColumns(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS));
         query.addCondition(ComboCondition.and(
                 BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
                 BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
         
+        
+        String a = query.toString();
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         rs.next();
@@ -131,6 +136,7 @@ public class AnnotationQueryUtil {
         TableSchema annTable = MedSavantDatabase.AnnotationTableSchema;
         SelectQuery query1 = new SelectQuery();
         query1.addFromTable(annTable.getTable());
+        query1.addAllColumns();
         query1.addCondition(BinaryCondition.equalTo(annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query1.toString());
@@ -149,6 +155,7 @@ public class AnnotationQueryUtil {
         TableSchema annFormatTable = MedSavantDatabase.AnnotationformatTableSchema;
         SelectQuery query2 = new SelectQuery();
         query2.addFromTable(annFormatTable.getTable());
+        query2.addAllColumns();
         query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         query2.addOrdering(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         

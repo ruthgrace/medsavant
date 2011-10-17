@@ -222,6 +222,11 @@ public class MedSavantDatabase {
 			super(s.addTable(TABLE_NAME));
 			addColumns();
 		}
+                
+                public DefaultpatientTableSchema(DbSchema s, String tablename) {
+			super(s.addTable(tablename));
+			addColumns();
+		}
 
 		// default_patient.patient_id
 		public static final int INDEX_OF_PATIENT_ID = 0;
@@ -264,6 +269,11 @@ public class MedSavantDatabase {
 			super(s.addTable(TABLE_NAME));
 			addColumns();
 		}
+                
+                public DefaultvariantTableSchema(DbSchema s, String tablename){
+                        super(s.addTable(tablename));
+                        addColumns();
+                }
 
 		// default_variant.upload_id
 		public static final int INDEX_OF_UPLOAD_ID = 0;
@@ -792,7 +802,7 @@ public class MedSavantDatabase {
 
 	}
 
-	private static final DbSchema schema = (new DbSpec()).addDefaultSchema();
+	public static final DbSchema schema = (new DbSpec()).addDefaultSchema();
 
 	//AnnotationTableSchema
 	public static final AnnotationTableSchema AnnotationTableSchema = new AnnotationTableSchema(schema);

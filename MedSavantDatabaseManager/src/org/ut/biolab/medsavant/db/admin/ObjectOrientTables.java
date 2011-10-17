@@ -80,6 +80,13 @@ public class ObjectOrientTables {
                     + "\t\t\taddColumns();\n"
                     + "\t\t}"+ "\n");
             bw.write(""+ "\n");
+            if(className.toLowerCase().contains("default")){
+                bw.write("\t\tpublic " + className + "(DbSchema s, String tablename) {\n"
+                        + "\t\t\tsuper(s.addTable(tablename));\n"
+                        + "\t\t\taddColumns();\n"
+                        + "\t\t}"+ "\n");
+                bw.write(""+ "\n");
+            }
             
             int index = 0;
 
@@ -111,7 +118,7 @@ public class ObjectOrientTables {
             bw.write("\n");
         }
         
-        bw.write("\tprivate static final DbSchema schema = (new DbSpec()).addDefaultSchema();\n\n");
+        bw.write("\tpublic static final DbSchema schema = (new DbSpec()).addDefaultSchema();\n\n");
         
         for (String className : classNames) {
             bw.write("\t//" + className + "\n");

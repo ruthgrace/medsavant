@@ -115,6 +115,7 @@ public class AnnotationLogQueryUtil {
         TableSchema table = MedSavantDatabase.VariantpendingupdateTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
+        query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(Status.PENDING)));
         query.addOrdering(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION), OrderObject.Dir.ASCENDING);
         

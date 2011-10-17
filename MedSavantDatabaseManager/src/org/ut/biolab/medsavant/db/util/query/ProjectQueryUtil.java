@@ -365,9 +365,9 @@ public class ProjectQueryUtil {
         List<ProjectDetails> result = new ArrayList<ProjectDetails>();
         while(rs.next()){
             result.add(new ProjectDetails(
-                    rs.getInt(VariantMapTable.FIELDNAME_REFERENCEID), 
-                    rs.getString(ReferenceTable.FIELDNAME_NAME), 
-                    rs.getString(VariantMapTable.FIELDNAME_ANNOTATIONIDS)));
+                    rs.getInt(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                    rs.getString(ReferenceTableSchema.COLUMNNAME_OF_NAME), 
+                    rs.getString(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS)));
         }
         
         return result;

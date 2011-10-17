@@ -4,6 +4,12 @@
  */
 package org.ut.biolab.medsavant.db.util.query;
 
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.Condition;
+import com.healthmarketscience.sqlbuilder.DeleteQuery;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -24,6 +30,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.format.CustomField;
+import org.ut.biolab.medsavant.db.model.structure.CustomTables;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultpatientTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.PatientformatTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.PatienttablemapTableSchema;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.table.PatientFormatTable;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -37,10 +49,17 @@ public class PatientQueryUtil {
         
         String tablename = getPatientTablename(projectId);
         
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientTable.FIELDNAME_ID + "," + PatientTable.FIELDNAME_FAMILYID + "," + PatientTable.FIELDNAME_PEDIGREEID + "," + PatientTable.FIELDNAME_HOSPITALID + "," + PatientTable.FIELDNAME_DNAIDS + " " +
-                "FROM " + tablename);
+        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addColumns(
+                table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID),
+                table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_FAMILY_ID),
+                table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID),
+                table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID),
+                table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<Vector> result = new ArrayList<Vector>();
         while(rs.next()){
@@ -58,11 +77,13 @@ public class PatientQueryUtil {
         
         String tablename = getPatientTablename(projectId);
         
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT *" + 
-                " FROM " + tablename + 
-                " WHERE " + PatientTable.FIELDNAME_ID + "=" + patientId);
+        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         rs.next();
         Vector v = new Vector();
@@ -73,20 +94,22 @@ public class PatientQueryUtil {
     }
     
     public static List<String> getPatientFieldAliases(int projectId) throws SQLException {
-                
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientFormatTable.FIELDNAME_ALIAS + 
-                " FROM " + PatientFormatTable.TABLENAME + 
-                " WHERE " + PatientFormatTable.FIELDNAME_PROJECTID + "=" + projectId + 
-                " ORDER BY `" + PatientFormatTable.FIELDNAME_POSITION + "`");
+        
+        TableSchema table = MedSavantDatabase.PatientformatTableSchema;
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addColumns(table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_ALIAS));
+        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addOrdering(table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<String> result = new ArrayList<String>();
-        result.add(PatientTable.ALIAS_ID);
-        result.add(PatientTable.ALIAS_FAMILYID);
-        result.add(PatientTable.ALIAS_PEDIGREEID);
-        result.add(PatientTable.ALIAS_HOSPITALID);
-        result.add(PatientTable.ALIAS_DNAIDS);
+        result.add(DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID);
+        result.add(DefaultpatientTableSchema.COLUMNNAME_OF_FAMILY_ID);
+        result.add(DefaultpatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID);
+        result.add(DefaultpatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID);
+        result.add(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS);
         while(rs.next()){
             result.add(rs.getString(1));
         }
@@ -94,42 +117,49 @@ public class PatientQueryUtil {
     }
     
     public static List<CustomField> getPatientFields(int projectId) throws SQLException {
-                
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientFormatTable.FIELDNAME_COLUMNNAME + "," + 
-                PatientFormatTable.FIELDNAME_COLUMNTYPE + "," + 
-                PatientFormatTable.FIELDNAME_FILTERABLE + "," + 
-                PatientFormatTable.FIELDNAME_ALIAS + "," +
-                PatientFormatTable.FIELDNAME_DESCRIPTION + 
-                " FROM " + PatientFormatTable.TABLENAME + 
-                " WHERE " + PatientFormatTable.FIELDNAME_PROJECTID + "=" + projectId +
-                " ORDER BY " + PatientFormatTable.FIELDNAME_POSITION);
+        
+        TableSchema table = MedSavantDatabase.PatientformatTableSchema;
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addColumns(
+                table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_NAME),
+                table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE),
+                table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_FILTERABLE),
+                table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_ALIAS),
+                table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_DESCRIPTION));
+        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addOrdering(table.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<CustomField> result = new ArrayList<CustomField>();
-        result.add(new CustomField(PatientTable.FIELDNAME_ID, "int(11)", false, PatientTable.ALIAS_ID, ""));
-        result.add(new CustomField(PatientTable.FIELDNAME_FAMILYID, "varchar(100)", false, PatientTable.ALIAS_FAMILYID, ""));
-        result.add(new CustomField(PatientTable.FIELDNAME_PEDIGREEID, "varchar(100)", false, PatientTable.ALIAS_PEDIGREEID, ""));
-        result.add(new CustomField(PatientTable.FIELDNAME_HOSPITALID, "varchar(100)", false, PatientTable.ALIAS_HOSPITALID, ""));
-        result.add(new CustomField(PatientTable.FIELDNAME_DNAIDS, "varchar(1000)", false, PatientTable.ALIAS_DNAIDS, ""));
+        result.add(new CustomField(DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID, "int(11)", false, DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID, ""));
+        result.add(new CustomField(DefaultpatientTableSchema.COLUMNNAME_OF_FAMILY_ID, "varchar(100)", false, DefaultpatientTableSchema.COLUMNNAME_OF_FAMILY_ID, ""));
+        result.add(new CustomField(DefaultpatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, "varchar(100)", false, DefaultpatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, ""));
+        result.add(new CustomField(DefaultpatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, "varchar(100)", false, DefaultpatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, ""));
+        result.add(new CustomField(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS, "varchar(1000)", false, DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS, ""));
         
         while(rs.next()){
             result.add(new CustomField(
-                    rs.getString(PatientFormatTable.FIELDNAME_COLUMNNAME), 
-                    rs.getString(PatientFormatTable.FIELDNAME_COLUMNTYPE), 
-                    rs.getBoolean(PatientFormatTable.FIELDNAME_FILTERABLE), 
-                    rs.getString(PatientFormatTable.FIELDNAME_ALIAS), 
-                    rs.getString(PatientFormatTable.FIELDNAME_DESCRIPTION)));
+                    rs.getString(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), 
+                    rs.getString(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), 
+                    rs.getBoolean(PatientformatTableSchema.COLUMNNAME_OF_FILTERABLE), 
+                    rs.getString(PatientformatTableSchema.COLUMNNAME_OF_ALIAS), 
+                    rs.getString(PatientformatTableSchema.COLUMNNAME_OF_DESCRIPTION)));
         }
         return result;
     }
     
     public static String getPatientTablename(int projectId) throws SQLException {
-        Connection c = ConnectionController.connect();
-        ResultSet rs = c.createStatement().executeQuery(
-                "SELECT " + PatientMapTable.FIELDNAME_PATIENTTABLENAME 
-                + " FROM `" + PatientMapTable.TABLENAME + "`"
-                + " WHERE " + PatientMapTable.FIELDNAME_PROJECTID + "=" + projectId);
+        
+        TableSchema table = MedSavantDatabase.PatienttablemapTableSchema;
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addColumns(table.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
+        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        
         rs.next();
         return rs.getString(1);
     }
@@ -143,11 +173,11 @@ public class PatientQueryUtil {
         //create basic fields
         String query = 
                 "CREATE TABLE `" + patientTableName + "` ("
-                + "`" + PatientTable.FIELDNAME_ID + "` int(11) unsigned NOT NULL AUTO_INCREMENT,"
-                + "`" + PatientTable.FIELDNAME_FAMILYID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`" + PatientTable.FIELDNAME_PEDIGREEID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`" + PatientTable.FIELDNAME_HOSPITALID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
-                + "`" + PatientTable.FIELDNAME_DNAIDS + "` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
+                + "`" + DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID + "` int(11) unsigned NOT NULL AUTO_INCREMENT,"
+                + "`" + DefaultpatientTableSchema.COLUMNNAME_OF_FAMILY_ID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + DefaultpatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + DefaultpatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID + "` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
+                + "`" + DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS + "` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
         
         //add any extra fields
         List<CustomField> customFields = new ArrayList<CustomField>();
@@ -172,39 +202,33 @@ public class PatientQueryUtil {
             }        
         }
         
-        query += "PRIMARY KEY (`" + PatientTable.FIELDNAME_ID + "`)"
+        query += "PRIMARY KEY (`" + DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID + "`)"
                 + ") ENGINE=MyISAM;";
         
         //create table
         c.createStatement().execute(query);
 
         //add to tablemap
-        c.createStatement().executeUpdate(
-                "INSERT INTO " + PatientMapTable.TABLENAME
-                + " (" + PatientMapTable.FIELDNAME_PROJECTID + "," + PatientMapTable.FIELDNAME_PATIENTTABLENAME
-                + ") VALUES (" + projectid + ",'" + patientTableName + "')");
+        TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
+        InsertQuery query1 = new InsertQuery(patientMapTable.getTable());
+        query1.addColumn(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid);
+        query1.addColumn(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME), patientTableName);
+        c.createStatement().executeUpdate(query1.toString());
         
         //populate format table
+        TableSchema patientFormatTable = MedSavantDatabase.PatientformatTableSchema;
         c.setAutoCommit(false);
         for(int i = 0; i < customFields.size(); i++){
             CustomField a = customFields.get(i);
-            c.createStatement().executeUpdate(
-                    "INSERT INTO " + PatientFormatTable.TABLENAME + " (" + 
-                    PatientFormatTable.FIELDNAME_PROJECTID + ", " +
-                    PatientFormatTable.FIELDNAME_POSITION + ", " + 
-                    PatientFormatTable.FIELDNAME_COLUMNNAME + ", " + 
-                    PatientFormatTable.FIELDNAME_COLUMNTYPE + ", " + 
-                    PatientFormatTable.FIELDNAME_FILTERABLE + ", " + 
-                    PatientFormatTable.FIELDNAME_ALIAS + ", " + 
-                    PatientFormatTable.FIELDNAME_DESCRIPTION +
-                    ") VALUES (" + 
-                    projectid + 
-                    "," + i + 
-                    ",\"" + a.getColumnName() + 
-                    "\",\"" + a.getColumnType() + 
-                    "\"," + (a.isFilterable() ? "1" : "0") + 
-                    ",\"" + a.getAlias() + 
-                    "\",\"" + a.getDescription() + "\");");
+            InsertQuery query2 = new InsertQuery(patientFormatTable.getTable());
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid);
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_POSITION), i);
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), a.getColumnName());
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), a.getColumnType());
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_FILTERABLE), (a.isFilterable() ? "1" : "0"));
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_ALIAS), a.getAlias());
+            query2.addColumn(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_DESCRIPTION), a.getDescription());
+            c.createStatement().executeUpdate(query2.toString());
         }
         c.commit();
         c.setAutoCommit(true);   
@@ -214,6 +238,7 @@ public class PatientQueryUtil {
     public static void removePatient(int projectId, int[] patientIds) throws SQLException {
         
         String tablename = getPatientTablename(projectId);
+        TableSchema table = CustomTables.getPatientTableSchema(tablename);
         
         Connection c = ConnectionController.connect();
         c.setAutoCommit(false);       
@@ -222,9 +247,8 @@ public class PatientQueryUtil {
             CohortQueryUtil.removePatientReferences(projectId, id); 
             
             //remove from patient table
-            c.createStatement().executeUpdate(
-                    "DELETE FROM " + tablename + 
-                    " WHERE " + PatientTable.FIELDNAME_ID + "=" + id);
+            DeleteQuery query = new DeleteQuery(table.getTable());
+            query.addCondition(BinaryCondition.equalTo(table.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
         }
         c.commit();
         c.setAutoCommit(true);
@@ -233,7 +257,7 @@ public class PatientQueryUtil {
     public static void addPatient(int projectId, List<CustomField> cols, List<String> values) throws SQLException {
         
         String tablename = getPatientTablename(projectId);
-        
+
         String query = "INSERT INTO " + tablename + " (";
         for(int i = 0; i < cols.size(); i++){
             query += "`" + cols.get(i).getColumnName() + "`";
