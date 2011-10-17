@@ -96,11 +96,11 @@ public class AnnotationLogQueryUtil {
         
         TableSchema table = MedSavantDatabase.VariantpendingupdateTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId);
-        query.addColumn(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId);
-        query.addColumn(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION), actionToInt(action));
-        query.addColumn(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
-        query.addColumn(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
+        query.addColumn(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId);
+        query.addColumn(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId);
+        query.addColumn(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION), actionToInt(action));
+        query.addColumn(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
+        query.addColumn(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
 
         PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
@@ -116,8 +116,8 @@ public class AnnotationLogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(Status.PENDING)));
-        query.addOrdering(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION), OrderObject.Dir.ASCENDING);
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(Status.PENDING)));
+        query.addOrdering(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION), OrderObject.Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -128,8 +128,8 @@ public class AnnotationLogQueryUtil {
         
         TableSchema table = MedSavantDatabase.VariantpendingupdateTableSchema;
         UpdateQuery query = new UpdateQuery(table.getTable());
-        query.addSetClause(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
+        query.addSetClause(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
         
         ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }
@@ -138,9 +138,9 @@ public class AnnotationLogQueryUtil {
         
         TableSchema table = MedSavantDatabase.VariantpendingupdateTableSchema;
         UpdateQuery query = new UpdateQuery(table.getTable());
-        query.addSetClause(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
-        query.addSetClause(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
+        query.addSetClause(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
+        query.addSetClause(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
         
         ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }

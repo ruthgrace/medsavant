@@ -25,8 +25,8 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.notEqualTo(table.getDbColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
-        query.addOrdering(table.getDbColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
+        query.addCondition(BinaryCondition.notEqualTo(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
+        query.addOrdering(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());
     }
@@ -37,8 +37,8 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
-        query.addOrdering(table.getDbColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
+        query.addOrdering(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());
     }
@@ -52,26 +52,26 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(updateTable.getTable());
         query.addColumns(
-                projectTable.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME),
-                referenceTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME),
-                updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION),
-                updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS),
-                updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP),
-                updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID));
+                projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME),
+                referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME),
+                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION),
+                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS),
+                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP),
+                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID));
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 projectTable.getTable(), 
                 BinaryCondition.equalTo(
-                        updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_PROJECT_ID), 
-                        projectTable.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID)));
+                        updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_PROJECT_ID), 
+                        projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 referenceTable.getTable(), 
                 BinaryCondition.equalTo(
-                        updateTable.getDbColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
-                        referenceTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+                        updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                        referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());
     }

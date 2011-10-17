@@ -50,8 +50,8 @@ public class AnnotationQueryUtil {
                 annTable.getTable(), 
                 refTable.getTable(), 
                 BinaryCondition.equalTo(
-                    annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
-                    refTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+                    annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                    refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 
@@ -83,9 +83,9 @@ public class AnnotationQueryUtil {
                 annTable.getTable(), 
                 refTable.getTable(), 
                 BinaryCondition.equalTo(
-                    annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
-                    refTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
-        query.addCondition(BinaryCondition.equalTo(annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotation_id));
+                    annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                    refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+        query.addCondition(BinaryCondition.equalTo(annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotation_id));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 
@@ -106,10 +106,10 @@ public class AnnotationQueryUtil {
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS));
+        query.addColumns(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS));
         query.addCondition(ComboCondition.and(
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
         
         
         String a = query.toString();
@@ -137,7 +137,7 @@ public class AnnotationQueryUtil {
         SelectQuery query1 = new SelectQuery();
         query1.addFromTable(annTable.getTable());
         query1.addAllColumns();
-        query1.addCondition(BinaryCondition.equalTo(annTable.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
+        query1.addCondition(BinaryCondition.equalTo(annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query1.toString());
 
@@ -156,8 +156,8 @@ public class AnnotationQueryUtil {
         SelectQuery query2 = new SelectQuery();
         query2.addFromTable(annFormatTable.getTable());
         query2.addAllColumns();
-        query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
-        query2.addOrdering(annFormatTable.getDbColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
+        query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
+        query2.addOrdering(annFormatTable.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
         ResultSet rs2 = ConnectionController.connect().createStatement().executeQuery(query2.toString());
 
@@ -181,13 +181,13 @@ public class AnnotationQueryUtil {
         
         TableSchema table = MedSavantDatabase.AnnotationTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM), program);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_VERSION), version);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceid);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_PATH), path);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_REF), hasRef);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT), hasAlt);
-        query.addColumn(table.getDbColumn(AnnotationTableSchema.COLUMNNAME_OF_TYPE), type);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM), program);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_VERSION), version);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceid);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_PATH), path);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_REF), hasRef);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT), hasAlt);
+        query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_TYPE), type);
 
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(
                 query.toString(),

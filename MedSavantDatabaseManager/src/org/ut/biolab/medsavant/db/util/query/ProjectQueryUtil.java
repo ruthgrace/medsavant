@@ -2,7 +2,6 @@ package org.ut.biolab.medsavant.db.util.query;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
-import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
@@ -20,9 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.table.PatientMapTable;
 import org.ut.biolab.medsavant.db.table.ProjectTable;
-import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantMapTable;
-import org.ut.biolab.medsavant.db.table.VariantTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -37,7 +33,6 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ProjectTable
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.PatientFormatTable;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,7 +46,7 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
+        query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 
@@ -70,7 +65,7 @@ public class ProjectQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addAllColumns();
         query.addFromTable(table.getTable());
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -82,8 +77,8 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
+        query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -99,10 +94,10 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query1 = new SelectQuery();
         query1.addFromTable(table.getTable());
-        query1.addColumns(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
+        query1.addColumns(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
         query1.addCondition(ComboCondition.and(
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), project_id), 
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), ref_id)));
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), project_id), 
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), ref_id)));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query1.toString());
         
@@ -113,8 +108,8 @@ public class ProjectQueryUtil {
         
         DeleteQuery query2 = new DeleteQuery(table.getTable());
         query2.addCondition(ComboCondition.and(
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), project_id), 
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), ref_id)));
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), project_id), 
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), ref_id)));
     }
 
     public static String getProjectName(int projectid) throws SQLException {
@@ -122,8 +117,8 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ProjectTable.FIELDNAME_ID), projectid));
+        query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTable.FIELDNAME_ID), projectid));
 
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -190,9 +185,9 @@ public class ProjectQueryUtil {
         if(!isStaging && addToTableMap){
             TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
             InsertQuery query1 = new InsertQuery(table.getTable());
-            query1.addColumn(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid);
-            query1.addColumn(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceid);
-            query1.addColumn(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME), variantTableInfoName);
+            query1.addColumn(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid);
+            query1.addColumn(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceid);
+            query1.addColumn(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME), variantTableInfoName);
 
             c.createStatement().execute(query1.toString());
         }
@@ -222,10 +217,10 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
+        query.addColumns(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
         query.addCondition(ComboCondition.and(
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid), 
-                BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid), 
+                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -238,7 +233,7 @@ public class ProjectQueryUtil {
         
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), name);
+        query.addColumn(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), name);
 
         PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
@@ -259,8 +254,8 @@ public class ProjectQueryUtil {
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
+        query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -288,8 +283,8 @@ public class ProjectQueryUtil {
         //remove patient table
         SelectQuery q2 = new SelectQuery();
         q2.addFromTable(patientMapTable.getTable());
-        q2.addColumns(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
-        q2.addCondition(BinaryCondition.equalTo(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        q2.addColumns(patientMapTable.getDBColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
+        q2.addCondition(BinaryCondition.equalTo(patientMapTable.getDBColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(q2.toString());
       
@@ -299,19 +294,19 @@ public class ProjectQueryUtil {
         
         //remove from patient format table
         DeleteQuery q3 = new DeleteQuery(patientFormatTable.getTable());
-        q3.addCondition(BinaryCondition.equalTo(patientFormatTable.getDbColumn(PatientformatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        q3.addCondition(BinaryCondition.equalTo(patientFormatTable.getDBColumn(PatientformatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         c.createStatement().execute(q3.toString());
 
         //remove from patient tablemap
         DeleteQuery q4 = new DeleteQuery(patientMapTable.getTable());
-        q4.addCondition(BinaryCondition.equalTo(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        q4.addCondition(BinaryCondition.equalTo(patientMapTable.getDBColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         c.createStatement().execute(q4.toString());
         
         //remove variant tables
         SelectQuery q5 = new SelectQuery();
         q5.addFromTable(variantMapTable.getTable());
-        q5.addColumns(variantMapTable.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
-        q5.addCondition(BinaryCondition.equalTo(variantMapTable.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        q5.addColumns(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_VARIANT_TABLENAME));
+        q5.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         
         ResultSet rs2 = c.createStatement().executeQuery(q5.toString());
           
@@ -322,7 +317,7 @@ public class ProjectQueryUtil {
         
         //remove from variant tablemap
         DeleteQuery q6 = new DeleteQuery(variantMapTable.getTable());
-        q6.addCondition(BinaryCondition.equalTo(variantMapTable.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        q6.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         c.createStatement().execute(q6.toString());
 
         //remove cohort entries
@@ -337,9 +332,9 @@ public class ProjectQueryUtil {
         
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         UpdateQuery query = new UpdateQuery(table.toString());
-        query.addSetClause(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS), annotation_ids);
-        query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid)));
-        query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
+        query.addSetClause(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS), annotation_ids);
+        query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid)));
+        query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
         
         (ConnectionController.connect()).createStatement().execute(query.toString());
         
@@ -357,8 +352,8 @@ public class ProjectQueryUtil {
                 SelectQuery.JoinType.LEFT_OUTER, 
                 variantMapTable.getTable(), 
                 refTable.getTable(), 
-                BinaryCondition.equalTo(variantMapTable.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refTable.getDbColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
-        query.addCondition(BinaryCondition.equalTo(variantMapTable.getDbColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+                BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+        query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         

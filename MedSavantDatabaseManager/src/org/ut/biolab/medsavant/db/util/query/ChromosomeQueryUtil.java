@@ -29,8 +29,8 @@ public class ChromosomeQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
-        query.addOrdering(table.getDbColumn(ChromosomeTableSchema.COLUMNNAME_OF_CONTIG_ID), Dir.ASCENDING);
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+        query.addOrdering(table.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_CONTIG_ID), Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
 

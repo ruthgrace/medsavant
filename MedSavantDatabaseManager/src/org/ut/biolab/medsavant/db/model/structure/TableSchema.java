@@ -113,7 +113,7 @@ public class TableSchema {
         return aliasToColumn.get(alias);
     }
     
-    public DbColumn getDbColumn(String columnname) {
+    public DbColumn getDBColumn(String columnname) {
         assert (dbNameToAlias.containsKey(columnname));
         return getDBColumnByAlias(dbNameToAlias.get(columnname));
     }

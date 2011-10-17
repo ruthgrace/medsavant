@@ -36,8 +36,8 @@ public class CohortQueryUtil {
         TableSchema table = MedSavantDatabase.CohortmembershipTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query.addColumns(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -59,9 +59,9 @@ public class CohortQueryUtil {
         SelectQuery query1 = new SelectQuery();
         query1.addFromTable(patientMapTable.getTable());
         query1.addFromTable(cohortTable.getTable());
-        query1.addColumns(patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDbColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDbColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDbColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
+        query1.addColumns(patientMapTable.getDBColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
+        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatienttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         
         ResultSet rs = c.createStatement().executeQuery(query1.toString());
         rs.next();
@@ -72,9 +72,9 @@ public class CohortQueryUtil {
         SelectQuery query2 = new SelectQuery();
         query2.addFromTable(cohortMembershipTable.getTable());
         query2.addFromTable(patientTable.getTable());
-        query2.addColumns(patientTable.getDbColumn(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID));
+        query2.addColumns(patientTable.getDBColumn(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS));
+        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), DefaultpatientTableSchema.COLUMNNAME_OF_PATIENT_ID));
         
         rs = c.createStatement().executeQuery(query2.toString());
         
@@ -100,8 +100,8 @@ public class CohortQueryUtil {
         for(int id : patientIds){
             try {
                 InsertQuery query = new InsertQuery(table.getTable());
-                query.addColumn(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId);
-                query.addColumn(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id);             
+                query.addColumn(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId);
+                query.addColumn(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id);             
                 c.createStatement().executeUpdate(query.toString());
             } catch (MySQLIntegrityConstraintViolationException e){
                 //duplicate entry, ignore
@@ -121,8 +121,8 @@ public class CohortQueryUtil {
         
         for(int id : patientIds){
             DeleteQuery query = new DeleteQuery(table.getTable());
-            query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-            query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
+            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
             c.createStatement().executeUpdate(query.toString());
         }
  
@@ -136,7 +136,7 @@ public class CohortQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
       
@@ -151,8 +151,8 @@ public class CohortQueryUtil {
         
         TableSchema table = MedSavantDatabase.CohortTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDbColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId);
-        query.addColumn(table.getDbColumn(CohortTableSchema.COLUMNNAME_OF_NAME), name);
+        query.addColumn(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId);
+        query.addColumn(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_NAME), name);
         
         ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }
@@ -165,12 +165,12 @@ public class CohortQueryUtil {
         
         //remove all entries from membership
         DeleteQuery query1 = new DeleteQuery(cohortMembershipTable.getTable());
-        query1.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         c.createStatement().execute(query1.toString());
         
         //remove from cohorts
         DeleteQuery query2 = new DeleteQuery(cohortTable.getTable());
-        query2.addCondition(BinaryCondition.equalTo(cohortTable.getDbColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         c.createStatement().execute(query2.toString());
         
     }
@@ -186,8 +186,8 @@ public class CohortQueryUtil {
         TableSchema table = MedSavantDatabase.CohortTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDbColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addColumns(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -207,8 +207,8 @@ public class CohortQueryUtil {
         
         for(Integer cohortId : cohortIds){
             DeleteQuery query = new DeleteQuery(table.getTable());
-            query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-            query.addCondition(BinaryCondition.equalTo(table.getDbColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
+            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortmembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
             c.createStatement().executeUpdate(query.toString());
         }
     }
