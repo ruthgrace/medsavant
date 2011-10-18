@@ -6,6 +6,7 @@ package org.ut.biolab.medsavant.db.util.query;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
+import com.healthmarketscience.sqlbuilder.FunctionCall;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
+import org.ut.biolab.medsavant.db.model.BEDRecord;
 import org.ut.biolab.medsavant.db.model.GenomicRegion;
 import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.RegionSet;
@@ -32,7 +34,7 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class RegionQueryUtil {
     
-    public static void addRegionList(String geneListName, Iterator<String[]> i) throws NonFatalDatabaseException, SQLException {
+    public static void addRegionList(String geneListName, int genomeId, Iterator<String[]> i) throws NonFatalDatabaseException, SQLException {
         
         Connection conn = ConnectionController.connect();       
         TableSchema regionSetTable = MedSavantDatabase.RegionsetTableSchema;     
@@ -54,7 +56,7 @@ public class RegionQueryUtil {
         while(i.hasNext()){
             String[] line = i.next();
             InsertQuery query = new InsertQuery(regionMemberTable.getTable());
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_GENOME_ID), 1);//TODO??
+            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_GENOME_ID), genomeId);
             query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId);
             query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), line[0]);
             query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), line[1]);
@@ -108,7 +110,7 @@ public class RegionQueryUtil {
         
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addAllColumns();
+        query.addCustomColumns(FunctionCall.countAll());
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
 
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
@@ -130,7 +132,7 @@ public class RegionQueryUtil {
 
         List<String> result = new ArrayList<String>();
         while(rs.next()){
-            result.add(rs.getString(1));
+            result.add(rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION));
         }
         return result;
     }
@@ -154,5 +156,28 @@ public class RegionQueryUtil {
         }
         return result;
     }
+    
+    public static List<BEDRecord> getBedRegionsInRegionSet(int regionSetId, int limit) throws NonFatalDatabaseException, SQLException {
+
+        TableSchema table = MedSavantDatabase.RegionsetmembershipTableSchema;
+        
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(table.getTable());
+        query.addAllColumns();
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
+        
+        List<BEDRecord> result = new ArrayList<BEDRecord>();
+        while(rs.next()){
+            result.add(new BEDRecord(
+                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), 
+                    rs.getInt(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), 
+                    rs.getInt(RegionsetmembershipTableSchema.COLUMNNAME_OF_END), 
+                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION)));
+        }
+        return result;           
+    }
+    
     
 }

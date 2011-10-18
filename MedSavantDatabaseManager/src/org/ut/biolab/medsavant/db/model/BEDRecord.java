@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ut.biolab.medsavant.model.record;
+package org.ut.biolab.medsavant.db.model;
 
 import java.util.ArrayList;
 import java.util.List;
