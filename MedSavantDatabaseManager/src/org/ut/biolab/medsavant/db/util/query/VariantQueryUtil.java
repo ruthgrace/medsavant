@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,10 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  * @author Andrew
  */
 public class VariantQueryUtil {
+    
+    public static TableSchema getVariantTableSchema(int projectId, int referenceId) throws SQLException {
+        return CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+    }
     
     public static Vector getVariants(int projectId, int referenceId, int limit) throws SQLException {       
         return getVariants(projectId, referenceId, new ArrayList(), limit);
@@ -288,6 +293,35 @@ public class VariantQueryUtil {
                 + "INTO TABLE " + tableName + " "
                 + "FIELDS TERMINATED BY ',' ENCLOSED BY '\"' "
                 + "LINES TERMINATED BY '\\r\\n';");
+    }
+    
+    public static int getNumPatientsWithVariantsInRange(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, int start, int end) throws SQLException {
+        
+        TableSchema table = getVariantTableSchema(projectId, referenceId);
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns("COUNT(DISTINCT " + DefaultvariantTableSchema.COLUMNNAME_OF_DNA_ID + ")");
+        for(int i = 0; i < conditions.size(); i++){
+            q.addCondition(ComboCondition.and(conditions.get(i)));
+        }
+        
+        Condition[] cond = new Condition[3];
+        cond[0] = new BinaryCondition(BinaryCondition.Op.EQUAL_TO, table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_CHROM), chrom);
+        cond[1] = new BinaryCondition(BinaryCondition.Op.GREATER_THAN_OR_EQUAL_TO, table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION), start);
+        cond[2] = new BinaryCondition(BinaryCondition.Op.LESS_THAN, table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION), end);       
+        q.addCondition(ComboCondition.and(cond));        
+        
+        String query = q.toString();
+        query = query.replaceFirst("'", "").replaceFirst("'", "");
+        
+        Statement s = ConnectionController.connect().createStatement();
+        ResultSet rs = s.executeQuery(query);
+        rs.next();
+
+        int numrows = rs.getInt(1);
+        s.close();
+        
+        return numrows;
     }
     
     
