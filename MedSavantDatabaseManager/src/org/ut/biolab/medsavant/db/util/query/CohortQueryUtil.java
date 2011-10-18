@@ -22,7 +22,6 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.Cohortmember
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultpatientTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.PatienttablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.CohortTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -142,7 +141,7 @@ public class CohortQueryUtil {
       
         List<Cohort> result = new ArrayList<Cohort>();
         while(rs.next()){
-            result.add(new Cohort(rs.getInt(CohortTable.FIELDNAME_ID), rs.getString(CohortTable.FIELDNAME_NAME)));
+            result.add(new Cohort(rs.getInt(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), rs.getString(CohortTableSchema.COLUMNNAME_OF_NAME)));
         }
         return result;
     }

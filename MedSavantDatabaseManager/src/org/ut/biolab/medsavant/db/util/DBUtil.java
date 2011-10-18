@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
-import org.ut.biolab.medsavant.db.table.ReferenceTable;
 
 /**
  *
@@ -92,15 +91,6 @@ public class DBUtil {
         }
         
         return false;
-    }
-
-
-    public static boolean containsReference(String referenceName) throws SQLException {
-        Connection c = ConnectionController.connect(DBSettings.DBNAME);
-        
-        ResultSet rs1 = c.createStatement().executeQuery("SELECT * FROM `" + ReferenceTable.TABLENAME + "` WHERE name=\"" + referenceName + "\"");
-        
-        return rs1.next();
     }
 
     public static int getNumRecordsInTable(String tablename) {

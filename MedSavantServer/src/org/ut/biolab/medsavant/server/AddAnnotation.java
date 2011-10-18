@@ -22,14 +22,11 @@ import net.sf.samtools.util.AsciiLineReader;
 import net.sf.samtools.util.BlockCompressedOutputStream;
 import org.broad.tabix.TabixWriter;
 import org.broad.tabix.TabixWriter.Conf;
-import org.ut.biolab.medsavant.db.table.AnnotationTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
-import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.format.AnnotationField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
-import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
+import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ReferenceQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.w3c.dom.*;
@@ -109,52 +106,14 @@ public class AddAnnotation {
         referenceId = ReferenceQueryUtil.getReferenceId(referenceName); 
         
         //insert into annotations table and get annotation_id
-        String query = 
-                "INSERT INTO " + AnnotationTable.TABLENAME + " ("
-                + AnnotationTable.FIELDNAME_PROGRAM + ", "
-                + AnnotationTable.FIELDNAME_VERSION + ", "
-                + AnnotationTable.FIELDNAME_REFERENCEID + ", "
-                + AnnotationTable.FIELDNAME_PATH + ", "
-                + AnnotationTable.FIELDNAME_HASREF + ", "
-                + AnnotationTable.FIELDNAME_HASALT + ", " 
-                + AnnotationTable.FIELDNAME_TYPE
-                + ") VALUES (" 
-                + "\"" + program 
-                + "\",\"" + version 
-                + "\"," + referenceId 
-                + ",\"" + (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/")
-                + "\"," + (hasRef ? "1" : "0")
-                + "," + (hasAlt ? "1" : "0") 
-                + "," + annotationType + ");";
-        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        stmt.execute();
-        
-        ResultSet rs = stmt.getGeneratedKeys();
-        rs.next();
-        int id = rs.getInt(1);
-  
+        int id = AnnotationQueryUtil.addAnnotation(program, version, referenceId, path, hasRef, hasAlt, annotationType);
+
         //populate
         Connection conn = ConnectionController.connect();
         conn.setAutoCommit(false);
         for(int i = 0; i < annotationFields.size(); i++){
             AnnotationField a = annotationFields.get(i);
-            conn.createStatement().executeUpdate(
-                    "INSERT INTO " + AnnotationFormatTable.TABLENAME + " ("
-                    + AnnotationFormatTable.FIELDNAME_ANNOTATIONID + ", "
-                    + AnnotationFormatTable.FIELDNAME_POSITION + ", "
-                    + AnnotationFormatTable.FIELDNAME_COLUMNNAME + ", " 
-                    + AnnotationFormatTable.FIELDNAME_COLUMNTYPE + ", " 
-                    + AnnotationFormatTable.FIELDNAME_FILTERABLE + ", " 
-                    + AnnotationFormatTable.FIELDNAME_ALIAS + ", " 
-                    + AnnotationFormatTable.FIELDNAME_DESCRIPTION 
-                    + ") VALUES (" 
-                    + id
-                    + "," + i
-                    + ",\"" + a.getColumnName() 
-                    + "\",\"" + a.getColumnType() 
-                    + "\"," + (a.isFilterable() ? "1" : "0") 
-                    + ",\"" + a.getAlias() 
-                    + "\",\"" + a.getDescription() + "\");");
+            AnnotationQueryUtil.addAnnotationFormat(id, i, a.getColumnName(), a.getColumnType(), a.isFilterable(), a.getAlias(), a.getDescription());
         }
         conn.commit();
         conn.setAutoCommit(true);

@@ -17,8 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.ut.biolab.medsavant.db.table.PatientMapTable;
-import org.ut.biolab.medsavant.db.table.ProjectTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
@@ -118,7 +116,7 @@ public class ProjectQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTable.FIELDNAME_ID), projectid));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
 
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -289,7 +287,7 @@ public class ProjectQueryUtil {
         ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(q2.toString());
       
         rs1.next();
-        String patientTableName = rs1.getString(PatientMapTable.FIELDNAME_PATIENTTABLENAME);
+        String patientTableName = rs1.getString(PatienttablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME);
         c.createStatement().execute("DROP TABLE IF EXISTS " + patientTableName);
         
         //remove from patient format table

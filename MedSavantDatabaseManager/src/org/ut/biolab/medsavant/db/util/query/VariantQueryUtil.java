@@ -23,7 +23,6 @@ import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultvariantTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.VariantTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -260,7 +259,7 @@ public class VariantQueryUtil {
                 + "select case ";
         int pos = 0;
         for(int i = 0; i < numbins; i++){
-            query += "when `" + VariantTable.FIELDNAME_POSITION + "` between " + pos + " and " + (pos+binsize) + " then " + i + " ";
+            query += "when `" + DefaultvariantTableSchema.COLUMNNAME_OF_POSITION + "` between " + pos + " and " + (pos+binsize) + " then " + i + " ";
             pos += binsize;
         }
         

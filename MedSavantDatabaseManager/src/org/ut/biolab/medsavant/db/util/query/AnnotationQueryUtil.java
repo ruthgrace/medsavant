@@ -17,8 +17,6 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.log.DBLogger;
-import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
@@ -28,7 +26,6 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.Annotationfo
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.AnnotationFormatTable;
 import org.xml.sax.SAXException;
 
 /**
@@ -62,7 +59,7 @@ public class AnnotationQueryUtil {
                     rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_VERSION),
-                    rs.getString(ReferenceTable.FIELDNAME_NAME),
+                    rs.getString(ReferenceTableSchema.COLUMNNAME_OF_NAME),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PATH),
                     AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_TYPE))));
         }
@@ -94,7 +91,7 @@ public class AnnotationQueryUtil {
                     rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PROGRAM),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_VERSION),
-                    rs.getString(ReferenceTable.FIELDNAME_NAME),
+                    rs.getString(ReferenceTableSchema.COLUMNNAME_OF_NAME),
                     rs.getString(AnnotationTableSchema.COLUMNNAME_OF_PATH),
                     AnnotationFormat.intToAnnotationType(rs.getInt(AnnotationTableSchema.COLUMNNAME_OF_TYPE)));
 
@@ -116,7 +113,7 @@ public class AnnotationQueryUtil {
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         rs.next();
-        String annotationString = rs.getString(VariantMapTable.FIELDNAME_ANNOTATIONIDS);
+        String annotationString = rs.getString(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS);
 
         if (annotationString == null || annotationString.isEmpty()) {
             return new int[0];
@@ -164,18 +161,18 @@ public class AnnotationQueryUtil {
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
         while(rs2.next()){
             fields.add(new AnnotationField(
-                    rs2.getString(AnnotationFormatTable.FIELDNAME_COLUMNNAME), 
-                    rs2.getString(AnnotationFormatTable.FIELDNAME_COLUMNTYPE), 
-                    rs2.getBoolean(AnnotationFormatTable.FIELDNAME_FILTERABLE), 
-                    rs2.getString(AnnotationFormatTable.FIELDNAME_ALIAS), 
-                    rs2.getString(AnnotationFormatTable.FIELDNAME_DESCRIPTION)));
+                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), 
+                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), 
+                    rs2.getBoolean(AnnotationformatTableSchema.COLUMNNAME_OF_FILTERABLE), 
+                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_ALIAS), 
+                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_DESCRIPTION)));
         }
 
         return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, type, fields);
     }
     
        
-    public static int addAnnotation(String program, String version, int referenceid, String path, String format, boolean hasRef, boolean hasAlt, int type) throws SQLException {
+    public static int addAnnotation(String program, String version, int referenceid, String path, boolean hasRef, boolean hasAlt, int type) throws SQLException {
         
         DBLogger.log("Adding annotation...");
         
@@ -200,6 +197,21 @@ public class AnnotationQueryUtil {
         int annotid = res.getInt(1);
 
         return annotid;
+    }
+    
+    public static void addAnnotationFormat(int annotationId, int position, String columnName, String columnType, boolean isFilterable, String alias, String description) throws SQLException {
+        
+        TableSchema table = MedSavantDatabase.AnnotationformatTableSchema;
+        InsertQuery query = new InsertQuery(table.getTable());
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), position);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), columnName);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), columnType);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_FILTERABLE), isFilterable);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ALIAS), alias);
+        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
+       
+        ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }
     
 }

@@ -1,7 +1,6 @@
 package org.ut.biolab.medsavant.db.util.query;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
@@ -21,10 +20,6 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ChromosomeTa
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.AnnotationTable;
-import org.ut.biolab.medsavant.db.table.ChromosomeTable;
-import org.ut.biolab.medsavant.db.table.ReferenceTable;
-import org.ut.biolab.medsavant.db.table.VariantMapTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**

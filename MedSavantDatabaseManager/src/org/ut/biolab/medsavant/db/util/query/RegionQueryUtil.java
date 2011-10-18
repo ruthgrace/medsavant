@@ -24,8 +24,6 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetmembershipTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.ut.biolab.medsavant.db.table.RegionSetMembershipTable;
-import org.ut.biolab.medsavant.db.table.RegionSetTable;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -99,7 +97,7 @@ public class RegionQueryUtil {
         
         List<RegionSet> result = new ArrayList<RegionSet>();
         while(rs.next()){
-            result.add(new RegionSet(rs.getInt(RegionSetTable.FIELDNAME_ID), rs.getString(RegionSetTable.FIELDNAME_NAME)));
+            result.add(new RegionSet(rs.getInt(RegionsetTableSchema.COLUMNNAME_OF_REGION_SET_ID), rs.getString(RegionsetTableSchema.COLUMNNAME_OF_NAME)));
         }
         return result;
     }
@@ -151,8 +149,8 @@ public class RegionQueryUtil {
         List<GenomicRegion> result = new ArrayList<GenomicRegion>();
         while(rs.next()){
             result.add(new GenomicRegion(
-                    rs.getString(RegionSetMembershipTable.FIELDNAME_CHROM), 
-                    new Range(rs.getDouble(RegionSetMembershipTable.FIELDNAME_START), rs.getDouble(RegionSetMembershipTable.FIELDNAME_END))));
+                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), 
+                    new Range(rs.getDouble(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), rs.getDouble(RegionsetmembershipTableSchema.COLUMNNAME_OF_END))));
         }
         return result;
     }
