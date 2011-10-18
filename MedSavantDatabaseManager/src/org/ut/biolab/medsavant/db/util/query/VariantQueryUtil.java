@@ -152,7 +152,7 @@ public class VariantQueryUtil {
         return getNumFilteredVariants(projectId, referenceId, new ArrayList());
     }
     
-    public static int getNumFilteredVariants(int projectId, int referenceId, List<List> conditions) throws SQLException {
+    public static int getNumFilteredVariants(int projectId, int referenceId, List<List<Condition>> conditions) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -169,7 +169,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);
     }
     
-    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List> conditions, String column, double min, double max) throws SQLException {
+    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List<Condition>> conditions, String column, double min, double max) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -188,7 +188,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);        
     }
     
-    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List> conditions, String column) throws SQLException {
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List<Condition>> conditions, String column) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -211,7 +211,7 @@ public class VariantQueryUtil {
         return map;     
     }
     
-    public static int getNumVariantsInRange(int projectId, int referenceId, List<List> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
+    public static int getNumVariantsInRange(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -231,7 +231,7 @@ public class VariantQueryUtil {
         return rs.getInt(1);
     }
     
-    public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
+    public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         
