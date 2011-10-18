@@ -63,6 +63,8 @@ public class VariantQueryUtil {
         query += conditionsToStringOr(conditions);
         query += " LIMIT " + limit;*/
         
+        String a = query.toString();
+        
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
