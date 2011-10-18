@@ -30,7 +30,7 @@ public class UpdateVariantTable {
         
     public static void performUpdate(int projectId, int referenceId) throws SQLException, Exception{
         
-        String tableName = ProjectQueryUtil.getVariantTable(projectId, referenceId);
+        String tableName = ProjectQueryUtil.getVariantTablename(projectId, referenceId);
         
         //create TDF from existing variants
         String tempFilename = "temp_proj" + projectId + "_ref" + referenceId;
@@ -55,7 +55,7 @@ public class UpdateVariantTable {
     
     public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException, Exception{
         
-        String tableName = ProjectQueryUtil.getVariantTable(projectId, referenceId);
+        String tableName = ProjectQueryUtil.getVariantTablename(projectId, referenceId);
         
         //create TDF from staging table
         String stagingTableName = DBSettings.createVariantStagingTableName(projectId, referenceId, updateId);
