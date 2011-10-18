@@ -9,6 +9,8 @@ import com.healthmarketscience.sqlbuilder.ComboCondition;
 import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.FunctionCall;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
+import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
+import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultpatientTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultvariantTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -174,15 +178,15 @@ public class VariantQueryUtil {
         return rs.getInt(1);
     }
     
-    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List<Condition>> conditions, String column, double min, double max) throws SQLException {
+    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List<Condition>> conditions, String columnname, double min, double max) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns(FunctionCall.countAll());
-        q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(column), min, true)); 
-        q.addCondition(BinaryCondition.lessThan(table.getDBColumn(column), max, false)); 
+        q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(columnname), min, true)); 
+        q.addCondition(BinaryCondition.lessThan(table.getDBColumn(columnname), max, false)); 
         for(int i = 0; i < conditions.size(); i++){
             q.addCondition(ComboCondition.and(conditions.get(i)));
         }
@@ -193,17 +197,24 @@ public class VariantQueryUtil {
         return rs.getInt(1);        
     }
     
-    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List<Condition>> conditions, String column) throws SQLException {
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List<Condition>> conditions, String columnAlias) throws SQLException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
-               
+        TableSchema tableSchema = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        DbTable table = tableSchema.getTable();
+        DbColumn col = tableSchema.getDBColumnByAlias(columnAlias);
+          
+        return getFilteredFrequencyValuesForColumn(table, conditions, col);
+    }
+    
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(DbTable table, List<List<Condition>> conditions, DbColumn column) throws SQLException {
+                       
         SelectQuery q = new SelectQuery();
-        q.addFromTable(table.getTable());
+        q.addFromTable(table);
         q.addCustomColumns(FunctionCall.countAll());
         for(int i = 0; i < conditions.size(); i++){
             q.addCondition(ComboCondition.and(conditions.get(i)));
         }
-        q.addGroupings(table.getDBColumn(column));
+        q.addGroupings(column);
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
@@ -323,6 +334,6 @@ public class VariantQueryUtil {
         
         return numrows;
     }
-    
-    
+
+
 }

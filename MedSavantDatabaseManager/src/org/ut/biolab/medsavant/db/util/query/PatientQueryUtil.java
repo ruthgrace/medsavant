@@ -5,6 +5,8 @@
 package org.ut.biolab.medsavant.db.util.query;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.ComboCondition;
+import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -28,6 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ut.biolab.medsavant.db.format.CustomField;
+import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultpatientTableSchema;
@@ -292,6 +296,69 @@ public class PatientQueryUtil {
         
         Connection c = ConnectionController.connect();
         c.createStatement().executeUpdate(query);*/
+    }
+
+    public static List<String> getDNAIdsWithValuesInRange(int projectId, String columnName, Range r) throws NonFatalDatabaseException, SQLException {
+        
+        String tablename = getPatientTablename(projectId);
+        
+        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        
+        DbColumn currentDNAId = table.getDBColumn(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS);
+        DbColumn testColumn = table.getDBColumn(columnName);
+        
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.setIsDistinct(true);
+        q.addColumns(currentDNAId);
+        q.addCondition(BinaryCondition.greaterThan(testColumn, r.getMin(), true));
+        q.addCondition(BinaryCondition.lessThan(testColumn, r.getMax(), true));
+        
+        Statement s = ConnectionController.connect().createStatement();
+        ResultSet rs = s.executeQuery(q.toString());
+        
+        List<String> result = new ArrayList<String>();
+        while(rs.next()){          
+            String[] dnaIds = rs.getString(1).split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }
+        }
+        return result;
+    }
+    
+     
+    public static List<String> getDNAIdsForList(TableSchema table, List<String> list, String columnAlias) throws NonFatalDatabaseException, SQLException {
+ 
+        DbColumn currentDNAId = table.getDBColumn(DefaultpatientTableSchema.COLUMNNAME_OF_DNA_IDS);
+        DbColumn testColumn = table.getDBColumn(columnAlias);
+        
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.setIsDistinct(true);
+        q.addColumns(currentDNAId);
+        
+        Condition[] conditions = new Condition[list.size()];
+        for(int i = 0; i < list.size(); i++){
+            conditions[i] = BinaryCondition.equalTo(testColumn, list.get(i));
+        }
+        q.addCondition(ComboCondition.or(conditions));   
+        
+        Statement s = ConnectionController.connect().createStatement();
+        ResultSet rs = s.executeQuery(q.toString());
+
+        List<String> result = new ArrayList<String>();
+        while(rs.next()){          
+            String[] dnaIds = rs.getString(1).split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }
+        }
+        return result;
     }
 
 }
