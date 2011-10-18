@@ -8,6 +8,7 @@ import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
 import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.FunctionCall;
+import com.healthmarketscience.sqlbuilder.Query;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
@@ -36,6 +37,14 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class VariantQueryUtil {
     
+    private static String queryToString(Query query){
+        return query.toString().replaceAll("\\[", "(").replaceAll("\\]", ")");
+    }
+    
+    private static String queryToString(String query){
+        return query.replaceAll("\\[", "(").replaceAll("\\]", ")");
+    }
+    
     public static TableSchema getVariantTableSchema(int projectId, int referenceId) throws SQLException {
         return CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
     }
@@ -62,11 +71,9 @@ public class VariantQueryUtil {
         }
         query += conditionsToStringOr(conditions);
         query += " LIMIT " + limit;*/
-        
-        String a = query.toString();
-        
+
         Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
+        ResultSet rs = conn.createStatement().executeQuery(queryToString(query) + " LIMIT " + limit);
         
         ResultSetMetaData rsMetaData = rs.getMetaData();
         int numberColumns = rsMetaData.getColumnCount();
@@ -125,7 +132,7 @@ public class VariantQueryUtil {
         query.addCustomColumns(FunctionCall.min().addColumnParams(table.getDBColumn(columnname)));
         query.addCustomColumns(FunctionCall.max().addColumnParams(table.getDBColumn(columnname)));
       
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(query));
         
         double[] result = new double[2];
         rs.next();
@@ -144,7 +151,7 @@ public class VariantQueryUtil {
         query.setIsDistinct(true);
         query.addColumns(table.getDBColumn(columnname)); 
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(query));
         
         List<String> result = new ArrayList<String>();
         while(rs.next()){
@@ -174,7 +181,7 @@ public class VariantQueryUtil {
             q.addCondition(ComboCondition.and(conditions.get(i)));
         }
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
         
         rs.next();
         return rs.getInt(1);
@@ -193,7 +200,7 @@ public class VariantQueryUtil {
             q.addCondition(ComboCondition.and(conditions.get(i)));
         }
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
         
         rs.next();
         return rs.getInt(1);        
@@ -218,7 +225,7 @@ public class VariantQueryUtil {
         }
         q.addGroupings(column);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
         
         Map<String, Integer> map = new HashMap<String, Integer>();
         
@@ -243,7 +250,7 @@ public class VariantQueryUtil {
             q.addCondition(ComboCondition.and(conditions.get(i)));
         }
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
         
         rs.next();
         return rs.getInt(1);
@@ -288,7 +295,7 @@ public class VariantQueryUtil {
                 + "group by y.`range`";
         
         Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(query);
+        ResultSet rs = conn.createStatement().executeQuery(queryToString(query));
         
         int[] numRows = new int[numbins];
         for(int i = 0; i < numbins; i++) numRows[i] = 0;
@@ -324,7 +331,7 @@ public class VariantQueryUtil {
         cond[2] = new BinaryCondition(BinaryCondition.Op.LESS_THAN, table.getDBColumn(DefaultvariantTableSchema.COLUMNNAME_OF_POSITION), end);       
         q.addCondition(ComboCondition.and(cond));        
         
-        String query = q.toString();
+        String query = queryToString(q);
         query = query.replaceFirst("'", "").replaceFirst("'", "");
         
         Statement s = ConnectionController.connect().createStatement();
