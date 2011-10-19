@@ -50,30 +50,22 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class VariantQueryUtil {
     
-    private static String queryToString(Query query){
-        return query.toString().replaceAll("\\[", "(").replaceAll("\\]", ")");
-    }
-    
-    private static String queryToString(String query){
-        return query.replaceAll("\\[", "(").replaceAll("\\]", ")");
-    }
-    
     public static TableSchema getVariantTableSchema(int projectId, int referenceId) throws SQLException {
         return CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
     }
     
     public static Vector getVariants(int projectId, int referenceId, int limit) throws SQLException {       
-        return getVariants(projectId, referenceId, new ArrayList(), limit);
+        return getVariants(projectId, referenceId, new Condition[1][], limit);
     }
    
-    public static Vector getVariants(int projectId, int referenceId, List<List<Condition>> conditions, int limit) throws SQLException {            
+    public static Vector getVariants(int projectId, int referenceId, Condition[][] conditions, int limit) throws SQLException {            
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        for(int i = 0; i < conditions.size(); i++){
-            query.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            query.addCondition(ComboCondition.and(conditions[i]));
         }
         
         /*String query = 
@@ -86,7 +78,7 @@ public class VariantQueryUtil {
         query += " LIMIT " + limit;*/
 
         Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(queryToString(query) + " LIMIT " + limit);
+        ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
         ResultSetMetaData rsMetaData = rs.getMetaData();
         int numberColumns = rsMetaData.getColumnCount();
@@ -145,7 +137,7 @@ public class VariantQueryUtil {
         query.addCustomColumns(FunctionCall.min().addColumnParams(table.getDBColumn(columnname)));
         query.addCustomColumns(FunctionCall.max().addColumnParams(table.getDBColumn(columnname)));
       
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(query));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         double[] result = new double[2];
         rs.next();
@@ -164,7 +156,7 @@ public class VariantQueryUtil {
         query.setIsDistinct(true);
         query.addColumns(table.getDBColumn(columnname)); 
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(query));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<String> result = new ArrayList<String>();
         while(rs.next()){
@@ -180,27 +172,27 @@ public class VariantQueryUtil {
     }
     
     public static int getNumFilteredVariants(int projectId, int referenceId) throws SQLException {
-        return getNumFilteredVariants(projectId, referenceId, new ArrayList());
+        return getNumFilteredVariants(projectId, referenceId, new Condition[0][]);
     }
     
-    public static int getNumFilteredVariants(int projectId, int referenceId, List<List<Condition>> conditions) throws SQLException {
+    public static int getNumFilteredVariants(int projectId, int referenceId, Condition[][] conditions) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns(FunctionCall.countAll());
-        for(int i = 0; i < conditions.size(); i++){
-            q.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            q.addCondition(ComboCondition.and(conditions[i]));
         }
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
     }
     
-    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, List<List<Condition>> conditions, String columnname, double min, double max) throws SQLException {
+    public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, Condition[][] conditions, String columnname, double min, double max) throws SQLException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -209,17 +201,17 @@ public class VariantQueryUtil {
         q.addCustomColumns(FunctionCall.countAll());
         q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(columnname), min, true)); 
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(columnname), max, false)); 
-        for(int i = 0; i < conditions.size(); i++){
-            q.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            q.addCondition(ComboCondition.and(conditions[i]));
         }
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);        
     }
     
-    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, List<List<Condition>> conditions, String columnAlias) throws SQLException {
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, Condition[][] conditions, String columnAlias) throws SQLException {
         
         TableSchema tableSchema = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         DbTable table = tableSchema.getTable();
@@ -228,17 +220,17 @@ public class VariantQueryUtil {
         return getFilteredFrequencyValuesForColumn(table, conditions, col);
     }
     
-    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(DbTable table, List<List<Condition>> conditions, DbColumn column) throws SQLException {
+    public static Map<String, Integer> getFilteredFrequencyValuesForColumn(DbTable table, Condition[][] conditions, DbColumn column) throws SQLException {
                        
         SelectQuery q = new SelectQuery();
         q.addFromTable(table);
         q.addCustomColumns(FunctionCall.countAll());
-        for(int i = 0; i < conditions.size(); i++){
-            q.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            q.addCondition(ComboCondition.and(conditions[i]));
         }
         q.addGroupings(column);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         Map<String, Integer> map = new HashMap<String, Integer>();
         
@@ -249,7 +241,7 @@ public class VariantQueryUtil {
         return map;     
     }
     
-    public static int getNumVariantsInRange(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
+    public static int getNumVariantsInRange(int projectId, int referenceId, Condition[][] conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
@@ -259,17 +251,17 @@ public class VariantQueryUtil {
         q.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
         q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), start, true));
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), end, false));
-        for(int i = 0; i < conditions.size(); i++){
-            q.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            q.addCondition(ComboCondition.and(conditions[i]));
         }
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(queryToString(q));
+        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
     }
     
-    public static int[] getNumVariantsForBins(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
+    public static int[] getNumVariantsForBins(int projectId, int referenceId, Condition[][] conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
         TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         
@@ -277,8 +269,8 @@ public class VariantQueryUtil {
         queryBase.addFromTable(table.getTable());
         queryBase.addColumns(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION));
         queryBase.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
-        for(int i = 0; i < conditions.size(); i++){
-            queryBase.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            queryBase.addCondition(ComboCondition.and(conditions[i]));
         }
         
         /*String queryBase = 
@@ -308,7 +300,7 @@ public class VariantQueryUtil {
                 + "group by y.`range`";
         
         Connection conn = ConnectionController.connect();
-        ResultSet rs = conn.createStatement().executeQuery(queryToString(query));
+        ResultSet rs = conn.createStatement().executeQuery(query.toString());
         
         int[] numRows = new int[numbins];
         for(int i = 0; i < numbins; i++) numRows[i] = 0;
@@ -328,14 +320,14 @@ public class VariantQueryUtil {
                 + "LINES TERMINATED BY '\\r\\n';");
     }
     
-    public static int getNumPatientsWithVariantsInRange(int projectId, int referenceId, List<List<Condition>> conditions, String chrom, int start, int end) throws SQLException {
+    public static int getNumPatientsWithVariantsInRange(int projectId, int referenceId, Condition[][] conditions, String chrom, int start, int end) throws SQLException {
         
         TableSchema table = getVariantTableSchema(projectId, referenceId);
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns("COUNT(DISTINCT " + DefaultVariantTableSchema.COLUMNNAME_OF_DNA_ID + ")");
-        for(int i = 0; i < conditions.size(); i++){
-            q.addCondition(ComboCondition.and(conditions.get(i)));
+        for(int i = 0; i < conditions.length; i++){
+            q.addCondition(ComboCondition.and(conditions[i]));
         }
         
         Condition[] cond = new Condition[3];
@@ -344,7 +336,7 @@ public class VariantQueryUtil {
         cond[2] = new BinaryCondition(BinaryCondition.Op.LESS_THAN, table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), end);       
         q.addCondition(ComboCondition.and(cond));        
         
-        String query = queryToString(q);
+        String query = q.toString();
         query = query.replaceFirst("'", "").replaceFirst("'", "");
         
         Statement s = ConnectionController.connect().createStatement();
