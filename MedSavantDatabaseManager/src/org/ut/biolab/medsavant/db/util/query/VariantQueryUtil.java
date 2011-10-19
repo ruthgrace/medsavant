@@ -32,14 +32,12 @@ import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
 import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.FunctionCall;
-import com.healthmarketscience.sqlbuilder.Query;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
-import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultVariantTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -64,19 +62,8 @@ public class VariantQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        for(int i = 0; i < conditions.length; i++){
-            query.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(query, conditions);
         
-        /*String query = 
-                "SELECT *" + 
-                " FROM " + ProjectQueryUtil.getVariantTablename(projectId, referenceId) + " t0";  
-        if(!conditions.isEmpty()){
-            query += " WHERE ";
-        }
-        query += conditionsToStringOr(conditions);
-        query += " LIMIT " + limit;*/
-
         Connection conn = ConnectionController.connect();
         ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
@@ -94,39 +81,6 @@ public class VariantQueryUtil {
         
         return result;
     }
-    
-    /*private static String conditionsToStringOr(List<List> conditions){
-        String s = "";
-        for(int i = 0; i < conditions.size(); i++){
-            List subset = conditions.get(i);
-            s += "(";
-            boolean somethingWritten = false;
-            boolean andWritten = false;
-            for(int j = 0; j < subset.size(); j++){
-                String current = subset.get(j).toString();
-                if(current.equals("")){
-                    if(j == subset.size()-1 && andWritten){
-                        s += "1=1"; //ensure no unclosed AND
-                    }
-                    continue;
-                }
-                somethingWritten = true;
-                s += subset.get(j).toString();
-                if(j != subset.size()-1){
-                    s += " AND ";
-                    andWritten = true;
-                }
-            }
-            if(!somethingWritten){
-                s += "1=2"; //ensure no unclosed OR
-            }
-            s += ")";
-            if(i != conditions.size()-1){
-                s += " OR ";
-            }
-        }
-        return s;
-    }*/
     
     public static double[] getExtremeValuesForColumn(String tablename, String columnname) throws SQLException { 
         
@@ -182,9 +136,7 @@ public class VariantQueryUtil {
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns(FunctionCall.countAll());
-        for(int i = 0; i < conditions.length; i++){
-            q.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(q, conditions);
 
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
@@ -201,9 +153,7 @@ public class VariantQueryUtil {
         q.addCustomColumns(FunctionCall.countAll());
         q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(columnname), min, true)); 
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(columnname), max, false)); 
-        for(int i = 0; i < conditions.length; i++){
-            q.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(q, conditions);
 
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
@@ -226,9 +176,7 @@ public class VariantQueryUtil {
         q.addFromTable(table);
         q.addColumns(column);
         q.addCustomColumns(FunctionCall.countAll());
-        for(int i = 0; i < conditions.length; i++){
-            q.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(q, conditions);
         q.addGroupings(column);
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
@@ -252,9 +200,7 @@ public class VariantQueryUtil {
         q.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
         q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), start, true));
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), end, false));
-        for(int i = 0; i < conditions.length; i++){
-            q.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(q, conditions);
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
         
@@ -270,9 +216,7 @@ public class VariantQueryUtil {
         queryBase.addFromTable(table.getTable());
         queryBase.addColumns(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION));
         queryBase.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
-        for(int i = 0; i < conditions.length; i++){
-            queryBase.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(queryBase, conditions);
         
         /*String queryBase = 
                 "SELECT `" + VariantTable.FIELDNAME_POSITION + "`" +
@@ -327,9 +271,7 @@ public class VariantQueryUtil {
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns("COUNT(DISTINCT " + DefaultVariantTableSchema.COLUMNNAME_OF_DNA_ID + ")");
-        for(int i = 0; i < conditions.length; i++){
-            q.addCondition(ComboCondition.and(conditions[i]));
-        }
+        addConditionsToQuery(q, conditions);
         
         Condition[] cond = new Condition[3];
         cond[0] = new BinaryCondition(BinaryCondition.Op.EQUAL_TO, table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom);
@@ -350,5 +292,12 @@ public class VariantQueryUtil {
         return numrows;
     }
 
+    private static void addConditionsToQuery(SelectQuery query, Condition[][] conditions){
+        Condition[] c = new Condition[conditions.length];
+        for(int i = 0; i < conditions.length; i++){
+            c[i] = ComboCondition.and(conditions[i]);
+        }
+        query.addCondition(ComboCondition.or(c));
+    }
 
 }
