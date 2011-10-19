@@ -186,7 +186,7 @@ public class AnnotationQueryUtil {
         query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT), hasAlt);
         query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_TYPE), type);
 
-        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(
+        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(
                 query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 

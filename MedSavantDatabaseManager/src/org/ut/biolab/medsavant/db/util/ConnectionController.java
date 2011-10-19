@@ -28,32 +28,54 @@ public class ConnectionController {
 
     }
     
+    private static String dbhost = "localhost";
+    private static int port = 5029;
+    private static String dbname = "medsavantkb";
+    
     public static Connection connect() throws SQLException {
-        return connect(DBSettings.DBNAME);
+        return connect(dbhost,port,dbname);
     }
 
-    public static Connection connect(String dbname) throws SQLException {
+    public static Connection connect(String dbhost, int port, String dbname) throws SQLException {
 
         if (connection == null) {
-            connection = connectOnce(dbname);
+            connection = connectOnce(dbhost, port, dbname);
         }
 
         return connection;
     }
 
+    public static void setDbhost(String dbhost) {
+        ConnectionController.dbhost = dbhost;
+    }
+
+    public static void setDbname(String dbname) {
+        ConnectionController.dbname = dbname;
+    }
+
+    public static void setPort(int port) {
+        ConnectionController.port = port;
+    }
+
+    public static String getDbname() {
+        return dbname;
+    }
+
+    
+    
     
     private static String dbdriver = "com.mysql.jdbc.Driver";
-    private static String dburl = "jdbc:mysql://localhost:5029/";
+    private static String dburl = "jdbc:mysql://";
     private static String user = "root";
     private static String pw = "";
 
-    private static Connection connectOnce(String dbname) throws SQLException {
+    private static Connection connectOnce(String dbhost, int port, String dbname) throws SQLException {
         Connection c;
         try {
             Class.forName(dbdriver).newInstance();
         } catch (Exception ex) {
         }
-        c = DriverManager.getConnection(dburl + dbname, user, pw);
+        c = DriverManager.getConnection(dburl + dbhost + ":" + port + "/" + dbname, user, pw);
         return c;
     }
 }

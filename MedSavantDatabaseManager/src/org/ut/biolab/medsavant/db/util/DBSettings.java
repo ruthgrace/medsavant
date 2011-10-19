@@ -6,8 +6,6 @@ package org.ut.biolab.medsavant.db.util;
  */
 public class DBSettings {
     
-    public static String DBNAME = "medsavantkb";
-    
     public static String createVariantTableName(int projectId, int referenceId){
         return "z_variant_proj" + projectId + "_ref" + referenceId;
     }

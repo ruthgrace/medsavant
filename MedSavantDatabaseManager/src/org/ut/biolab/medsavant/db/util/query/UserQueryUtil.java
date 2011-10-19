@@ -59,7 +59,7 @@ public class UserQueryUtil {
                 "CREATE USER '"+ name +"'@'localhost' IDENTIFIED BY '"+ pass +"';");
                 
         (ConnectionController.connect()).createStatement().execute(
-                "GRANT ALL ON "+ DBSettings.DBNAME +".* TO '"+  name +"'@'localhost';");
+                "GRANT ALL ON "+ ConnectionController.getDbname() +".* TO '"+  name +"'@'localhost';");
         
 
         TableSchema table = MedSavantDatabase.UserTableSchema;

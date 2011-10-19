@@ -18,7 +18,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
@@ -31,6 +30,7 @@ import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ProjectTable
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.xml.sax.SAXException;
 
 /**
@@ -135,7 +135,7 @@ public class ProjectQueryUtil {
         
         String variantTableInfoName = isStaging ? DBSettings.createVariantStagingTableName(projectid, referenceid, updateid) : DBSettings.createVariantTableName(projectid, referenceid);
 
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
+        Connection c = (ConnectionController.connect());
    
         String query = 
                 "CREATE TABLE `" + variantTableInfoName + "` ("
@@ -233,7 +233,7 @@ public class ProjectQueryUtil {
         InsertQuery query = new InsertQuery(table.getTable());
         query.addColumn(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), name);
 
-        PreparedStatement stmt = (ConnectionController.connect(DBSettings.DBNAME)).prepareStatement(query.toString(),
+        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 
         stmt.execute();
@@ -266,7 +266,7 @@ public class ProjectQueryUtil {
     public static void removeProject(int projectid) throws SQLException {
         
         
-        Connection c = ConnectionController.connect(DBSettings.DBNAME);
+        Connection c = ConnectionController.connect();
         
         TableSchema projectTable = MedSavantDatabase.ProjectTableSchema;
         TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;

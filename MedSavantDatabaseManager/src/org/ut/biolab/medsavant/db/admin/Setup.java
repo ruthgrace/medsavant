@@ -23,29 +23,28 @@ public class Setup {
 
     private static void dropTables() throws SQLException {
 
-
-        if (DBUtil.tableExists(DBSettings.DBNAME, MedSavantDatabase.UserTableSchema.getTablename())) {
+        if (DBUtil.tableExists( MedSavantDatabase.UserTableSchema.getTablename())) {
             List<String> userNames = getValuesFromField(MedSavantDatabase.UserTableSchema.getTablename(), "name");
             for (String s : userNames) {
                 UserQueryUtil.removeUser(s);
             }
         }
 
-        if (DBUtil.tableExists(DBSettings.DBNAME, MedSavantDatabase.PatienttablemapTableSchema.getTablename())) {
+        if (DBUtil.tableExists( MedSavantDatabase.PatienttablemapTableSchema.getTablename())) {
             List<String> patientTables = getValuesFromField(MedSavantDatabase.PatienttablemapTableSchema.getTablename(), "patient_tablename");
             for (String s : patientTables) {
                 DBUtil.dropTable(s);
             }
         }
         
-        if (DBUtil.tableExists(DBSettings.DBNAME, MedSavantDatabase.VarianttablemapTableSchema.getTablename())) {
+        if (DBUtil.tableExists( MedSavantDatabase.VarianttablemapTableSchema.getTablename())) {
             List<String> variantTables = getValuesFromField(MedSavantDatabase.VarianttablemapTableSchema.getTablename(), "variant_tablename");
             for (String s : variantTables) {
                 DBUtil.dropTable(s);
             }
         }
 
-        DBUtil.dropTable(MedSavantDatabase.ServerlogTableSchema.getTablename());
+        DBUtil.dropTable( MedSavantDatabase.ServerlogTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.UserTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.AnnotationTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.ReferenceTableSchema.getTablename());
@@ -65,7 +64,7 @@ public class Setup {
 
     private static void createTables() throws SQLException {
 
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
+        Connection c = (ConnectionController.connect());
 
         c.createStatement().execute(
                 "CREATE TABLE `" + MedSavantDatabase.ServerlogTableSchema.getTablename() + "` ("
@@ -210,7 +209,7 @@ public class Setup {
                 + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
         
         c.createStatement().execute(
-                "CREATE TABLE  `medsavantkb`.`default_patient` ("
+                "CREATE TABLE  `default_patient` ("
                 + "`patient_id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
                 + "`family_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
                 + "`pedigree_id` varchar(100) COLLATE latin1_bin DEFAULT NULL,"
@@ -220,7 +219,7 @@ public class Setup {
                 + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
         
         c.createStatement().execute(
-                "CREATE TABLE  `medsavantkb`.`default_variant` ("
+                "CREATE TABLE  `default_variant` ("
                 + "`upload_id` int(11) NOT NULL,"
                 + "`file_id` int(11) NOT NULL,"
                 + "`variant_id` int(11) NOT NULL,"
@@ -262,6 +261,8 @@ public class Setup {
         ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }
 
+    
+    
     public static void main(String[] argv) throws SQLException {
         dropTables();
         createTables();
@@ -270,7 +271,7 @@ public class Setup {
 
     private static List<String> getValuesFromField(String tablename, String fieldname) throws SQLException {
         String q = "SELECT `" + fieldname + "` FROM `" + tablename + "`";
-        Statement stmt = (ConnectionController.connect(DBSettings.DBNAME)).createStatement();
+        Statement stmt = (ConnectionController.connect()).createStatement();
         ResultSet rs = stmt.executeQuery(q);
         List<String> results = new ArrayList<String>();
         while (rs.next()) {

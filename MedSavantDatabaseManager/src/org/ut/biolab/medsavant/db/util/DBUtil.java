@@ -41,14 +41,10 @@ public class DBUtil {
     }
     
     public static DbTable importTable(String tablename) throws SQLException {
-        return importTable(DBSettings.DBNAME, tablename);
-    }
-    
-    public static DbTable importTable(String dbname, String tablename) throws SQLException {
         
         Connection c;
         try {
-            c = ConnectionController.connect(dbname);
+            c = ConnectionController.connect();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -73,14 +69,14 @@ public class DBUtil {
     }
     
     public static void dropTable(String tablename) throws SQLException {
-        Connection c = (ConnectionController.connect(DBSettings.DBNAME));
+        Connection c = (ConnectionController.connect());
 
         c.createStatement().execute(
                 "DROP TABLE IF EXISTS " + tablename + ";");
     }
 
-    public static boolean tableExists(String dbname, String tablename) throws SQLException {
-        Statement s = ConnectionController.connect(dbname).createStatement();
+    public static boolean tableExists(String tablename) throws SQLException {
+        Statement s = ConnectionController.connect().createStatement();
         
         ResultSet rs = s.executeQuery("SHOW TABLES");
         
@@ -95,7 +91,7 @@ public class DBUtil {
 
     public static int getNumRecordsInTable(String tablename) {
         try {
-            Connection c = ConnectionController.connect(DBSettings.DBNAME);
+            Connection c = ConnectionController.connect();
             ResultSet rs =  c.createStatement().executeQuery("SELECT COUNT(*) FROM `" + tablename + "`");
             rs.next();
             return rs.getInt(1);

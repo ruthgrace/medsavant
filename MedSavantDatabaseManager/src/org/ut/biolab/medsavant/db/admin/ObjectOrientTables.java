@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
+import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 
 /**
@@ -25,10 +26,10 @@ public class ObjectOrientTables {
     public static String outputClassName = "MedSavantDatabase";
     
     public static void main(String argv[]) throws SQLException, IOException, Exception {
-        ooTables(TableSchema.class,"medsavantkb");
+        ooTables("localhost",5029,"medsavantkb",TableSchema.class);
     }
 
-    private static void ooTables(Class tableSchemaClass, String dbname) throws SQLException, IOException, Exception {
+    private static void ooTables(String dbhost, int port, String dbname,Class tableSchemaClass) throws SQLException, IOException, Exception {
 
         File outfile = new File(outputClassName + ".java");
         
@@ -45,6 +46,10 @@ public class ObjectOrientTables {
         }
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(outfile));
+        
+        ConnectionController.setPort(port);
+        ConnectionController.setDbhost(dbhost);
+        ConnectionController.setDbname(dbname);
         
         Connection conn = ConnectionController.connect();
         
