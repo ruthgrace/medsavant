@@ -6,8 +6,9 @@ package org.ut.biolab.medsavant.db.model.structure;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultpatientTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.DefaultvariantTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultVariantTableSchema;
 
 /**
  *
@@ -17,14 +18,14 @@ public class CustomTables {
     
     private static Map<String, TableSchema> map = new HashMap<String, TableSchema>();
     
-    public static class CustomvariantTableSchema extends DefaultvariantTableSchema {
+    public static class CustomvariantTableSchema extends DefaultVariantTableSchema {
         public CustomvariantTableSchema(String tablename) {
             super(MedSavantDatabase.schema, tablename);
             //could add columns here...
         }
     }
     
-    public static class CustompatientTableSchema extends DefaultpatientTableSchema {
+    public static class CustompatientTableSchema extends DefaultPatientTableSchema {
         public CustompatientTableSchema(String tablename) {
             super(MedSavantDatabase.schema, tablename);
             //could add columns here...

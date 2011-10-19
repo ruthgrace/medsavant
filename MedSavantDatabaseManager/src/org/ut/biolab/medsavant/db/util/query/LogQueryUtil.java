@@ -1,15 +1,33 @@
+/*
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.ut.biolab.medsavant.db.util.query;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ProjectTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ServerlogTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VariantpendingupdateTableSchema;
+
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ProjectTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ServerLogTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantPendingUpdateTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -25,8 +43,8 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.notEqualTo(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
-        query.addOrdering(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
+        query.addCondition(BinaryCondition.notEqualTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
+        query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());
     }
@@ -37,8 +55,8 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), "server"));
-        query.addOrdering(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
+        query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());
     }
@@ -54,23 +72,23 @@ public class LogQueryUtil {
         query.addColumns(
                 projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME),
                 referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME),
-                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_ACTION),
-                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_STATUS),
-                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_TIMESTAMP),
-                updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_UPDATE_ID));
+                updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_ACTION),
+                updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_STATUS),
+                updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_TIMESTAMP),
+                updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_UPDATE_ID));
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 projectTable.getTable(), 
                 BinaryCondition.equalTo(
-                        updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_PROJECT_ID), 
+                        updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_PROJECT_ID), 
                         projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 referenceTable.getTable(), 
                 BinaryCondition.equalTo(
-                        updateTable.getDBColumn(VariantpendingupdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
+                        updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         
         return ConnectionController.connect().createStatement().executeQuery(query.toString());

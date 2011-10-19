@@ -1,12 +1,21 @@
+/*
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.ut.biolab.medsavant.db.util.query;
 
-import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.ComboCondition;
-import com.healthmarketscience.sqlbuilder.InsertQuery;
-import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
-import com.healthmarketscience.sqlbuilder.SelectQuery;
-import org.ut.biolab.medsavant.db.model.Annotation;
-import org.ut.biolab.medsavant.db.format.AnnotationField;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,18 +24,26 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.ComboCondition;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
+import org.xml.sax.SAXException;
+
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.log.DBLogger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat.AnnotationType;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.AnnotationTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.AnnotationformatTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.AnnotationTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.AnnotationFormatTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantTablemapTableSchema;
+import org.ut.biolab.medsavant.db.format.AnnotationField;
+import org.ut.biolab.medsavant.db.model.Annotation;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -103,17 +120,17 @@ public class AnnotationQueryUtil {
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
-        query.addColumns(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS));
+        query.addColumns(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS));
         query.addCondition(ComboCondition.and(
-                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
-                BinaryCondition.equalTo(table.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
+                BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId),
+                BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), referenceId)));
         
         
         String a = query.toString();
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         rs.next();
-        String annotationString = rs.getString(VarianttablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS);
+        String annotationString = rs.getString(VariantTablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS);
 
         if (annotationString == null || annotationString.isEmpty()) {
             return new int[0];
@@ -153,19 +170,19 @@ public class AnnotationQueryUtil {
         SelectQuery query2 = new SelectQuery();
         query2.addFromTable(annFormatTable.getTable());
         query2.addAllColumns();
-        query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
-        query2.addOrdering(annFormatTable.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
+        query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
+        query2.addOrdering(annFormatTable.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
         ResultSet rs2 = ConnectionController.connect().createStatement().executeQuery(query2.toString());
 
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
         while(rs2.next()){
             fields.add(new AnnotationField(
-                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), 
-                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), 
-                    rs2.getBoolean(AnnotationformatTableSchema.COLUMNNAME_OF_FILTERABLE), 
-                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_ALIAS), 
-                    rs2.getString(AnnotationformatTableSchema.COLUMNNAME_OF_DESCRIPTION)));
+                    rs2.getString(AnnotationFormatTableSchema.COLUMNNAME_OF_COLUMN_NAME), 
+                    rs2.getString(AnnotationFormatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), 
+                    rs2.getBoolean(AnnotationFormatTableSchema.COLUMNNAME_OF_FILTERABLE), 
+                    rs2.getString(AnnotationFormatTableSchema.COLUMNNAME_OF_ALIAS), 
+                    rs2.getString(AnnotationFormatTableSchema.COLUMNNAME_OF_DESCRIPTION)));
         }
 
         return new AnnotationFormat(program, version, referenceId, path, hasRef, hasAlt, type, fields);
@@ -203,13 +220,13 @@ public class AnnotationQueryUtil {
         
         TableSchema table = MedSavantDatabase.AnnotationformatTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_POSITION), position);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_NAME), columnName);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), columnType);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_FILTERABLE), isFilterable);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_ALIAS), alias);
-        query.addColumn(table.getDBColumn(AnnotationformatTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_POSITION), position);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_COLUMN_NAME), columnName);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), columnType);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_FILTERABLE), isFilterable);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_ALIAS), alias);
+        query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
        
         ConnectionController.connect().createStatement().executeUpdate(query.toString());
     }

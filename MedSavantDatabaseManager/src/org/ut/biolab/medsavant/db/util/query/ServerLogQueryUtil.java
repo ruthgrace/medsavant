@@ -1,13 +1,31 @@
+/*
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.ut.biolab.medsavant.db.util.query;
 
-import com.healthmarketscience.sqlbuilder.InsertQuery;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Level;
+
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+
 import org.ut.biolab.medsavant.db.log.DBLogger;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ServerlogTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ServerLogTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -17,11 +35,11 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class ServerLogQueryUtil {
 
-    public static final String SEVERVER_UNAME = "server";
+    public static final String SERVER_UNAME = "server";
     public enum LogType { INFO, ERROR, LOGIN, LOGOUT };
     
     public static void addServerLog(LogType t, String description) {
-        addLog(SEVERVER_UNAME, t, description);
+        addLog(SERVER_UNAME, t, description);
     }
     
     public static void addLog(String uname, LogType t, String description) {
@@ -30,10 +48,10 @@ public class ServerLogQueryUtil {
             
             TableSchema table = MedSavantDatabase.ServerlogTableSchema;
             InsertQuery query = new InsertQuery(table.getTable());
-            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_USER), uname);
-            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_EVENT), t.toString());
-            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
-            query.addColumn(table.getDBColumn(ServerlogTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
+            query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), uname);
+            query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_EVENT), t.toString());
+            query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
+            query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
             ConnectionController.connect().createStatement().execute(query.toString());
             
         } catch (SQLException ex) {

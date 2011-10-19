@@ -1,9 +1,21 @@
+/*
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.ut.biolab.medsavant.db.util.query;
 
-import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.DeleteQuery;
-import com.healthmarketscience.sqlbuilder.InsertQuery;
-import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,12 +25,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.DeleteQuery;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
+
 import org.ut.biolab.medsavant.db.model.Chromosome;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.AnnotationTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ChromosomeTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.ReferenceTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.VarianttablemapTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.AnnotationTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ChromosomeTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantTablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -131,7 +149,7 @@ public class ReferenceQueryUtil {
          SelectQuery q2 = new SelectQuery();
          q2.addFromTable(variantMapTable.getTable());
          q2.addAllColumns();
-         q2.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+         q2.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
          rs = c.createStatement().executeQuery(q2.toString());
          if (rs.next()) { return false; }
          
@@ -159,8 +177,8 @@ public class ReferenceQueryUtil {
                 refTable.getTable(), 
                 BinaryCondition.equalTo(
                         refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
-                        variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
-        query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+                        variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
+        query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         
         String a = query.toString();
         
@@ -182,8 +200,8 @@ public class ReferenceQueryUtil {
                 "SELECT *"
                 + " FROM " + ReferenceTableSchema.TABLE_NAME
                 + " WHERE " + ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID + " NOT IN"
-                + " (SELECT " + VarianttablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID + " FROM " + VarianttablemapTableSchema.TABLE_NAME
-                + " WHERE " + VarianttablemapTableSchema.COLUMNNAME_OF_PROJECT_ID + "=" + projectid + ")");
+                + " (SELECT " + VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID + " FROM " + VariantTablemapTableSchema.TABLE_NAME
+                + " WHERE " + VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID + "=" + projectid + ")");
         
         HashMap<Integer,String> result = new HashMap<Integer,String>();
         

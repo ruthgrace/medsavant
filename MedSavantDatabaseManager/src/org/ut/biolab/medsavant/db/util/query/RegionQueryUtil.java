@@ -1,14 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
+
 package org.ut.biolab.medsavant.db.util.query;
 
-import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.DeleteQuery;
-import com.healthmarketscience.sqlbuilder.FunctionCall;
-import com.healthmarketscience.sqlbuilder.InsertQuery;
-import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,14 +24,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.healthmarketscience.sqlbuilder.BinaryCondition;
+import com.healthmarketscience.sqlbuilder.DeleteQuery;
+import com.healthmarketscience.sqlbuilder.FunctionCall;
+import com.healthmarketscience.sqlbuilder.InsertQuery;
+import com.healthmarketscience.sqlbuilder.SelectQuery;
+
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.BEDRecord;
 import org.ut.biolab.medsavant.db.model.GenomicRegion;
 import org.ut.biolab.medsavant.db.model.Range;
 import org.ut.biolab.medsavant.db.model.RegionSet;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.MedSavantDatabase.RegionsetmembershipTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.RegionSetTableSchema;
+import org.ut.biolab.medsavant.db.api.MedSavantDatabase.RegionSetMembershipTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -42,7 +56,7 @@ public class RegionQueryUtil {
         
         //add region set
         InsertQuery query1 = new InsertQuery(regionSetTable.getTable());
-        query1.addColumn(regionSetTable.getDBColumn(RegionsetTableSchema.COLUMNNAME_OF_NAME), geneListName);
+        query1.addColumn(regionSetTable.getDBColumn(RegionSetTableSchema.COLUMNNAME_OF_NAME), geneListName);
         
         PreparedStatement stmt = conn.prepareStatement(query1.toString(), Statement.RETURN_GENERATED_KEYS);       
         stmt.execute();
@@ -56,12 +70,12 @@ public class RegionQueryUtil {
         while(i.hasNext()){
             String[] line = i.next();
             InsertQuery query = new InsertQuery(regionMemberTable.getTable());
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_GENOME_ID), genomeId);
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId);
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), line[0]);
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), line[1]);
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_END), line[2]);
-            query.addColumn(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION), line[3]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_GENOME_ID), genomeId);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_CHROM), line[0]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_START), line[1]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_END), line[2]);
+            query.addColumn(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_DESCRIPTION), line[3]);
             
             conn.createStatement().executeUpdate(query.toString());
         }
@@ -78,12 +92,12 @@ public class RegionQueryUtil {
         
         //remove members
         DeleteQuery q1 = new DeleteQuery(regionMemberTable.getTable());
-        q1.addCondition(BinaryCondition.equalTo(regionMemberTable.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        q1.addCondition(BinaryCondition.equalTo(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         c.createStatement().execute(q1.toString());
         
         //remove from region regionSetTable
         DeleteQuery q2 = new DeleteQuery(regionSetTable.getTable());
-        q2.addCondition(BinaryCondition.equalTo(regionSetTable.getDBColumn(RegionsetTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        q2.addCondition(BinaryCondition.equalTo(regionSetTable.getDBColumn(RegionSetTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         c.createStatement().execute(q2.toString());
     }
     
@@ -99,7 +113,7 @@ public class RegionQueryUtil {
         
         List<RegionSet> result = new ArrayList<RegionSet>();
         while(rs.next()){
-            result.add(new RegionSet(rs.getInt(RegionsetTableSchema.COLUMNNAME_OF_REGION_SET_ID), rs.getString(RegionsetTableSchema.COLUMNNAME_OF_NAME)));
+            result.add(new RegionSet(rs.getInt(RegionSetTableSchema.COLUMNNAME_OF_REGION_SET_ID), rs.getString(RegionSetTableSchema.COLUMNNAME_OF_NAME)));
         }
         return result;
     }
@@ -111,7 +125,7 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addCustomColumns(FunctionCall.countAll());
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
 
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
@@ -126,13 +140,13 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
 
         List<String> result = new ArrayList<String>();
         while(rs.next()){
-            result.add(rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION));
+            result.add(rs.getString(RegionSetMembershipTableSchema.COLUMNNAME_OF_DESCRIPTION));
         }
         return result;
     }
@@ -144,15 +158,15 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
         
         List<GenomicRegion> result = new ArrayList<GenomicRegion>();
         while(rs.next()){
             result.add(new GenomicRegion(
-                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), 
-                    new Range(rs.getDouble(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), rs.getDouble(RegionsetmembershipTableSchema.COLUMNNAME_OF_END))));
+                    rs.getString(RegionSetMembershipTableSchema.COLUMNNAME_OF_CHROM), 
+                    new Range(rs.getDouble(RegionSetMembershipTableSchema.COLUMNNAME_OF_START), rs.getDouble(RegionSetMembershipTableSchema.COLUMNNAME_OF_END))));
         }
         return result;
     }
@@ -164,17 +178,17 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionsetmembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
         List<BEDRecord> result = new ArrayList<BEDRecord>();
         while(rs.next()){
             result.add(new BEDRecord(
-                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_CHROM), 
-                    rs.getInt(RegionsetmembershipTableSchema.COLUMNNAME_OF_START), 
-                    rs.getInt(RegionsetmembershipTableSchema.COLUMNNAME_OF_END), 
-                    rs.getString(RegionsetmembershipTableSchema.COLUMNNAME_OF_DESCRIPTION)));
+                    rs.getString(RegionSetMembershipTableSchema.COLUMNNAME_OF_CHROM), 
+                    rs.getInt(RegionSetMembershipTableSchema.COLUMNNAME_OF_START), 
+                    rs.getInt(RegionSetMembershipTableSchema.COLUMNNAME_OF_END), 
+                    rs.getString(RegionSetMembershipTableSchema.COLUMNNAME_OF_DESCRIPTION)));
         }
         return result;           
     }
