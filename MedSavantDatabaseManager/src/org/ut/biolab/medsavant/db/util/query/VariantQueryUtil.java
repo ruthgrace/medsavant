@@ -224,6 +224,7 @@ public class VariantQueryUtil {
                        
         SelectQuery q = new SelectQuery();
         q.addFromTable(table);
+        q.addColumns(column);
         q.addCustomColumns(FunctionCall.countAll());
         for(int i = 0; i < conditions.length; i++){
             q.addCondition(ComboCondition.and(conditions[i]));
