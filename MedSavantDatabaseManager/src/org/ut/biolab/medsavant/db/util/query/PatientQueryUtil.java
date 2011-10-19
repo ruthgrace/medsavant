@@ -79,10 +79,11 @@ public class PatientQueryUtil {
         List<Vector> result = new ArrayList<Vector>();
         while(rs.next()){
             Vector v = new Vector();
-            v.add(rs.getInt(1));
-            for(int i = 2; i < 7; i++){
-                v.add(rs.getString(i));
-            }
+            v.add(rs.getInt(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID));
+            v.add(rs.getString(DefaultPatientTableSchema.COLUMNNAME_OF_FAMILY_ID));
+            v.add(rs.getString(DefaultPatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID));
+            v.add(rs.getString(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID));
+            v.add(rs.getString(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS));          
             result.add(v);
         }
         return result;
