@@ -21,7 +21,28 @@ package org.ut.biolab.medsavant.db.format;
  */
 public class AnnotationField extends CustomField {
     
-    public static enum Category { PATIENT, GENOTYPE, PHENOTYPE, PLUGIN }
+    public static enum Category {PATIENT, GENOTYPE, PHENOTYPE, ONTOLOGY, PATHWAYS, GENOME_COORDS, PLUGIN}
+    
+    public static String categoryToString(Category cat){
+        switch(cat){
+            case PATIENT:
+                return "Patient";
+            case GENOTYPE:
+                return "Genotype";
+            case PHENOTYPE:
+                return "Phenotype";
+            case ONTOLOGY:
+                return "Ontology";
+            case PATHWAYS:
+                return "Pathways";
+            case GENOME_COORDS:
+                return "Genome Coordinates";
+            case PLUGIN:
+                return "Plugin";
+            default:
+                return "undefined";
+        }
+    }
     
     private Category category;
     
