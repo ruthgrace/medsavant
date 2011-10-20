@@ -47,6 +47,7 @@ public class PathwaysPlugin extends MedSavantFilterPlugin {
     private JLabel currentLabel;
     private JButton applyButton;
     private JButton removeButton;
+    private int queryId;
 
     /**
      * Create the user-interface which appears within the panel.
@@ -54,7 +55,8 @@ public class PathwaysPlugin extends MedSavantFilterPlugin {
      * @param host provided by MedSavant to host our plugin
      */
     @Override
-    public void init(JPanel panel) {
+    public void init(JPanel panel, int queryId) {
+        this.queryId = queryId;
         pathwaysTab = new PathwaysTab(this);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -140,10 +142,15 @@ public class PathwaysPlugin extends MedSavantFilterPlugin {
     }
     
     private void removeFilter(){
-        ProjectUtils.removeFilter("wikipathways", 0);
+        ProjectUtils.removeFilter("wikipathways", queryId);
         setAppliedFilter("(none)", 0);
         applyButton.setEnabled(true);
         removeButton.setEnabled(false);
+    }
+    
+    public void addFilter(Condition[] conditions, String pathwayString, int size) {
+        ProjectUtils.addFilterConditions(conditions, "WikiPathways", "wikipathways", queryId);
+        setAppliedFilter(pathwayString, size);
     }
     
     public void enableApply(boolean enable){

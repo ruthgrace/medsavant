@@ -319,8 +319,8 @@ public class Viewer extends JSplitPane {
         positionCol = table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION);
         chromCol = table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM);
     
-        ProjectUtils.addFilterConditions(getConditions(), "WikiPathways", "wikipathways", 0);
-        plugin.setAppliedFilter(pathwayString, genes.size());
+        plugin.addFilter(getConditions(), pathwayString, genes.size());
+        
         loader.setVisible(false);
         
     }
