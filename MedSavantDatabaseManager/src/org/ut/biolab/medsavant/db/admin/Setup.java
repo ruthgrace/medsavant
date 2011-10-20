@@ -60,6 +60,7 @@ public class Setup {
         DBUtil.dropTable(MedSavantDatabase.ChromosomeTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.PatientformatTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.AnnotationformatTableSchema.getTablename());
+        DBUtil.dropTable(MedSavantDatabase.AlignmentTableSchema.getTablename());
     }
 
     private static void createTables() throws SQLException {
@@ -249,6 +250,13 @@ public class Setup {
                 + "`validated` int(1) DEFAULT NULL,"
                 + "`custom_info` varchar(500) COLLATE latin1_bin DEFAULT NULL"
                 + ") ENGINE=BRIGHTHOUSE DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
+        
+        c.createStatement().execute(
+                "CREATE TABLE  `" + MedSavantDatabase.AlignmentTableSchema.getTablename() + "` ("
+                + "`dna_id` varchar(100) COLLATE latin1_bin NOT NULL,"
+                + "`bam_file` varchar(5000) COLLATE latin1_bin NOT NULL,"
+                + "PRIMARY KEY (`dna_id`)"
+                + ") ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;");
     }
     
     private static void addRootUser() throws SQLException {
