@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
+import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.DeleteQuery;
 import com.healthmarketscience.sqlbuilder.InsertQuery;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
@@ -274,10 +275,10 @@ public class ProjectQueryUtil {
         TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
         TableSchema patientFormatTable = MedSavantDatabase.PatientformatTableSchema;
         TableSchema variantMapTable = MedSavantDatabase.VarianttablemapTableSchema;
-        
+
         //remove from project table
         DeleteQuery q1 = new DeleteQuery(projectTable.getTable());
-        q1.addCondition(BinaryCondition.equalTo(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID, projectid));
+        q1.addCondition(BinaryCondition.equalTo(projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         c.createStatement().execute(q1.toString());
         
         //remove patient table
