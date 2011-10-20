@@ -16,6 +16,8 @@
 
 package org.ut.biolab.medsavant.db.api;
 
+import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
+
 /**
  * Plugin-friendly interface for exposing table schemata.
  *
@@ -23,6 +25,8 @@ package org.ut.biolab.medsavant.db.api;
  */
 public interface TableSchemaAdapter {
     
+    public DbColumn getDBColumn(String colName);
+
     /**
      * Enum which describes the recognised column data-types.
      */
