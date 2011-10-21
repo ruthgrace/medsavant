@@ -16,30 +16,24 @@
 
 package medsavant.pathways;
 
-import com.healthmarketscience.sqlbuilder.Condition;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import javax.swing.*;
 import javax.swing.border.Border;
+
+import com.healthmarketscience.sqlbuilder.Condition;
+
+import org.ut.biolab.medsavant.api.MedSavantFilterPlugin;
 import org.ut.biolab.medsavant.api.ProjectUtils;
-import org.ut.biolab.medsavant.plugin.MedSavantFilterPlugin;
 
 
 /**
- * Demonstration plugin to show how to do a simple panel.
+ * Filter plugin which lets us use the WikiPathways site to select genes for filtering.
  *
- * @author tarkvara
+ * @author AndrewBrook
  */
 public class PathwaysPlugin extends MedSavantFilterPlugin {
     private PathwaysTab pathwaysTab;

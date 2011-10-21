@@ -21,7 +21,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.ut.biolab.medsavant.plugin.MedSavantSectionPlugin;
+import org.ut.biolab.medsavant.api.MedSavantSectionPlugin;
 
 
 /**
