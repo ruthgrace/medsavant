@@ -332,7 +332,7 @@ public class ProjectQueryUtil {
     public static void setAnnotations(int projectid, int refid, String annotation_ids) throws SQLException {
         
         TableSchema table = MedSavantDatabase.VarianttablemapTableSchema;
-        UpdateQuery query = new UpdateQuery(table.toString());
+        UpdateQuery query = new UpdateQuery(table.getTable());
         query.addSetClause(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS), annotation_ids);
         query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid)));
         query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));

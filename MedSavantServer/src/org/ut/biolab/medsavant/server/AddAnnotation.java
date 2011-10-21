@@ -106,7 +106,7 @@ public class AddAnnotation {
         referenceId = ReferenceQueryUtil.getReferenceId(referenceName); 
         
         //insert into annotations table and get annotation_id
-        int id = AnnotationQueryUtil.addAnnotation(program, version, referenceId, path, hasRef, hasAlt, annotationType);
+        int id = AnnotationQueryUtil.addAnnotation(program, version, referenceId, (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/"), hasRef, hasAlt, annotationType);
 
         //populate
         Connection conn = ConnectionController.connect();

@@ -47,7 +47,7 @@ public class TabixReader {
 	protected int mSkip;
 	protected String[] mSeq;
 
-	protected HashMap<String, Integer> mChr2tid;
+	protected HashMap<String, Integer> mChr2tid = new HashMap<String, Integer>();
 
 	private static int MAX_BIN = 37450;
 	private static int TAD_MIN_CHUNK_GAP = 32768;
