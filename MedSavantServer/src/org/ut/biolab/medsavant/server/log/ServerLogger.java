@@ -3,6 +3,7 @@ package org.ut.biolab.medsavant.server.log;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ut.biolab.medsavant.server.mail.Mail;
@@ -18,13 +19,14 @@ public class ServerLogger {
     private static BufferedWriter writer;
     private static Logger logger;
     private static boolean logOpen;
+    private static FileHandler handler;
 
     public static void log(Class c,String string) {
         log(c,string, Level.INFO);
     }
 
     private static void openLogFile() throws IOException {
-        FileHandler handler = new FileHandler(logPath, true);
+        handler = new FileHandler(logPath, true);
         handler.setFormatter(new BriefLogFormatter());
         logger = Logger.getLogger("org.ut.biolab.medsavant.server");
         logger.addHandler(handler);
@@ -55,6 +57,9 @@ public class ServerLogger {
                 openLogFile();
             }
             logger.log(level, "'{'{0}'} '{1}", new Object[]{c.toString(), msg});
+            for (Handler h : logger.getHandlers()) {
+                h.flush();
+            }
         } catch (IOException ex) {
         }
     }

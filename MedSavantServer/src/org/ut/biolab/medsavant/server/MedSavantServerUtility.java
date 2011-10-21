@@ -7,8 +7,10 @@ package org.ut.biolab.medsavant.server;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingWorker;
+import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.query.ServerLogQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ServerLogQueryUtil.LogType;
+import org.ut.biolab.medsavant.server.log.ServerLogger;
 import org.ut.biolab.medsavant.server.worker.AnnotationWorker;
 import org.ut.biolab.medsavant.server.worker.PhoneHomeWorker;
 import org.ut.biolab.medsavant.server.worker.WorkerChecker;
@@ -25,6 +27,18 @@ public class MedSavantServerUtility {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        String host = args[0];
+        int port = Integer.parseInt(args[1]);
+        String name = args[2];
+        
+        ConnectionController.setDbhost(host);
+        ConnectionController.setPort(port);
+        ConnectionController.setDbname(name);
+        
+        ServerLogger.log(MedSavantServerUtility.class, "dbhost: " + host);
+        ServerLogger.log(MedSavantServerUtility.class, "dbport: " + port);
+        ServerLogger.log(MedSavantServerUtility.class, "dbname: " + name);
         
         ServerLogQueryUtil.addServerLog(LogType.INFO, "Server booted");
         
