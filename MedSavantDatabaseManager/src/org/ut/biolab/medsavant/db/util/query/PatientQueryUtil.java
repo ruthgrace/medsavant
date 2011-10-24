@@ -181,7 +181,7 @@ public class PatientQueryUtil {
     }
     
      
-    public static void createPatientTable(int projectid, File patientFormatFile) throws SQLException, ParserConfigurationException, SAXException, IOException {
+    public static void createPatientTable(int projectid, List<CustomField> fields) throws SQLException, ParserConfigurationException, SAXException, IOException {
 
         String patientTableName = DBSettings.createPatientTableName(projectid);        
         Connection c = ConnectionController.connectPooled();
@@ -196,7 +196,7 @@ public class PatientQueryUtil {
                 + "`" + DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS + "` varchar(1000) COLLATE latin1_bin DEFAULT NULL,";
         
         //add any extra fields
-        List<CustomField> customFields = new ArrayList<CustomField>();
+        /*List<CustomField> customFields = new ArrayList<CustomField>();
         if(patientFormatFile != null){
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -216,6 +216,10 @@ public class PatientQueryUtil {
                 customFields.add(current);
                 query += current.generateSchema();
             }        
+        }*/
+        
+        for(CustomField field : fields){
+            query += field.generateSchema();
         }
         
         query += "PRIMARY KEY (`" + DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID + "`)"
@@ -234,8 +238,8 @@ public class PatientQueryUtil {
         //populate format table
         TableSchema patientFormatTable = MedSavantDatabase.PatientformatTableSchema;
         c.setAutoCommit(false);
-        for(int i = 0; i < customFields.size(); i++){
-            CustomField a = customFields.get(i);
+        for(int i = 0; i < fields.size(); i++){
+            CustomField a = fields.get(i);
             InsertQuery query2 = new InsertQuery(patientFormatTable.getTable());
             query2.addColumn(patientFormatTable.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid);
             query2.addColumn(patientFormatTable.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_POSITION), i);

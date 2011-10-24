@@ -268,7 +268,7 @@ public class VariantQueryUtil {
                 "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
                 + "INTO TABLE " + tableName + " "
                 + "FIELDS TERMINATED BY ',' ENCLOSED BY '\"' "
-                + "LINES TERMINATED BY '\\r\\n';");
+                + "LINES TERMINATED BY '\\r\\n';");    
     }
     
     public static int getNumPatientsWithVariantsInRange(int projectId, int referenceId, Condition[][] conditions, String chrom, int start, int end) throws SQLException {

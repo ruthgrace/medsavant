@@ -33,6 +33,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase.PatientTablemapTableSche
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ProjectTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantTablemapTableSchema;
+import org.ut.biolab.medsavant.db.format.CustomField;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -233,7 +234,7 @@ public class ProjectQueryUtil {
     }
     
     
-    public static int addProject(String name, File patientFormatFile) throws SQLException, ParserConfigurationException, SAXException, IOException {
+    public static int addProject(String name, List<CustomField> fields) throws SQLException, ParserConfigurationException, SAXException, IOException {
         
         TableSchema table = MedSavantDatabase.ProjectTableSchema;
         InsertQuery query = new InsertQuery(table.getTable());
@@ -248,7 +249,7 @@ public class ProjectQueryUtil {
 
         int projectid = res.getInt(1);
 
-        PatientQueryUtil.createPatientTable(projectid, patientFormatFile);
+        PatientQueryUtil.createPatientTable(projectid, fields);
 
         return projectid;
     }
