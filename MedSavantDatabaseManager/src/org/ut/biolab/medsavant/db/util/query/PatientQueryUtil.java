@@ -74,7 +74,7 @@ public class PatientQueryUtil {
                 table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID),
                 table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<Vector> result = new ArrayList<Vector>();
         while(rs.next()){
@@ -99,7 +99,7 @@ public class PatientQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         rs.next();
         Vector v = new Vector();
@@ -118,7 +118,7 @@ public class PatientQueryUtil {
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         query.addOrdering(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<String> result = new ArrayList<String>();
         result.add(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID);
@@ -146,7 +146,7 @@ public class PatientQueryUtil {
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         query.addOrdering(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<CustomField> result = new ArrayList<CustomField>();
         result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, "int(11)", false, DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, ""));
@@ -174,7 +174,7 @@ public class PatientQueryUtil {
         query.addColumns(table.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         rs.next();
         return rs.getString(1);
@@ -184,7 +184,7 @@ public class PatientQueryUtil {
     public static void createPatientTable(int projectid, File patientFormatFile) throws SQLException, ParserConfigurationException, SAXException, IOException {
 
         String patientTableName = DBSettings.createPatientTableName(projectid);        
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
 
         //create basic fields
         String query = 
@@ -256,7 +256,7 @@ public class PatientQueryUtil {
         String tablename = getPatientTablename(projectId);
         TableSchema table = CustomTables.getPatientTableSchema(tablename);
         
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         c.setAutoCommit(false);       
         for(int id : patientIds){
             //remove all references
@@ -280,7 +280,7 @@ public class PatientQueryUtil {
             query.addColumn(new DbColumn(table.getTable(), cols.get(i).getColumnName(), cols.get(i).getColumnType(), 100), values.get(i));
         }
         
-        ConnectionController.connect().createStatement().executeUpdate(query.toString()); 
+        ConnectionController.connectPooled().createStatement().executeUpdate(query.toString()); 
         
         /*
         String query = "INSERT INTO " + tablename + " (";
@@ -329,7 +329,7 @@ public class PatientQueryUtil {
         q.addCondition(BinaryCondition.greaterThan(testColumn, r.getMin(), true));
         q.addCondition(BinaryCondition.lessThan(testColumn, r.getMax(), true));
         
-        Statement s = ConnectionController.connect().createStatement();
+        Statement s = ConnectionController.connectPooled().createStatement();
         ResultSet rs = s.executeQuery(q.toString());
         
         List<String> result = new ArrayList<String>();
@@ -361,7 +361,7 @@ public class PatientQueryUtil {
         }
         q.addCondition(ComboCondition.or(conditions));   
         
-        Statement s = ConnectionController.connect().createStatement();
+        Statement s = ConnectionController.connectPooled().createStatement();
         ResultSet rs = s.executeQuery(q.toString());
 
         List<String> result = new ArrayList<String>();

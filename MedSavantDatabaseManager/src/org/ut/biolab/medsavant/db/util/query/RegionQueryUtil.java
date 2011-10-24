@@ -50,7 +50,7 @@ public class RegionQueryUtil {
     
     public static void addRegionList(String geneListName, int genomeId, Iterator<String[]> i) throws NonFatalDatabaseException, SQLException {
         
-        Connection conn = ConnectionController.connect();       
+        Connection conn = ConnectionController.connectPooled();       
         TableSchema regionSetTable = MedSavantDatabase.RegionsetTableSchema;     
         TableSchema regionMemberTable = MedSavantDatabase.RegionsetmembershipTableSchema;
         
@@ -88,7 +88,7 @@ public class RegionQueryUtil {
         TableSchema regionMemberTable = MedSavantDatabase.RegionsetmembershipTableSchema;
         TableSchema regionSetTable = MedSavantDatabase.RegionsetTableSchema;
 
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         
         //remove members
         DeleteQuery q1 = new DeleteQuery(regionMemberTable.getTable());
@@ -109,7 +109,7 @@ public class RegionQueryUtil {
         query.addFromTable(table.getTable());
         query.addAllColumns();
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<RegionSet> result = new ArrayList<RegionSet>();
         while(rs.next()){
@@ -127,7 +127,7 @@ public class RegionQueryUtil {
         query.addCustomColumns(FunctionCall.countAll());
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         rs.next();
         return rs.getInt(1);
@@ -142,7 +142,7 @@ public class RegionQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
 
         List<String> result = new ArrayList<String>();
         while(rs.next()){
@@ -160,7 +160,7 @@ public class RegionQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<GenomicRegion> result = new ArrayList<GenomicRegion>();
         while(rs.next()){
@@ -180,7 +180,7 @@ public class RegionQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
         List<BEDRecord> result = new ArrayList<BEDRecord>();
         while(rs.next()){

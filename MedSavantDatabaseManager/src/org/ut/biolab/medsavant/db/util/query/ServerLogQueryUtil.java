@@ -52,7 +52,7 @@ public class ServerLogQueryUtil {
             query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_EVENT), t.toString());
             query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
             query.addColumn(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
-            ConnectionController.connect().createStatement().execute(query.toString());
+            ConnectionController.connectPooled().createStatement().execute(query.toString());
             
         } catch (SQLException ex) {
             DBLogger.log(ex.getLocalizedMessage(), Level.SEVERE);

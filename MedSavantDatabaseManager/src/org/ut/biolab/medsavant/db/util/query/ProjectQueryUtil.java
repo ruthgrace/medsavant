@@ -49,7 +49,7 @@ public class ProjectQueryUtil {
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
         List<String> results = new ArrayList<String>();
         
@@ -68,7 +68,7 @@ public class ProjectQueryUtil {
         query.addFromTable(table.getTable());
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         return rs.next();
     }
@@ -81,7 +81,7 @@ public class ProjectQueryUtil {
         query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         if (rs.next()) {
             return rs.getInt(1);
@@ -100,7 +100,7 @@ public class ProjectQueryUtil {
                 BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), project_id), 
                 BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), ref_id)));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query1.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query1.toString());
         
         while (rs.next()) {
             String tableName = rs.getString(1);
@@ -121,7 +121,7 @@ public class ProjectQueryUtil {
         query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
 
-        ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs1 = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         if (rs1.next()) {
             return rs1.getString(1);
@@ -138,7 +138,7 @@ public class ProjectQueryUtil {
         
         String variantTableInfoName = isStaging ? DBSettings.createVariantStagingTableName(projectid, referenceid, updateid) : DBSettings.createVariantTableName(projectid, referenceid);
 
-        Connection c = (ConnectionController.connect());
+        Connection c = (ConnectionController.connectPooled());
    
         String query = 
                 "CREATE TABLE `" + variantTableInfoName + "` ("
@@ -223,10 +223,13 @@ public class ProjectQueryUtil {
                 BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid), 
                 BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
-        rs.next();
-        return rs.getString(1);
+        if (rs.next()) {
+            return rs.getString(1);
+        } else {
+            return null;
+        }
     }
     
     
@@ -236,7 +239,7 @@ public class ProjectQueryUtil {
         InsertQuery query = new InsertQuery(table.getTable());
         query.addColumn(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), name);
 
-        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query.toString(),
+        PreparedStatement stmt = (ConnectionController.connectPooled()).prepareStatement(query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 
         stmt.execute();
@@ -258,7 +261,7 @@ public class ProjectQueryUtil {
         query.addColumns(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_NAME), projectName));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         if (rs.next()) {
             removeProject(rs.getInt(1));
@@ -269,7 +272,7 @@ public class ProjectQueryUtil {
     public static void removeProject(int projectid) throws SQLException {
         
         
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         
         TableSchema projectTable = MedSavantDatabase.ProjectTableSchema;
         TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
@@ -287,7 +290,7 @@ public class ProjectQueryUtil {
         q2.addColumns(patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
         q2.addCondition(BinaryCondition.equalTo(patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         
-        ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(q2.toString());
+        ResultSet rs1 = ConnectionController.connectPooled().createStatement().executeQuery(q2.toString());
       
         rs1.next();
         String patientTableName = rs1.getString(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME);
@@ -337,7 +340,7 @@ public class ProjectQueryUtil {
         query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid)));
         query.addCondition(ComboCondition.and(BinaryCondition.equalTo(table.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid)));
         
-        (ConnectionController.connect()).createStatement().execute(query.toString());
+        (ConnectionController.connectPooled()).createStatement().execute(query.toString());
         
         AnnotationLogQueryUtil.addAnnotationLogEntry(projectid, refid, Action.UPDATE_TABLE, Status.PENDING);
     }
@@ -356,7 +359,7 @@ public class ProjectQueryUtil {
                 BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<ProjectDetails> result = new ArrayList<ProjectDetails>();
         while(rs.next()){

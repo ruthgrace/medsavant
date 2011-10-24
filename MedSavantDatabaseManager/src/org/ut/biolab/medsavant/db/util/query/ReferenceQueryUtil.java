@@ -53,7 +53,7 @@ public class ReferenceQueryUtil {
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
         List<String> results = new ArrayList<String>();      
         while (rs.next()) {
@@ -71,7 +71,7 @@ public class ReferenceQueryUtil {
         query.addColumns(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), refName));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         if (rs.next()) {
             return rs.getInt(1);
@@ -88,7 +88,7 @@ public class ReferenceQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), name));
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
         return rs.next();
     }
@@ -98,7 +98,7 @@ public class ReferenceQueryUtil {
          
         TableSchema referenceTable = MedSavantDatabase.ReferenceTableSchema;
         TableSchema chromTable = MedSavantDatabase.ChromosomeTableSchema;
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
 
         //add reference
         InsertQuery query1 = new InsertQuery(referenceTable.getTable());
@@ -137,7 +137,7 @@ public class ReferenceQueryUtil {
          TableSchema refTable = MedSavantDatabase.ReferenceTableSchema;
          TableSchema chromTable = MedSavantDatabase.ChromosomeTableSchema;
          
-         Connection c = ConnectionController.connect();
+         Connection c = ConnectionController.connectPooled();
          
          SelectQuery q1 = new SelectQuery();
          q1.addFromTable(annotationTable.getTable());
@@ -182,7 +182,7 @@ public class ReferenceQueryUtil {
         
         String a = query.toString();
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<String> references = new ArrayList<String>();
         while (rs.next()) {
@@ -195,7 +195,7 @@ public class ReferenceQueryUtil {
     
     public static Map<Integer, String> getReferencesWithoutTablesInProject(int projectid) throws SQLException {
         
-        Connection c = org.ut.biolab.medsavant.db.util.ConnectionController.connect();
+        Connection c = org.ut.biolab.medsavant.db.util.ConnectionController.connectPooled();
         ResultSet rs = c.createStatement().executeQuery(
                 "SELECT *"
                 + " FROM " + ReferenceTableSchema.TABLE_NAME

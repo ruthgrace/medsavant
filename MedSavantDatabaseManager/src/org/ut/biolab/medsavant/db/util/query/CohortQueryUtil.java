@@ -52,7 +52,7 @@ public class CohortQueryUtil {
         query.addColumns(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<Integer> result = new ArrayList<Integer>();
         while(rs.next()){
@@ -63,7 +63,7 @@ public class CohortQueryUtil {
     
     public static List<String> getDNAIdsInCohort(int cohortId) throws SQLException {
 
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
         TableSchema cohortTable = MedSavantDatabase.CohortTableSchema;
         TableSchema cohortMembershipTable = MedSavantDatabase.CohortmembershipTableSchema;
@@ -107,7 +107,7 @@ public class CohortQueryUtil {
         
         TableSchema table = MedSavantDatabase.CohortmembershipTableSchema;
         
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         c.setAutoCommit(false);
         
         for(int id : patientIds){
@@ -129,7 +129,7 @@ public class CohortQueryUtil {
         
         TableSchema table = MedSavantDatabase.CohortmembershipTableSchema;
         
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         c.setAutoCommit(false);
         
         for(int id : patientIds){
@@ -151,7 +151,7 @@ public class CohortQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
       
         List<Cohort> result = new ArrayList<Cohort>();
         while(rs.next()){
@@ -167,14 +167,14 @@ public class CohortQueryUtil {
         query.addColumn(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId);
         query.addColumn(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_NAME), name);
         
-        ConnectionController.connect().createStatement().executeUpdate(query.toString());
+        ConnectionController.connectPooled().createStatement().executeUpdate(query.toString());
     }
     
     public static void removeCohort(int cohortId) throws SQLException {
         
         TableSchema cohortMembershipTable = MedSavantDatabase.CohortmembershipTableSchema;
         TableSchema cohortTable = MedSavantDatabase.CohortTableSchema;
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         
         //remove all entries from membership
         DeleteQuery query1 = new DeleteQuery(cohortMembershipTable.getTable());
@@ -202,7 +202,7 @@ public class CohortQueryUtil {
         query.addColumns(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<Integer> result = new ArrayList<Integer>();
         while(rs.next()){
@@ -216,7 +216,7 @@ public class CohortQueryUtil {
         List<Integer> cohortIds = getCohortIds(projectId);
         
         TableSchema table = MedSavantDatabase.CohortmembershipTableSchema;
-        Connection c = ConnectionController.connect();
+        Connection c = ConnectionController.connectPooled();
         
         for(Integer cohortId : cohortIds){
             DeleteQuery query = new DeleteQuery(table.getTable());

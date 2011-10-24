@@ -63,13 +63,17 @@ public class ImportVariants {
             
             //add to staging table
             try {
+                if(progressLabel != null){               
+                    progressLabel.setText("Uploading file " + (i+1) + " of " + vcfFiles.length);
+                    progressLabel.updateUI();
+                }
                 VariantQueryUtil.uploadFileToVariantTable(outfile, tableName); 
             } catch (SQLException ex) {
                 Logger.getLogger(ImportVariants.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             //cleanup
-            outfile.delete();            
+            //outfile.delete();            
             System.gc();            
         }
         

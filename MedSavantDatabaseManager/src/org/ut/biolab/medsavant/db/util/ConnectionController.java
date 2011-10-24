@@ -14,44 +14,64 @@ import java.sql.SQLException;
  */
 public class ConnectionController {
 
-    private static Connection connection;
+    private static Connection lastConnection;
 
     public static void disconnectAll() {
-        if (connection != null) {
+        if (lastConnection != null) {
             try {
-                connection.close();
+                lastConnection.close();
             } catch (SQLException ex) {
             }
         }
 
     }
     
-    private static String dbhost = "localhost";
-    private static int port = 5029;
-    private static String dbname = "medsavantkb";
+    private static String dbhost;
+    private static int port;
+    private static String dbname;
     
-    public static Connection connect() throws SQLException {
-        return connect(dbhost,port,dbname);
-    }
-
-    public static Connection connect(String dbhost, int port, String dbname) throws SQLException {
-
-        if (connection == null) {
-            connection = connectOnce(dbhost, port, dbname);
+    public static Connection connectPooled() throws SQLException {
+        
+        if (!hostSet) {
+            throw new SQLException("DB host not set");
         }
+        
+        if (!dbnameset) {
+            throw new SQLException("DB name not set");
+        }
+        
+        if (!portset) {
+            throw new SQLException("DB port not set");
+        }
+        
+        return connectInternal(dbhost,port,dbname);
+    }
+    
+    public static Connection connectUnpooled(String dbhost, int port, String dbname) throws SQLException {
+        return connectOnce(dbhost, port, dbname);
+    }
+    
+    private static Connection connectInternal(String dbhost, int port, String dbname) throws SQLException {
 
-        return connection;
+        if (lastConnection == null || lastConnection.isClosed()) {
+            lastConnection = connectOnce(dbhost, port, dbname);
+        }
+        
+        return lastConnection;
     }
 
     public static void setDbhost(String dbhost) {
+        hostSet = true;
         ConnectionController.dbhost = dbhost;
     }
 
     public static void setDbname(String dbname) {
+        dbnameset = true;
         ConnectionController.dbname = dbname;
     }
 
     public static void setPort(int port) {
+        portset = true;
         ConnectionController.port = port;
     }
 
@@ -76,4 +96,7 @@ public class ConnectionController {
         c = DriverManager.getConnection(dburl + dbhost + ":" + port + "/" + dbname, user, pw);
         return c;
     }
+    private static boolean hostSet;
+    private static boolean portset;
+    private static boolean dbnameset;
 }

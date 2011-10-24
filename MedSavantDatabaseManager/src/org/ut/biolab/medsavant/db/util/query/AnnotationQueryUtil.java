@@ -67,7 +67,7 @@ public class AnnotationQueryUtil {
                     annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                     refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
         List<Annotation> results = new ArrayList<Annotation>();
 
@@ -101,7 +101,7 @@ public class AnnotationQueryUtil {
                     refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         query.addCondition(BinaryCondition.equalTo(annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotation_id));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
         rs.next();
         Annotation result = new Annotation(
@@ -127,7 +127,7 @@ public class AnnotationQueryUtil {
         
         
         String a = query.toString();
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         rs.next();
         String annotationString = rs.getString(VariantTablemapTableSchema.COLUMNNAME_OF_ANNOTATION_IDS);
@@ -153,7 +153,7 @@ public class AnnotationQueryUtil {
         query1.addAllColumns();
         query1.addCondition(BinaryCondition.equalTo(annTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         
-        ResultSet rs1 = ConnectionController.connect().createStatement().executeQuery(query1.toString());
+        ResultSet rs1 = ConnectionController.connectPooled().createStatement().executeQuery(query1.toString());
 
         rs1.next();
         
@@ -173,7 +173,7 @@ public class AnnotationQueryUtil {
         query2.addCondition(BinaryCondition.equalTo(annFormatTable.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_ANNOTATION_ID), annotationId));
         query2.addOrdering(annFormatTable.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
-        ResultSet rs2 = ConnectionController.connect().createStatement().executeQuery(query2.toString());
+        ResultSet rs2 = ConnectionController.connectPooled().createStatement().executeQuery(query2.toString());
 
         List<AnnotationField> fields = new ArrayList<AnnotationField>();
         while(rs2.next()){
@@ -203,7 +203,7 @@ public class AnnotationQueryUtil {
         query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_HAS_ALT), hasAlt);
         query.addColumn(table.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_TYPE), type);
 
-        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(
+        PreparedStatement stmt = (ConnectionController.connectPooled()).prepareStatement(
                 query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 
@@ -228,7 +228,7 @@ public class AnnotationQueryUtil {
         query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_ALIAS), alias);
         query.addColumn(table.getDBColumn(AnnotationFormatTableSchema.COLUMNNAME_OF_DESCRIPTION), description);
        
-        ConnectionController.connect().createStatement().executeUpdate(query.toString());
+        ConnectionController.connectPooled().createStatement().executeUpdate(query.toString());
     }
     
 }

@@ -46,7 +46,7 @@ public class LogQueryUtil {
         query.addCondition(BinaryCondition.notEqualTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
         query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
-        return ConnectionController.connect().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
     }
 
     public static ResultSet getServerLog() throws SQLException {
@@ -58,7 +58,7 @@ public class LogQueryUtil {
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
         query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
-        return ConnectionController.connect().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
     }
 
     public static ResultSet getAnnotationLog() throws SQLException {
@@ -91,6 +91,6 @@ public class LogQueryUtil {
                         updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         
-        return ConnectionController.connect().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
     }
 }

@@ -64,7 +64,7 @@ public class VariantQueryUtil {
         query.addAllColumns();
         addConditionsToQuery(query, conditions);
         
-        Connection conn = ConnectionController.connect();
+        Connection conn = ConnectionController.connectPooled();
         ResultSet rs = conn.createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         
         ResultSetMetaData rsMetaData = rs.getMetaData();
@@ -91,7 +91,7 @@ public class VariantQueryUtil {
         query.addCustomColumns(FunctionCall.min().addColumnParams(table.getDBColumn(columnname)));
         query.addCustomColumns(FunctionCall.max().addColumnParams(table.getDBColumn(columnname)));
       
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         double[] result = new double[2];
         rs.next();
@@ -110,7 +110,7 @@ public class VariantQueryUtil {
         query.setIsDistinct(true);
         query.addColumns(table.getDBColumn(columnname)); 
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<String> result = new ArrayList<String>();
         while(rs.next()){
@@ -131,14 +131,18 @@ public class VariantQueryUtil {
     
     public static int getNumFilteredVariants(int projectId, int referenceId, Condition[][] conditions) throws SQLException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        String name = ProjectQueryUtil.getVariantTablename(projectId, referenceId);
+        
+        if (name == null) { return -1; }
+        
+        TableSchema table = CustomTables.getVariantTableSchema(name);
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns(FunctionCall.countAll());
         addConditionsToQuery(q, conditions);
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
@@ -155,7 +159,7 @@ public class VariantQueryUtil {
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(columnname), max, false)); 
         addConditionsToQuery(q, conditions);
 
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);        
@@ -179,7 +183,7 @@ public class VariantQueryUtil {
         addConditionsToQuery(q, conditions);
         q.addGroupings(column);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
         
         Map<String, Integer> map = new HashMap<String, Integer>();
         
@@ -202,7 +206,7 @@ public class VariantQueryUtil {
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), end, false));
         addConditionsToQuery(q, conditions);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(q.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
         
         rs.next();
         return rs.getInt(1);
@@ -244,7 +248,7 @@ public class VariantQueryUtil {
         query += ") x ) y "
                 + "group by y.`range`";
         
-        Connection conn = ConnectionController.connect();
+        Connection conn = ConnectionController.connectPooled();
         ResultSet rs = conn.createStatement().executeQuery(query.toString());
         
         int[] numRows = new int[numbins];
@@ -257,7 +261,9 @@ public class VariantQueryUtil {
     }
     
     public static void uploadFileToVariantTable(File file, String tableName) throws SQLException{
-        Connection c = ConnectionController.connect();
+        
+        // TODO: for some reason the connection is closed going into this function
+        Connection c = ConnectionController.connectPooled();
         c.createStatement().execute(
                 "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
                 + "INTO TABLE " + tableName + " "
@@ -282,12 +288,11 @@ public class VariantQueryUtil {
         String query = q.toString();
         query = query.replaceFirst("'", "").replaceFirst("'", "");
         
-        Statement s = ConnectionController.connect().createStatement();
+        Statement s = ConnectionController.connectPooled().createStatement();
         ResultSet rs = s.executeQuery(query);
         rs.next();
 
         int numrows = rs.getInt(1);
-        s.close();
         
         return numrows;
     }

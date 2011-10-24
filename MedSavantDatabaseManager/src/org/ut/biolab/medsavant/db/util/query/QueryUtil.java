@@ -47,7 +47,7 @@ public class QueryUtil {
         q.addColumns(col);
         q.addFromTable(t.getTable());
         
-        Statement s = ConnectionController.connect().createStatement();    
+        Statement s = ConnectionController.connectPooled().createStatement();    
         String queryString = q.toString();
         if(limit > 0) queryString = queryString + " LIMIT " + limit;
         ResultSet rs = s.executeQuery(queryString);
@@ -80,7 +80,7 @@ public class QueryUtil {
         q.addCustomColumns(FunctionCall.min().addColumnParams(col));
         q.addCustomColumns(FunctionCall.max().addColumnParams(col));
 
-        Statement s = ConnectionController.connect().createStatement();
+        Statement s = ConnectionController.connectPooled().createStatement();
         ResultSet rs = s.executeQuery(q.toString());
 
         double min = 0;

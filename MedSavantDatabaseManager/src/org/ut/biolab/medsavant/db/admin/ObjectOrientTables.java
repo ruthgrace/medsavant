@@ -51,7 +51,7 @@ public class ObjectOrientTables {
         ConnectionController.setDbhost(dbhost);
         ConnectionController.setDbname(dbname);
         
-        Connection conn = ConnectionController.connect();
+        Connection conn = ConnectionController.connectPooled();
         
         ResultSet rs = conn.createStatement().executeQuery("SHOW TABLES in " + dbname);
         

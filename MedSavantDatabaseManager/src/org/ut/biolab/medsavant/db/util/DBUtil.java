@@ -44,7 +44,7 @@ public class DBUtil {
         
         Connection c;
         try {
-            c = ConnectionController.connect();
+            c = ConnectionController.connectPooled();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -69,14 +69,14 @@ public class DBUtil {
     }
     
     public static void dropTable(String tablename) throws SQLException {
-        Connection c = (ConnectionController.connect());
+        Connection c = (ConnectionController.connectPooled());
 
         c.createStatement().execute(
                 "DROP TABLE IF EXISTS " + tablename + ";");
     }
 
     public static boolean tableExists(String tablename) throws SQLException {
-        Statement s = ConnectionController.connect().createStatement();
+        Statement s = ConnectionController.connectPooled().createStatement();
         
         ResultSet rs = s.executeQuery("SHOW TABLES");
         
@@ -91,7 +91,7 @@ public class DBUtil {
 
     public static int getNumRecordsInTable(String tablename) {
         try {
-            Connection c = ConnectionController.connect();
+            Connection c = ConnectionController.connectPooled();
             ResultSet rs =  c.createStatement().executeQuery("SELECT COUNT(*) FROM `" + tablename + "`");
             rs.next();
             return rs.getInt(1);

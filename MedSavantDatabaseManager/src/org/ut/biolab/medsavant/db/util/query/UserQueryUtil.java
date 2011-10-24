@@ -46,7 +46,7 @@ public class UserQueryUtil {
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         List<String> results = new ArrayList<String>();       
         while (rs.next()) {
@@ -64,7 +64,7 @@ public class UserQueryUtil {
         query.addAllColumns();
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), username));
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         return rs.next();
     }
@@ -72,10 +72,10 @@ public class UserQueryUtil {
      
     public static int addUser(String name, String pass, boolean isAdmin) throws SQLException {
 
-        (ConnectionController.connect()).createStatement().execute(
+        (ConnectionController.connectPooled()).createStatement().execute(
                 "CREATE USER '"+ name +"'@'localhost' IDENTIFIED BY '"+ pass +"';");
                 
-        (ConnectionController.connect()).createStatement().execute(
+        (ConnectionController.connectPooled()).createStatement().execute(
                 "GRANT ALL ON "+ ConnectionController.getDbname() +".* TO '"+  name +"'@'localhost';");
         
 
@@ -84,7 +84,7 @@ public class UserQueryUtil {
         query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), name);
         query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_IS_ADMIN), isAdmin);
         
-        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query.toString(),
+        PreparedStatement stmt = (ConnectionController.connectPooled()).prepareStatement(query.toString(),
                 Statement.RETURN_GENERATED_KEYS);
 
         stmt.execute();
@@ -105,7 +105,7 @@ public class UserQueryUtil {
             query.addColumns(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_IS_ADMIN));
             query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), username));
             
-            ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+            ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
             
             rs.next();
             return rs.getBoolean(1);
@@ -117,13 +117,13 @@ public class UserQueryUtil {
     
         
     public static void removeUser(String name) throws SQLException {
-        (ConnectionController.connect()).createStatement().execute(
+        (ConnectionController.connectPooled()).createStatement().execute(
                 "DROP USER '"+name+"'@'localhost';");
         
         TableSchema table = MedSavantDatabase.UserTableSchema;
         DeleteQuery query = new DeleteQuery(table.getTable());
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), name));
-        ConnectionController.connect().createStatement().execute(query.toString());
+        ConnectionController.connectPooled().createStatement().execute(query.toString());
     }
 
 }

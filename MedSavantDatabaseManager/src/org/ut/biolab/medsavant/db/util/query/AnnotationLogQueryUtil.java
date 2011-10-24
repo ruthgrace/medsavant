@@ -116,7 +116,7 @@ public class AnnotationLogQueryUtil {
         query.addColumn(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
         query.addColumn(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
 
-        PreparedStatement stmt = (ConnectionController.connect()).prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement stmt = (ConnectionController.connectPooled()).prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
         stmt.execute();
         
         ResultSet rs = stmt.getGeneratedKeys();
@@ -133,7 +133,7 @@ public class AnnotationLogQueryUtil {
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(Status.PENDING)));
         query.addOrdering(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_ACTION), OrderObject.Dir.ASCENDING);
         
-        ResultSet rs = ConnectionController.connect().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
         return rs;
     }
@@ -145,7 +145,7 @@ public class AnnotationLogQueryUtil {
         query.addSetClause(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_STATUS), statusToInt(status));
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
         
-        ConnectionController.connect().createStatement().executeUpdate(query.toString());
+        ConnectionController.connectPooled().createStatement().executeUpdate(query.toString());
     }
     
     public static void setAnnotationLogStatus(int updateId, Status status, Timestamp sqlDate) throws SQLException {
@@ -156,7 +156,7 @@ public class AnnotationLogQueryUtil {
         query.addSetClause(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_TIMESTAMP), sqlDate);
         query.addCondition(BinaryCondition.equalTo(table.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_UPDATE_ID), updateId));
         
-        ConnectionController.connect().createStatement().executeUpdate(query.toString());
+        ConnectionController.connectPooled().createStatement().executeUpdate(query.toString());
     }
     
 }
