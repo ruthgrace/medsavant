@@ -97,16 +97,16 @@ public class Viewer extends JSplitPane {
     private int initialHorizontalScroll = 0;
     
     private boolean hasPathway = false;
-    private PathwaysPlugin plugin;
+    private FilterInstance instance;
     private String pathwayString;
 
     List<Gene> genes;
     DbColumn positionCol;
     DbColumn chromCol;
 
-    Viewer(Loader loader, PathwaysPlugin pp) {
+    Viewer(Loader loader, FilterInstance inst) {
 
-        this.plugin = pp;
+        this.instance = inst;
         
         this.loader = loader;
 
@@ -279,7 +279,7 @@ public class Viewer extends JSplitPane {
         this.pathwayString = pathway;
         
         hasPathway = false;
-        plugin.enableApply(false);
+        instance.enableApply(false);
         
         jumpGene = null;
         jumpPathway = null;
@@ -292,8 +292,8 @@ public class Viewer extends JSplitPane {
         //applyFilter();
         
         hasPathway = true;
-        plugin.enableApply(true);      
-        plugin.setCurrentFilter(pathwayString);
+        instance.enableApply(true);      
+        instance.setCurrentFilter(pathwayString);
     }
     
     public void applyFilter(){
@@ -319,7 +319,7 @@ public class Viewer extends JSplitPane {
         positionCol = table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION);
         chromCol = table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM);
     
-        plugin.addFilter(getConditions(), pathwayString, genes.size());
+        instance.addFilter(getConditions(), pathwayString, genes.size());
         
         loader.setVisible(false);
         

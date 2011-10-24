@@ -29,13 +29,14 @@ import org.bridgedb.bio.Organism;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 
 
+
 /**
  *
  * @author AndrewBrook
  */
 public class PathwaysTab extends JFrame {
     
-    private PathwaysPlugin plugin;
+    private FilterInstance instance;
 
     private JPanel parent;
     private PathwaysBrowser browser;
@@ -53,9 +54,8 @@ public class PathwaysTab extends JFrame {
     private boolean started = false;
 
     
-    public PathwaysTab(PathwaysPlugin pp){
-        super();
-        this.plugin = pp;
+    public PathwaysTab(FilterInstance inst){
+        this.instance = inst;
         this.setPreferredSize(new Dimension(800,500));
         this.setMinimumSize(new Dimension(400,250));
         this.setSize(new Dimension(800,500));
@@ -65,12 +65,12 @@ public class PathwaysTab extends JFrame {
         this.getContentPane().add(pane, BorderLayout.CENTER);
         init(pane);
     }
-    
+
     public void applyFilter(){
         if(svgPanel != null) {
-            plugin.enableApply(false);
+            instance.enableApply(false);
             svgPanel.applyFilter();
-            plugin.enableApply(true);
+            instance.enableApply(true);
         }
     }
     
@@ -169,7 +169,7 @@ public class PathwaysTab extends JFrame {
                 }
 
                 //create panel for viewing svgs
-                svgPanel = new Viewer(loader, plugin);
+                svgPanel = new Viewer(loader, instance);
                 svgPanel.setVisible(false);
 
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -280,7 +280,6 @@ public class PathwaysTab extends JFrame {
 
     
 }
-
 class ExtJOptionPane extends JOptionPane {
 
     public static String[] showInputDialog(final String message, final String title, final String[] list) {
