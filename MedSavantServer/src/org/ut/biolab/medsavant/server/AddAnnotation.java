@@ -109,7 +109,7 @@ public class AddAnnotation {
         int id = AnnotationQueryUtil.addAnnotation(program, version, referenceId, (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/"), hasRef, hasAlt, annotationType);
 
         //populate
-        Connection conn = ConnectionController.connect();
+        Connection conn = ConnectionController.connectPooled();
         conn.setAutoCommit(false);
         for(int i = 0; i < annotationFields.size(); i++){
             AnnotationField a = annotationFields.get(i);

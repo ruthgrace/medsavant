@@ -105,7 +105,7 @@ public class UpdateVariantTable {
     }
     
     private static void dumpTableToFile(String tableName, File file) throws SQLException{
-        Connection c = (ConnectionController.connect());
+        Connection c = (ConnectionController.connectPooled());
         c.createStatement().execute(
                 "SELECT *"
                 + " INTO OUTFILE \"" + file.getAbsolutePath().replaceAll("\\\\", "/") + "\""
@@ -115,7 +115,7 @@ public class UpdateVariantTable {
     }
     
     private static void variantsToFile(String tableName, File file) throws SQLException{
-        Connection c = (ConnectionController.connect());
+        Connection c = (ConnectionController.connectPooled());
         c.createStatement().execute(
                 "SELECT `upload_id`, `file_id`, `variant_id`, `dna_id`, `chrom`, `position`, `"
                 + "dbsnp_id`, `ref`, `alt`, `qual`, `filter`, `aa`, `ac`, `af`, `an`, `bq`, `cigar`, `db`, `dp`, `"
@@ -138,7 +138,7 @@ public class UpdateVariantTable {
     }
     
     private static void dropTable(String tableName) throws SQLException{
-        Connection c = (ConnectionController.connect());
+        Connection c = (ConnectionController.connectPooled());
         c.createStatement().execute(
                 "DROP TABLE IF EXISTS " + tableName + ";");
     }
