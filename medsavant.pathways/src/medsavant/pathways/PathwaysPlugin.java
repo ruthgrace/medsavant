@@ -16,11 +16,14 @@
 
 package medsavant.pathways;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
 
 import org.ut.biolab.medsavant.api.MedSavantFilterPlugin;
+import org.ut.biolab.medsavant.api.ProjectUtils;
+import org.ut.biolab.medsavant.model.event.FiltersChangedListener;
 
 
 /**
@@ -30,7 +33,7 @@ import org.ut.biolab.medsavant.api.MedSavantFilterPlugin;
  */
 public class PathwaysPlugin extends MedSavantFilterPlugin {
     private Map<Integer, FilterInstance> instances = new HashMap<Integer, FilterInstance>();
-
+    
     /**
      * Create the user-interface which appears within the panel.
      *
@@ -39,6 +42,14 @@ public class PathwaysPlugin extends MedSavantFilterPlugin {
     @Override
     public void init(JPanel panel, int queryID) {
         instances.put(queryID, new FilterInstance(panel, queryID));
+    }
+
+    /**
+     * Clean up when we know this instance of the plugin is no longer needed.
+     */
+    public void cleanup(int queryID) {
+        instances.get(queryID).cleanup();
+        instances.remove(queryID);
     }
 
     /**

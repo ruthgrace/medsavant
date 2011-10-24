@@ -297,7 +297,7 @@ public class VariantQueryUtil {
         return numrows;
     }
 
-    private static void addConditionsToQuery(SelectQuery query, Condition[][] conditions){
+    public static void addConditionsToQuery(SelectQuery query, Condition[][] conditions){
         Condition[] c = new Condition[conditions.length];
         for(int i = 0; i < conditions.length; i++){
             c[i] = ComboCondition.and(conditions[i]);

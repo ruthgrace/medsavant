@@ -16,22 +16,16 @@
 
 package medsavant.pathways;
 
-import javax.swing.JPanel;
-
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.*;
+import javax.swing.border.Border;
 
 import com.healthmarketscience.sqlbuilder.Condition;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import javax.swing.Box;
-import javax.swing.border.Border;
 import org.ut.biolab.medsavant.api.ProjectUtils;
 
 /**
@@ -45,15 +39,15 @@ public class FilterInstance {
     private JLabel currentLabel;
     private JButton applyButton;
     private JButton removeButton;
-    private int queryId;
+    private int queryID;
 
     /**
      * Create the user-interface which appears within the panel.
      *
      * @param panel provided by MedSavant to host our plugin
      */
-    FilterInstance(JPanel panel, int queryId) {
-        this.queryId = queryId;
+    FilterInstance(JPanel panel, int queryID) {
+        this.queryID = queryID;
         pathwaysTab = new PathwaysTab(this);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -139,14 +133,14 @@ public class FilterInstance {
     }
     
     private void removeFilter(){
-        ProjectUtils.removeFilter("wikipathways", queryId);
+        ProjectUtils.removeFilter("medsavant.pathways", queryID);
         setAppliedFilter("(none)", 0);
         applyButton.setEnabled(true);
         removeButton.setEnabled(false);
     }
     
     public void addFilter(Condition[] conditions, String pathwayString, int size) {
-        ProjectUtils.addFilterConditions(conditions, "WikiPathways", "wikipathways", queryId);
+        ProjectUtils.addFilterConditions(conditions, "WikiPathways", "medsavant.pathways", queryID);
         setAppliedFilter(pathwayString, size);
     }
     
@@ -156,7 +150,17 @@ public class FilterInstance {
     
     public void apply(){
         pathwaysTab.applyFilter();
+        pathwaysTab.setVisible(false);
         applyButton.setEnabled(false);
         removeButton.setEnabled(true);
+    }
+    
+    /**
+     * Called when MedSavant has removed this filter.
+     */
+    public void cleanup() {
+        pathwaysTab.setVisible(false);
+        pathwaysTab = null;
+        System.out.println("Pretending to clean up " + queryID);
     }
 }
