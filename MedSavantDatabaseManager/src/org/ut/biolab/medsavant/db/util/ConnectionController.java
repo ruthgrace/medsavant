@@ -22,6 +22,7 @@ public class ConnectionController {
                 lastConnection.close();
             } catch (SQLException ex) {
             }
+            lastConnection = null;
         }
 
     }
