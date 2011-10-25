@@ -265,12 +265,18 @@ public class MedSavantDatabase {
         public static final ColumnType TYPE_OF_DNA_IDS = TableSchema.ColumnType.VARCHAR;
         public static final int LENGTH_OF_DNA_IDS = 1000;
         public static final String COLUMNNAME_OF_DNA_IDS = "dna_ids";
+        // default_patient.bam_url
+        public static final int INDEX_OF_BAM_URL = 5;
+        public static final ColumnType TYPE_OF_BAM_URL = TableSchema.ColumnType.VARCHAR;
+        public static final int LENGTH_OF_BAM_URL = 5000;
+        public static final String COLUMNNAME_OF_BAM_URL = "bam_url";
         private void addColumns() {
                 addColumn(COLUMNNAME_OF_PATIENT_ID,COLUMNNAME_OF_PATIENT_ID,TableSchema.ColumnType.INTEGER,11);
                 addColumn(COLUMNNAME_OF_FAMILY_ID,COLUMNNAME_OF_FAMILY_ID,TableSchema.ColumnType.VARCHAR,100);
                 addColumn(COLUMNNAME_OF_PEDIGREE_ID,COLUMNNAME_OF_PEDIGREE_ID,TableSchema.ColumnType.VARCHAR,100);
                 addColumn(COLUMNNAME_OF_HOSPITAL_ID,COLUMNNAME_OF_HOSPITAL_ID,TableSchema.ColumnType.VARCHAR,100);
                 addColumn(COLUMNNAME_OF_DNA_IDS,COLUMNNAME_OF_DNA_IDS,TableSchema.ColumnType.VARCHAR,1000);
+                addColumn(COLUMNNAME_OF_BAM_URL,COLUMNNAME_OF_BAM_URL,TableSchema.ColumnType.VARCHAR,5000);
         }
     }
 
@@ -801,29 +807,6 @@ public class MedSavantDatabase {
                 addColumn(COLUMNNAME_OF_ANNOTATION_IDS,COLUMNNAME_OF_ANNOTATION_IDS,TableSchema.ColumnType.VARCHAR,500);
         }
     }
-    
-    public static class AlignmentTableSchema extends TableSchema {
-        public static final String TABLE_NAME = "alignment";
-        public AlignmentTableSchema(DbSchema s) {
-                super(s.addTable(TABLE_NAME));
-                addColumns();
-        }
-        
-        //alignment.dna_id
-        public static final int INDEX_OF_DNA_ID = 0;
-        public static final ColumnType TYPE_OF_DNA_ID = TableSchema.ColumnType.VARCHAR;
-        public static final int LENGTH_OF_DNA_ID = 100;
-        public static final String COLUMNNAME_OF_DNA_ID = "dna_id";
-        //alignment.bam_file
-        public static final int INDEX_OF_BAM_FILE = 1;
-        public static final ColumnType TYPE_OF_BAM_FILE = TableSchema.ColumnType.VARCHAR;
-        public static final int LENGTH_OF_BAM_FILE = 5000;
-        public static final String COLUMNNAME_OF_BAM_FILE = "bam_file";
-        private void addColumns() {
-                addColumn(COLUMNNAME_OF_DNA_ID,COLUMNNAME_OF_DNA_ID,TableSchema.ColumnType.VARCHAR,100);
-                addColumn(COLUMNNAME_OF_BAM_FILE,COLUMNNAME_OF_BAM_FILE,TableSchema.ColumnType.VARCHAR,5000);
-        }
-    }
 
     public static final DbSchema schema = (new DbSpec()).addDefaultSchema();
 
@@ -877,7 +860,5 @@ public class MedSavantDatabase {
 
     //VarianttablemapTableSchema
     public static final VariantTablemapTableSchema VarianttablemapTableSchema = new VariantTablemapTableSchema(schema);
-    
-    //AlignmentTableSchema
-    public static final AlignmentTableSchema AlignmentTableSchema = new AlignmentTableSchema(schema);
+
 }
