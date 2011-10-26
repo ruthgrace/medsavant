@@ -66,4 +66,10 @@ public class Annotation {
         }
         return reader;
     }
+
+    @Override
+    public String toString() {
+        return "Annotation{" + "version=" + version + ", reference=" + reference + ", dataPath=" + dataPath + ", type=" + type + '}';
+    }
+    
 }
