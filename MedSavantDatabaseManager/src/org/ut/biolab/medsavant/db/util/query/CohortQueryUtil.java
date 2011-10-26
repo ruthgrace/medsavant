@@ -81,7 +81,7 @@ public class CohortQueryUtil {
         String patientTablename = rs.getString(1);
         
         //get dna id lists
-        TableSchema patientTable = CustomTables.getPatientTableSchema(patientTablename);
+        TableSchema patientTable = CustomTables.getCustomTableSchema(patientTablename);
         SelectQuery query2 = new SelectQuery();
         query2.addFromTable(cohortMembershipTable.getTable());
         query2.addFromTable(patientTable.getTable());

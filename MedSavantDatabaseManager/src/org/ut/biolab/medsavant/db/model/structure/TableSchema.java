@@ -35,26 +35,18 @@ public class TableSchema implements TableSchemaAdapter {
     public static ColumnType convertStringToColumnType(String typeNameSQL) {
         if (typeNameSQL.equals("float")) {
             return ColumnType.FLOAT;
-        }
-        
-        if (typeNameSQL.equals("int")) {
+        } else if (typeNameSQL.equals("int")) {
             return ColumnType.INTEGER;
-        }
-        
-        if (typeNameSQL.equals("varchar")) {
+        } else if (typeNameSQL.equals("varchar")) {
             return ColumnType.VARCHAR;
-        }
-        
-        if (typeNameSQL.equals("tinyint")) {
+        } else if (typeNameSQL.equals("tinyint")) {
             return ColumnType.INTEGER;
-        }
-        
-         if (typeNameSQL.equals("blob")) {
+        } else if (typeNameSQL.equals("blob")) {
             return ColumnType.VARCHAR;
-        }
-         
-          if (typeNameSQL.equals("datetime")) {
+        } else if (typeNameSQL.equals("datetime")) {
             return ColumnType.DATE;
+        } else if(typeNameSQL.equals("decimal")){
+            return ColumnType.DECIMAL;
         }
         
         throw new UnsupportedOperationException("Type not supported: " + typeNameSQL);

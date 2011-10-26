@@ -64,7 +64,7 @@ public class PatientQueryUtil {
         
         String tablename = getPatientTablename(projectId);
         
-        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(
@@ -93,7 +93,7 @@ public class PatientQueryUtil {
         
         String tablename = getPatientTablename(projectId);
         
-        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
@@ -260,7 +260,7 @@ public class PatientQueryUtil {
     public static void removePatient(int projectId, int[] patientIds) throws SQLException {
         
         String tablename = getPatientTablename(projectId);
-        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         
         Connection c = ConnectionController.connectPooled();
         c.setAutoCommit(false);       
@@ -279,7 +279,7 @@ public class PatientQueryUtil {
     public static void addPatient(int projectId, List<CustomField> cols, List<String> values) throws SQLException {
         
         String tablename = getPatientTablename(projectId);
-        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         
         InsertQuery query = new InsertQuery(table.getTable());
         for(int i = 0; i < Math.min(cols.size(), values.size()); i++){
@@ -323,7 +323,7 @@ public class PatientQueryUtil {
         
         String tablename = getPatientTablename(projectId);
         
-        TableSchema table = CustomTables.getPatientTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         
         DbColumn currentDNAId = table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS);
         DbColumn testColumn = table.getDBColumn(columnName);

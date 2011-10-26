@@ -4,14 +4,15 @@
  */
 package org.ut.biolab.medsavant.db.format;
 
+import org.ut.biolab.medsavant.db.util.DBUtil;
+import org.ut.biolab.medsavant.db.util.DBUtil.FieldType;
+
 /**
  *
  * @author Andrew
  */
 public class CustomField {
-    
-    public static enum FieldType {VARCHAR, FLOAT, INT, BOOLEAN, DECIMAL, DATE, TIMESTAMP}
-
+   
     private String columnName;
     private String columnType;
     private boolean filterable;
@@ -49,26 +50,7 @@ public class CustomField {
     }
     
     private void setFieldType(String type){
-        String typeLower = type.toLowerCase();
-        if (typeLower.contains("float")){
-            fieldType = FieldType.FLOAT;
-        } else if (typeLower.contains("decimal")){
-            fieldType = FieldType.DECIMAL;
-        } else if (typeLower.contains("int")){
-            if(typeLower.contains("(1)")){
-                fieldType = FieldType.BOOLEAN;
-            } else {
-                fieldType = FieldType.INT;
-            }
-        } else if (typeLower.contains("boolean")){
-            fieldType = FieldType.BOOLEAN;
-        } else if (typeLower.contains("date")){
-            fieldType = FieldType.DATE;
-        } else if (typeLower.contains("timestamp")){
-            fieldType = FieldType.TIMESTAMP;
-        } else {
-            fieldType = FieldType.VARCHAR;
-        }
+        fieldType = DBUtil.getFieldType(type);
     }
     
     public FieldType getFieldType(){

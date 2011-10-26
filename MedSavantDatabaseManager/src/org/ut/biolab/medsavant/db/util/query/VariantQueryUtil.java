@@ -48,8 +48,8 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class VariantQueryUtil {
     
-    public static TableSchema getVariantTableSchema(int projectId, int referenceId) throws SQLException {
-        return CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+    public static TableSchema getCustomTableSchema(int projectId, int referenceId) throws SQLException {
+        return CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
     }
     
     public static Vector getVariants(int projectId, int referenceId, int limit) throws SQLException {       
@@ -58,7 +58,7 @@ public class VariantQueryUtil {
    
     public static Vector getVariants(int projectId, int referenceId, Condition[][] conditions, int limit) throws SQLException {            
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        TableSchema table = CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
@@ -84,7 +84,7 @@ public class VariantQueryUtil {
     
     public static double[] getExtremeValuesForColumn(String tablename, String columnname) throws SQLException { 
         
-        TableSchema table = CustomTables.getVariantTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
@@ -103,7 +103,7 @@ public class VariantQueryUtil {
     
     public static List<String> getDistinctValuesForColumn(String tablename, String columnname) throws SQLException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(tablename);
+        TableSchema table = CustomTables.getCustomTableSchema(tablename);
         
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
@@ -135,7 +135,7 @@ public class VariantQueryUtil {
         
         if (name == null) { return -1; }
         
-        TableSchema table = CustomTables.getVariantTableSchema(name);
+        TableSchema table = CustomTables.getCustomTableSchema(name);
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
@@ -150,7 +150,7 @@ public class VariantQueryUtil {
     
     public static int getFilteredFrequencyValuesForColumnInRange(int projectId, int referenceId, Condition[][] conditions, String columnname, double min, double max) throws SQLException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        TableSchema table = CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
@@ -167,7 +167,7 @@ public class VariantQueryUtil {
     
     public static Map<String, Integer> getFilteredFrequencyValuesForColumn(int projectId, int referenceId, Condition[][] conditions, String columnAlias) throws SQLException {
         
-        TableSchema tableSchema = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        TableSchema tableSchema = CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         DbTable table = tableSchema.getTable();
         DbColumn col = tableSchema.getDBColumnByAlias(columnAlias);
           
@@ -196,7 +196,7 @@ public class VariantQueryUtil {
     
     public static int getNumVariantsInRange(int projectId, int referenceId, Condition[][] conditions, String chrom, long start, long end) throws SQLException, NonFatalDatabaseException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        TableSchema table = CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
                
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
@@ -214,7 +214,7 @@ public class VariantQueryUtil {
     
     public static int[] getNumVariantsForBins(int projectId, int referenceId, Condition[][] conditions, String chrom, int binsize, int numbins) throws SQLException, NonFatalDatabaseException {
         
-        TableSchema table = CustomTables.getVariantTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
+        TableSchema table = CustomTables.getCustomTableSchema(ProjectQueryUtil.getVariantTablename(projectId, referenceId));
         
         SelectQuery queryBase = new SelectQuery();
         queryBase.addFromTable(table.getTable());
@@ -273,7 +273,7 @@ public class VariantQueryUtil {
     
     public static int getNumPatientsWithVariantsInRange(int projectId, int referenceId, Condition[][] conditions, String chrom, int start, int end) throws SQLException {
         
-        TableSchema table = getVariantTableSchema(projectId, referenceId);
+        TableSchema table = getCustomTableSchema(projectId, referenceId);
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns("COUNT(DISTINCT " + DefaultVariantTableSchema.COLUMNNAME_OF_DNA_ID + ")");

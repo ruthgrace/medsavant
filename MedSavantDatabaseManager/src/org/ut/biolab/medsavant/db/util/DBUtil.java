@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 
 /**
  *
@@ -19,7 +20,32 @@ import java.util.Date;
  */
 public class DBUtil {
 
-    public static String getColumnType(String s) {
+    public static enum FieldType {VARCHAR, FLOAT, INT, BOOLEAN, DECIMAL, DATE, TIMESTAMP}
+    
+    public static FieldType getFieldType(String type){
+        String typeLower = type.toLowerCase();
+        if (typeLower.contains("float")){
+            return FieldType.FLOAT;
+        } else if (typeLower.contains("decimal")){
+            return FieldType.DECIMAL;
+        } else if (typeLower.contains("int")){
+            if(typeLower.contains("(1)")){
+                return FieldType.BOOLEAN;
+            } else {
+                return FieldType.INT;
+            }
+        } else if (typeLower.contains("boolean")){
+            return FieldType.BOOLEAN;
+        } else if (typeLower.contains("date")){
+            return FieldType.DATE;
+        } else if (typeLower.contains("timestamp")){
+            return FieldType.TIMESTAMP;
+        } else {
+            return FieldType.VARCHAR;
+        }
+    }
+    
+    public static String getColumnTypeString(String s) {
         int pos = s.indexOf("(");
         if (pos == -1) { return s; }
         else { return s.substring(0,pos); }
@@ -62,10 +88,31 @@ public class DBUtil {
         int numberOfColumns = rsMetaData.getColumnCount();
 
         while (rs.next()) {
-            table.addColumn(rs.getString(1), getColumnType(rs.getString(2)), getColumnLength(rs.getString(2)));
+            table.addColumn(rs.getString(1), getColumnTypeString(rs.getString(2)), getColumnLength(rs.getString(2)));
         }
 
         return table;
+    }
+    
+    public static TableSchema importTableSchema(String tablename) throws SQLException {
+        
+        Connection c = ConnectionController.connectPooled();
+        
+        DbSpec spec = new DbSpec();
+        DbSchema schema = spec.addDefaultSchema();
+        
+        DbTable table = schema.addTable(tablename);
+        TableSchema ts = new TableSchema(table);
+
+        Statement s = c.createStatement ();
+        ResultSet rs = s.executeQuery("DESCRIBE " + tablename);
+
+        while (rs.next()) {
+            table.addColumn(rs.getString(1), getColumnTypeString(rs.getString(2)), getColumnLength(rs.getString(2)));
+            ts.addColumn(rs.getString(1), rs.getString(1), TableSchema.convertStringToColumnType(getColumnTypeString(rs.getString(2))), getColumnLength(rs.getString(2)));
+        }
+
+        return ts;
     }
     
     public static void dropTable(String tablename) throws SQLException {
