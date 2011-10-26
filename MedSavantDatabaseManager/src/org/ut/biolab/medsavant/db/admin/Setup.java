@@ -1,17 +1,33 @@
+/*
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.ut.biolab.medsavant.db.admin;
 
-import com.healthmarketscience.sqlbuilder.InsertQuery;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.api.MedSavantDatabase.UserTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.model.UserLevel;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
-import org.ut.biolab.medsavant.db.util.DBSettings;
 import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.UserQueryUtil;
 
@@ -20,15 +36,9 @@ import org.ut.biolab.medsavant.db.util.query.UserQueryUtil;
  * @author mfiume
  */
 public class Setup {
-
+    private static final Logger LOG = Logger.getLogger(Setup.class.getName());
+   
     private static void dropTables(Connection c) throws SQLException {
-
-        if (DBUtil.tableExists( MedSavantDatabase.UserTableSchema.getTablename())) {
-            List<String> userNames = getValuesFromField(c,MedSavantDatabase.UserTableSchema.getTablename(), "name");
-            for (String s : userNames) {
-                UserQueryUtil.removeUser(s);
-            }
-        }
 
         if (DBUtil.tableExists( MedSavantDatabase.PatienttablemapTableSchema.getTablename())) {
             List<String> patientTables = getValuesFromField(c,MedSavantDatabase.PatienttablemapTableSchema.getTablename(), "patient_tablename");
@@ -45,7 +55,6 @@ public class Setup {
         }
 
         DBUtil.dropTable(MedSavantDatabase.ServerlogTableSchema.getTablename());
-        DBUtil.dropTable(MedSavantDatabase.UserTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.AnnotationTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.ReferenceTableSchema.getTablename());
         DBUtil.dropTable(MedSavantDatabase.ProjectTableSchema.getTablename());
@@ -75,15 +84,6 @@ public class Setup {
                 + ") ENGINE=MyISAM;"
                 );
         
-        c.createStatement().execute(
-                "CREATE TABLE `" + MedSavantDatabase.UserTableSchema.getTablename() + "` ("
-                + "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,"
-                + "`name` varchar(50) COLLATE latin1_bin NOT NULL DEFAULT '',"
-                + "`is_admin` tinyint(1) NOT NULL DEFAULT '0',"
-                + "PRIMARY KEY (`id`),"
-                + "UNIQUE KEY `name` (`name`)"
-                + ") ENGINE=MyISAM;");
-
         c.createStatement().execute(
                 "CREATE TABLE `" + MedSavantDatabase.RegionsetTableSchema.getTablename() + "` ("
                 + "`region_set_id` int(11) NOT NULL AUTO_INCREMENT,"
@@ -251,49 +251,39 @@ public class Setup {
 
     }
     
-    private static void addRootUser(Connection c) throws SQLException {
-        
-        TableSchema table = MedSavantDatabase.UserTableSchema;
-        InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), "root");
-        query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_IS_ADMIN), 1);
-        
-        c.createStatement().executeUpdate(query.toString());
+    /**
+     * Create a <i>root</i> user if MySQL does not already have one.
+     * @param c database connection
+     * @param password a character array, supposedly for security's sake
+     * @throws SQLException 
+     */
+    private static void addRootUser(Connection c, char[] password) throws SQLException {
+        if (!UserQueryUtil.userExists("root")) {
+            UserQueryUtil.addUser("root", password, UserLevel.ADMIN);
+        }
     }
 
-    public static boolean createDatabase(String dbhost, int port, String dbname) {
+    public static void createDatabase(String dbhost, int port, String dbname, char[] rootPassword) throws SQLException {
         
-        try {
-            Connection c = ConnectionController.connectUnpooled(dbhost, port, "");
-            createDatabase(c,dbname);
-            
-            /*
-            ConnectionController.setDbhost(dbhost);
-            ConnectionController.setPort(port);
-            ConnectionController.setDbname(dbname);
-             */
-            
-            c = ConnectionController.connectUnpooled(dbhost, port,dbname);
-            
-            ConnectionController.setDbhost(dbhost);
-            ConnectionController.setPort(port);
-            ConnectionController.setDbname(dbname);
-            
-            dropTables(c);
-            createTables(c);
-            addRootUser(c);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        Connection c = ConnectionController.connectUnpooled(dbhost, port, "");
+        createDatabase(c,dbname);
+
+        c = ConnectionController.connectUnpooled(dbhost, port,dbname);
+
+        ConnectionController.setDbhost(dbhost);
+        ConnectionController.setPort(port);
+        ConnectionController.setDbname(dbname);
+
+        dropTables(c);
+        createTables(c);
+        addRootUser(c, rootPassword);
+
+        for (String user: UserQueryUtil.getUserNames()) {
+            UserQueryUtil.grantPrivileges(user, UserQueryUtil.getUserLevel(user));
         }
     }
     
     
-    public static void main(String[] args) throws SQLException {
-        createDatabase("localhost",5029,"test2");
-    }
-
     private static List<String> getValuesFromField(Connection c,String tablename, String fieldname) throws SQLException {
         String q = "SELECT `" + fieldname + "` FROM `" + tablename + "`";
         Statement stmt = c.createStatement();

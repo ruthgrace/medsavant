@@ -16,21 +16,12 @@
 
 package org.ut.biolab.medsavant.db.util.query;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.DeleteQuery;
-import com.healthmarketscience.sqlbuilder.InsertQuery;
-import com.healthmarketscience.sqlbuilder.SelectQuery;
-
-import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
-import org.ut.biolab.medsavant.db.api.MedSavantDatabase.UserTableSchema;
-import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.model.UserLevel;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -41,12 +32,7 @@ public class UserQueryUtil {
     
     public static List<String> getUserNames() throws SQLException {
         
-        TableSchema table = MedSavantDatabase.UserTableSchema;
-        SelectQuery query = new SelectQuery();
-        query.addFromTable(table.getTable());
-        query.addColumns(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME));
-        
-        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
+        ResultSet rs = ConnectionController.executeQuery("SELECT DISTINCT user FROM mysql.user");
         
         List<String> results = new ArrayList<String>();       
         while (rs.next()) {
@@ -56,74 +42,75 @@ public class UserQueryUtil {
         return results;
     }
 
-    public static boolean userExists(String username) throws SQLException {
-        
-        TableSchema table = MedSavantDatabase.UserTableSchema;
-        SelectQuery query = new SelectQuery();
-        query.addFromTable(table.getTable());
-        query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), username));
-        
-        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
-        
+    public static boolean userExists(String userName) throws SQLException {
+        ResultSet rs = ConnectionController.executeQuery("SELECT user FROM mysql.user WHERE user='%s';", userName);
         return rs.next();
     }
     
-     
-    public static int addUser(String name, String pass, boolean isAdmin) throws SQLException {
-
-        (ConnectionController.connectPooled()).createStatement().execute(
-                "CREATE USER '"+ name +"'@'localhost' IDENTIFIED BY '"+ pass +"';");
-                
-        (ConnectionController.connectPooled()).createStatement().execute(
-                "GRANT ALL ON "+ ConnectionController.getDbname() +".* TO '"+  name +"'@'localhost';");
-        
-
-        TableSchema table = MedSavantDatabase.UserTableSchema;
-        InsertQuery query = new InsertQuery(table.getTable());
-        query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), name);
-        query.addColumn(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_IS_ADMIN), isAdmin);
-        
-        PreparedStatement stmt = (ConnectionController.connectPooled()).prepareStatement(query.toString(),
-                Statement.RETURN_GENERATED_KEYS);
-
-        stmt.execute();
-        ResultSet res = stmt.getGeneratedKeys();
-        res.next();
-
-        int id = res.getInt(1);
-        
-        return id;
+    public static void addUser(String name, char[] pass, UserLevel level) throws SQLException {
+        try {
+            ConnectionController.executeUpdate("CREATE USER '%s'@'localhost' IDENTIFIED BY '%s';", name, new String(pass));
+        } finally {
+            for (int i = 0; i < pass.length; i++) {
+                pass[i] = 0;
+            }
+        }
+        grantPrivileges(name, level);
     }
 
-    public static boolean isUserAdmin(String username) throws SQLException {
-        if (userExists(username)) {
-            
-            TableSchema table = MedSavantDatabase.UserTableSchema;
-            SelectQuery query = new SelectQuery();
-            query.addFromTable(table.getTable());
-            query.addColumns(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_IS_ADMIN));
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), username));
-            
-            ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
-            
+    /**
+     * Grant the user the privileges appropriate to their level
+     * @param name user name from <code>mysql.user</code> table
+     * @param level ADMIN, USER, or GUEST
+     * @throws SQLException 
+     */
+    public static void grantPrivileges(String name, UserLevel level) throws SQLException {
+        switch (level) {
+            case ADMIN:
+                ConnectionController.executeUpdate("GRANT ALL ON %s.* TO '%s'@'localhost';", ConnectionController.getDbname(), name);
+                ConnectionController.executeUpdate("GRANT CREATE USER ON *.* TO '%s'@'localhost';", name);
+                break;
+            case USER:
+                ConnectionController.executeUpdate("GRANT SELECT, CREATE TEMPORARY TABLES ON %s.* TO '%s'@'localhost';", ConnectionController.getDbname(), name);
+                break;
+            case GUEST:
+                ConnectionController.executeUpdate("GRANT SELECT ON %s.* TO '%s'@'localhost'", ConnectionController.getDbname(), name);
+                break;
+        }                
+    }
+
+    public static boolean isUserAdmin(String name) throws SQLException {
+        if (userExists(name)) {
+            // If the user can create other users, they're assumed to be admin.
+            ResultSet rs = ConnectionController.executeQuery("SELECT Create_user_priv FROM mysql.user WHERE user='%s';", name);
             rs.next();
-            return rs.getBoolean(1);
-            
+            return rs.getString(1).equals("Y");
         } else {
             return false;
         }
     }
     
+    public static UserLevel getUserLevel(String name) throws SQLException {
+        if (userExists(name)) {
+            // If the user can create other users, they're assumed to be admin.
+            ResultSet rs = ConnectionController.executeQuery("SELECT Create_user_priv FROM mysql.user WHERE user='%s';", name);
+            if (rs.next()) {
+                if (rs.getString(1).equals("Y")) {
+                    return UserLevel.ADMIN;
+                }
+            }
+            rs = ConnectionController.executeQuery("SELECT Create_tmp_table_priv FROM mysql.db WHERE user='%s'", name, ConnectionController.getDbname());
+            if (rs.next()) {
+                if (rs.getString(1).equals("Y")) {
+                    return UserLevel.USER;
+                }
+            }
+            return UserLevel.GUEST;
+        }
+        return UserLevel.NONE;
+    }
         
     public static void removeUser(String name) throws SQLException {
-        (ConnectionController.connectPooled()).createStatement().execute(
-                "DROP USER '"+name+"'@'localhost';");
-        
-        TableSchema table = MedSavantDatabase.UserTableSchema;
-        DeleteQuery query = new DeleteQuery(table.getTable());
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(UserTableSchema.COLUMNNAME_OF_NAME), name));
-        ConnectionController.connectPooled().createStatement().execute(query.toString());
+        ConnectionController.executeUpdate("DROP USER '%s'@'localhost';", name);
     }
-
 }
