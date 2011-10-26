@@ -37,6 +37,7 @@ public class AnnotationWorker extends SwingWorker {
             try {
                 ServerLogQueryUtil.addServerLog(LogType.INFO, "Starting pending annotations");
                 kickStartPendingAnnotations();
+                ServerLogQueryUtil.addServerLog(LogType.INFO, "Done starting pending annotations");            
             } catch (Exception e) {
                 ServerLogger.logByEmail(AnnotationWorker.class, "Uh oh...", e.getMessage(), Level.SEVERE);
             }
@@ -50,6 +51,8 @@ public class AnnotationWorker extends SwingWorker {
         try {
             while (rs.next()) {
 
+                ServerLogQueryUtil.addServerLog(LogType.INFO, "Starting next annotation");
+                
                 int projectId = rs.getInt("project_id");
                 int referenceId = rs.getInt("reference_id");
                 int updateId = rs.getInt("update_id");
@@ -60,12 +63,24 @@ public class AnnotationWorker extends SwingWorker {
                 try {
                     switch (action) {
                         case ADD_VARIANTS:
+                            //TODO: users shouldnt see ids
+                            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Adding variants to projectid=" + projectId + " referenceid=" + referenceId);
                             UpdateVariantTable.performAddVCF(projectId, referenceId, updateId);
+                            //TODO: users shouldnt see ids
+                            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Done adding variants to projectid=" + projectId + " referenceid=" + referenceId);
                             break;
                         case UPDATE_TABLE:
+                            // TODO: users shouldnt see ids
+                            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Updating table projectid=" + projectId + " referenceid=" + referenceId + " updateid=" + updateId);
                             UpdateVariantTable.performUpdate(projectId, referenceId);
+                            // TODO: users shouldnt see ids
+                            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Done updating table projectid=" + projectId + " referenceid=" + referenceId + " updateid=" + updateId);
+                            break;
+                        default:
+                            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.ERROR, "Unknown annotation action: " + action);
                             break;
                     }
+                    
                     AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.COMPLETE);
                 } catch (Exception e) {
                     ServerLogger.logByEmail(AnnotationWorker.class, "Uh oh...", "There was a problem making update " + updateId + ". Here's the error message:\n\n" + e.getLocalizedMessage());

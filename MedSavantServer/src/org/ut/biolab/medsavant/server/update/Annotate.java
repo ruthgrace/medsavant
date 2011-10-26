@@ -18,6 +18,7 @@ import org.broad.tabix.TabixReader;
 import org.broad.tabix.TabixReader.Iterator;
 import org.ut.biolab.medsavant.db.model.Annotation;
 import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
+import org.ut.biolab.medsavant.db.util.query.ServerLogQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
 
 /**
@@ -252,13 +253,18 @@ public class Annotate {
         for (int i = 0; i < annotationIds.length; i++) {
             annotations[i] = AnnotationQueryUtil.getAnnotation(annotationIds[i]);
         }
+        
 
         File[] tmpFiles = new File[annotationIds.length];
 
         // perform each annotation in turn
         File inFile = new File(tdfFilename);
         File outFile = null;
+        
+        ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Annotating " + inFile.getAbsolutePath() + " with " + annotations.length + " annotations");
+        
         for (int i = 0; i < annotations.length; i++) {
+            ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Annotating " + inFile.getAbsolutePath() + " with " + annotations[i].toString());
             outFile = new File(outputFilename + "_part" + i);
             tmpFiles[i] = outFile;
             annotate(inFile, annotations[i], outFile);
@@ -291,6 +297,8 @@ public class Annotate {
 
         //writer.writeNext(new String[]{"### SKIPPING ###"});
 
+        ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Done annotating " + currentPos.chrom);
+        
         // skip to next chr
         String currentChr = currentPos.chrom;
         String nextLineChr = currentPos.chrom;
