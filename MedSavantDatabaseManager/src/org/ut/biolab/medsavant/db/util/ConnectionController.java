@@ -103,6 +103,7 @@ public class ConnectionController {
     private static String dburl = "jdbc:mysql://";
     private static String user = "root";
     private static String pw = "";
+    private static String props = "";//"useCompression=true"; //"useCompression=true&enableQueryTimeouts=false";
 
     private static Connection connectOnce(String dbhost, int port, String dbname) throws SQLException {
         Connection c;
@@ -110,7 +111,8 @@ public class ConnectionController {
             Class.forName(dbdriver).newInstance();
         } catch (Exception ex) {
         }
-        c = DriverManager.getConnection(dburl + dbhost + ":" + port + "/" + dbname, user, pw);
+        c = DriverManager.getConnection(dburl + dbhost + ":" + port + "/" + dbname + "?" + props, user, pw);
+        
         return c;
     }
     private static boolean hostSet;

@@ -34,7 +34,7 @@ public class ProjectDetails {
     
     public int getNumAnnotations() {
         int numAnnotations = 0;
-        if (annotationIds != null) {
+        if (annotationIds != null && !annotationIds.isEmpty()) {
             numAnnotations = annotationIds.length() - annotationIds.replaceAll(",", "").length() + 1;
         }
         return numAnnotations;

@@ -44,7 +44,7 @@ public class ImportVariants {
         for(int i = 0; i < vcfFiles.length; i++){
 
             //update progress
-            String progress = "Importing file " + (i+1) + " of " + vcfFiles.length;
+            String progress = "Importing file " + (i+1) + " of " + vcfFiles.length + "...";
             if(progressLabel != null){               
                 progressLabel.setText(progress);
             }
@@ -64,7 +64,7 @@ public class ImportVariants {
             //add to staging table
             try {
                 if(progressLabel != null){               
-                    progressLabel.setText("Uploading file " + (i+1) + " of " + vcfFiles.length);
+                    progressLabel.setText("Uploading file " + (i+1) + " of " + vcfFiles.length + "...");
                     progressLabel.updateUI();
                 }
                 VariantQueryUtil.uploadFileToVariantTable(outfile, tableName); 

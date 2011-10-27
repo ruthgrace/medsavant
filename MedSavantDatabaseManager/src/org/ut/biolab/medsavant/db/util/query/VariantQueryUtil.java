@@ -264,7 +264,16 @@ public class VariantQueryUtil {
         
         // TODO: for some reason the connection is closed going into this function
         Connection c = ConnectionController.connectPooled();
-        c.createStatement().execute(
+        
+        System.out.println("Uploading file to variant table: " + 
+                "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
+                + "INTO TABLE " + tableName + " "
+                + "FIELDS TERMINATED BY ',' ENCLOSED BY '\"' "
+                + "LINES TERMINATED BY '\\r\\n';");
+
+        Statement s = c.createStatement();
+        s.setQueryTimeout(60 * 60); // 1 hour
+        s.execute(
                 "LOAD DATA LOCAL INFILE '" + file.getAbsolutePath().replaceAll("\\\\", "/") + "' "
                 + "INTO TABLE " + tableName + " "
                 + "FIELDS TERMINATED BY ',' ENCLOSED BY '\"' "
