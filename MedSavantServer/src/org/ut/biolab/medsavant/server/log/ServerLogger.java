@@ -2,6 +2,8 @@ package org.ut.biolab.medsavant.server.log;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -21,8 +23,8 @@ public class ServerLogger {
     private static boolean logOpen;
     private static FileHandler handler;
 
-    public static void log(Class c,String string) {
-        log(c,string, Level.INFO);
+    public static void log(Class c, String string) {
+        log(c, string, Level.INFO);
     }
 
     private static void openLogFile() throws IOException {
@@ -37,26 +39,33 @@ public class ServerLogger {
         emailaddress = eaddress;
     }
 
-    public static void logByEmail(Class c,String subject, String message) {
-        logByEmail(c,subject,message,Level.INFO);
+    public static void logByEmail(Class c, String subject, String message) {
+        logByEmail(c, subject, message, Level.INFO);
     }
-    
-    public static void logByEmail(Class c,String subject, String message, Level l) {
+
+    public static void logByEmail(Class c, String subject, String message, Level l) {
         message += "\n\nMedSavant Server Utility";
         if (emailaddress != null) {
             Mail.sendEmail(emailaddress, "[" + l + "] " + subject, message);
-            log(c,"(Also emailed to " + emailaddress + "): \"" + message.replace("\n", "") + "\"",l);
+            log(c, "(Also emailed to " + emailaddress + "): \"" + message.replace("\n", "") + "\"", l);
         } else {
-            log(c,"(No email address configured to sent to): \"" + message.replace("\n", "") + "\"",l);
+            log(c, "(No email address configured to sent to): \"" + message.replace("\n", "") + "\"", l);
         }
     }
 
-    public static void log(Class c,String msg, Level level) {
+    public static void logError(Class c, Throwable t) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        log(c, sw.toString(), Level.SEVERE);
+    }
+
+    public static void log(Class c, String msg, Level level) {
         try {
             if (!logOpen) {
                 openLogFile();
             }
-            logger.log(level, "'{'{0}'} '{1}", new Object[]{c.toString(), msg});
+            logger.log(level, "'{'{0}'}' {1}", new Object[]{c.toString(), msg});
             for (Handler h : logger.getHandlers()) {
                 h.flush();
             }

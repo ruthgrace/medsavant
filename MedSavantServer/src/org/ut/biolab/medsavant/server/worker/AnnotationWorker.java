@@ -39,6 +39,7 @@ public class AnnotationWorker extends SwingWorker {
                 kickStartPendingAnnotations();
                 ServerLogQueryUtil.addServerLog(LogType.INFO, "Done starting pending annotations");            
             } catch (Exception e) {
+                ServerLogger.logError(AnnotationWorker.class,e);
                 ServerLogger.logByEmail(AnnotationWorker.class, "Uh oh...", e.getMessage(), Level.SEVERE);
             }
             Thread.sleep(DELAY);
@@ -83,12 +84,14 @@ public class AnnotationWorker extends SwingWorker {
                     
                     AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.COMPLETE);
                 } catch (Exception e) {
+                    ServerLogger.logError(AnnotationWorker.class,e);
                     ServerLogger.logByEmail(AnnotationWorker.class, "Uh oh...", "There was a problem making update " + updateId + ". Here's the error message:\n\n" + e.getLocalizedMessage());
                     AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.ERROR);
                 }
             }
 
         } catch (SQLException ex) {
+            ServerLogger.logError(AnnotationWorker.class,ex);
             ServerLogger.log(AnnotationWorker.class, ex.getLocalizedMessage(), Level.SEVERE);
         }
     }

@@ -63,10 +63,10 @@ public class Annotate {
         
         while (lastChr.equals(currentVariant.chrom)) {
 
-            if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
-                ServerLogger.log(Annotate.class,"Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
-                numWarnings++;
-            }
+            //if (lastPosition == currentVariant.position && lastChr.equals(currentVariant.chrom)) {
+            //    ServerLogger.log(Annotate.class,"Parser does not support multiple lines per position (" + lastChr + " " + lastPosition + ")", Level.WARNING);
+            //    numWarnings++;
+            //}
 
             boolean annotationHitEnd = false;
 
@@ -294,8 +294,6 @@ public class Annotate {
      * 
      */
     private static VariantRecord skipToNextChr(VariantRecord currentPos, CSVReader recordReader, CSVWriter writer, String[] outLine) throws EOFException, IOException {
-
-        //writer.writeNext(new String[]{"### SKIPPING ###"});
 
         ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Done annotating " + currentPos.chrom);
         
