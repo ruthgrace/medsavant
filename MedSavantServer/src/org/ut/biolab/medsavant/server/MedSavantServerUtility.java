@@ -35,6 +35,12 @@ public class MedSavantServerUtility {
         boolean isAnnotation = false;
         String annotationFile = null;
         String annotationFormat = null;
+        String emailadd = null;
+        
+        try {
+            emailadd = args[3];
+            
+        } catch (Exception e) {}
         
         try {
             for(int i = 0; i < args.length; i++){
@@ -49,12 +55,16 @@ public class MedSavantServerUtility {
                     isAnnotation = true;
                     annotationFile = args[++i];
                     annotationFormat = args[++i];
+                } else if (arg.equals("-e")) {
+                    ServerLogger.setMailRecipient(args[++i]);
                 }
             }
         } catch (Exception e){
             exitWithUsage();
         }      
         if(name == null) exitWithUsage();
+        
+        
         
         ConnectionController.setDbhost(host);
         ConnectionController.setPort(port);

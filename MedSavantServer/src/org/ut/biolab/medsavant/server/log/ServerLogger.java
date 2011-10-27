@@ -65,7 +65,7 @@ public class ServerLogger {
             if (!logOpen) {
                 openLogFile();
             }
-            logger.log(level, "'{'{0}'}' {1}", new Object[]{c.toString(), msg});
+            logger.log(level, "{" + c.toString() + "} " + msg);
             for (Handler h : logger.getHandlers()) {
                 h.flush();
             }

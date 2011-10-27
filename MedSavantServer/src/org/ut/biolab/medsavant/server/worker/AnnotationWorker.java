@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Action;
@@ -23,7 +22,7 @@ import org.ut.biolab.medsavant.server.update.UpdateVariantTable;
  */
 public class AnnotationWorker extends SwingWorker {
 
-    private final static int DELAY = 10 * 6000; // 10 minutes
+    private final static int DELAY =  1 * 6000; // 10 minutes
 
     public static void main(String[] args) throws InterruptedException {
 

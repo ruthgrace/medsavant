@@ -94,7 +94,13 @@ public class UpdateVariantTable {
         removeTemp(variantDump);
         removeTemp(outputFilename);
         removeTemp(outputFilenameMerged);
+        
+        for (File f : splitDir.listFiles()) {
+            removeTemp(f);
+        }
         splitDir.delete();
+
+        ServerLogger.log(UpdateVariantTable.class, "Annotation complete!");
     }
 
     public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException, Exception {
@@ -108,12 +114,14 @@ public class UpdateVariantTable {
         ServerLogger.log(UpdateVariantTable.class, "Dumping variants to file");
         variantsToFile(stagingTableName, new File(tempFilename));
 
+        logFileSize(tempFilename);
+        
         ServerLogger.log(UpdateVariantTable.class, "Sorting variants");
         String sortedVariants = tempFilename + "_sorted";
 
         sortFileByPosition(tempFilename, sortedVariants);
-
-        //tempFilename = "variantDumpSortedComma";
+        
+        logFileSize(sortedVariants);
 
         //annotate
         String annotatedFilename = sortedVariants + "_annotated";
@@ -124,6 +132,8 @@ public class UpdateVariantTable {
         int[] annotationIds = AnnotationQueryUtil.getAnnotationIds(projectId, referenceId);
         annotateTDF(sortedVariants, annotatedFilename, annotationIds);
 
+        logFileSize(annotatedFilename);
+        
         File splitDir = new File("splitDir");
         splitDir.mkdir();
 
@@ -138,21 +148,37 @@ public class UpdateVariantTable {
 
         concatenateFilesInDir(splitDir, outputFilenameMerged);
 
+        logFileSize(outputFilenameMerged);
+        
+        ServerLogger.log(UpdateVariantTable.class, "Dropping existing table");
+
         //recreate empty table
         dropTable(tableName);
+
+        ServerLogger.log(UpdateVariantTable.class, "Creating new table from file");
+
         ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
 
         //upload file
         VariantQueryUtil.uploadFileToVariantTable(new File(outputFilenameMerged), tableName);
 
+        ServerLogger.log(UpdateVariantTable.class, "Removing temp files");
+
         //remove temporary files
+        /*
         removeTemp(tempFilename);
         removeTemp(annotatedFilename);
         removeTemp(sortedVariants);
         removeTemp(outputFilenameMerged);
+         * 
+         */
 
+        ServerLogger.log(UpdateVariantTable.class, "Removing staging tables");
+        
         //drop staging table
-        dropTable(stagingTableName);
+        //dropTable(stagingTableName);
+
+        ServerLogger.log(UpdateVariantTable.class, "Annotation complete!");
     }
 
     private static void annotateTDF(String tdfFilename, String outputFilename, int[] annotationIds) throws Exception {
@@ -246,6 +272,8 @@ public class UpdateVariantTable {
         String line;
         for (File inFile : fromDir.listFiles()) {
             line = "";
+
+            ServerLogger.log(UpdateVariantTable.class, "Merging " + inFile.getAbsolutePath() + " with to the result file " + (new File(outputPath)).getAbsolutePath());
             BufferedReader br = new BufferedReader(new FileReader(inFile));
             while ((line = br.readLine()) != null) {
                 bw.write(line + "\n");
@@ -259,40 +287,40 @@ public class UpdateVariantTable {
 
     private static void sortFileByPosition(String inFile, String outfile) throws IOException, InterruptedException {
         String sortCommand = "sort -t , -k 5,5 -k 6,6n -k 7 " + ((new File(inFile)).getAbsolutePath());
-        
+
         ServerLogger.log(UpdateVariantTable.class, "Sorting file: " + ((new File(inFile)).getAbsolutePath()));
-        
+
         if (!(new File(inFile)).exists()) {
             throw new IOException("File not found " + ((new File(inFile)).getAbsolutePath()));
         }
 
         Process p = Runtime.getRuntime().exec(sortCommand);
         //p.waitFor();
-        
+
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        
+
         ServerLogger.log(UpdateVariantTable.class, "Writing results to file: " + ((new File(outfile)).getAbsolutePath()));
-        
-        boolean nothingWritten = true;
-        
+
         BufferedWriter bw = new BufferedWriter(new FileWriter(outfile));
         String s = null;
         // read the output from the command
-            while ((s = stdInput.readLine()) != null) {
-                bw.write(s + "\n");
-                //System.out.println(s);
-                nothingWritten = false;
-            }
-        
-            
+        while ((s = stdInput.readLine()) != null) {
+            bw.write(s + "\n");
+        }
+
+
         stdInput.close();
         bw.close();
-        
-        if (nothingWritten || !(new File(outfile)).exists()) {
+
+        if (!(new File(outfile)).exists()) {
             throw new IOException("Problem sorting file; no output");
         }
-        
+
         ServerLogger.log(UpdateVariantTable.class, "Done sorting");
-        
+
+    }
+
+    private static void logFileSize(String fn) {
+        ServerLogger.log(UpdateVariantTable.class, "Size of " + fn + ": " + ((new File(fn)).length()));
     }
 }
