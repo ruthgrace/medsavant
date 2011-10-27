@@ -54,7 +54,11 @@ public class AddAnnotation {
     private static List<AnnotationField> annotationFields = new ArrayList<AnnotationField>();
 
     
-    public static void main(String[] args){
+    /*public static void main(String[] args){
+        
+        ConnectionController.setDbhost("localhost");
+        ConnectionController.setPort(5029);
+        ConnectionController.setDbname("medsavantkb");
         
         if(args.length != 2){
             System.err.println("Usage: AddAnnotation.jar annotationFilePath formatFilePath");
@@ -66,6 +70,23 @@ public class AddAnnotation {
         try {
             ServerLogger.log(AddAnnotation.class, "parsing format");
             parseFormat(args[1]);
+            ServerLogger.log(AddAnnotation.class, "formatting tabix");
+            formatTabix(getFieldNames(), new File(path), new File(tabixPath));
+            ServerLogger.log(AddAnnotation.class, "generating tables");
+            generateTable();
+            ServerLogger.log(AddAnnotation.class, "done adding annotation");
+        } catch (Exception e){
+            ServerLogger.log(AddAnnotation.class, "error adding annotation");
+            e.printStackTrace();
+        }       
+    }*/
+    
+    public static void addAnnotation(String annotationFile, String annotationFormat){
+        path = annotationFile;
+        tabixPath = path + ".tabix";
+        try {
+            ServerLogger.log(AddAnnotation.class, "parsing format");
+            parseFormat(annotationFormat);
             ServerLogger.log(AddAnnotation.class, "formatting tabix");
             formatTabix(getFieldNames(), new File(path), new File(tabixPath));
             ServerLogger.log(AddAnnotation.class, "generating tables");
