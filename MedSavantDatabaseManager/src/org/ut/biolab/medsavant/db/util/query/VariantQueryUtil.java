@@ -32,6 +32,7 @@ import com.healthmarketscience.sqlbuilder.BinaryCondition;
 import com.healthmarketscience.sqlbuilder.ComboCondition;
 import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.FunctionCall;
+import com.healthmarketscience.sqlbuilder.OrderObject.Dir;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
@@ -109,6 +110,7 @@ public class VariantQueryUtil {
         query.addFromTable(table.getTable());
         query.setIsDistinct(true);
         query.addColumns(table.getDBColumn(columnname)); 
+        query.addOrdering(table.getDBColumn(columnname), Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
