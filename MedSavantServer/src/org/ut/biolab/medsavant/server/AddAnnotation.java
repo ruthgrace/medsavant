@@ -52,34 +52,6 @@ public class AddAnnotation {
     private static String tabixPath;
     
     private static List<AnnotationField> annotationFields = new ArrayList<AnnotationField>();
-
-    
-    /*public static void main(String[] args){
-        
-        ConnectionController.setDbhost("localhost");
-        ConnectionController.setPort(5029);
-        ConnectionController.setDbname("medsavantkb");
-        
-        if(args.length != 2){
-            System.err.println("Usage: AddAnnotation.jar annotationFilePath formatFilePath");
-            return;
-        }
-        
-        path = args[0];
-        tabixPath = path + ".tabix";
-        try {
-            ServerLogger.log(AddAnnotation.class, "parsing format");
-            parseFormat(args[1]);
-            ServerLogger.log(AddAnnotation.class, "formatting tabix");
-            formatTabix(getFieldNames(), new File(path), new File(tabixPath));
-            ServerLogger.log(AddAnnotation.class, "generating tables");
-            generateTable();
-            ServerLogger.log(AddAnnotation.class, "done adding annotation");
-        } catch (Exception e){
-            ServerLogger.log(AddAnnotation.class, "error adding annotation");
-            e.printStackTrace();
-        }       
-    }*/
     
     public static void addAnnotation(String annotationFile, String annotationFormat){
         path = annotationFile;
@@ -128,13 +100,13 @@ public class AddAnnotation {
         
         //insert into annotations table and get annotation_id
         int id = AnnotationQueryUtil.addAnnotation(program, version, referenceId, (new File(tabixPath)).getAbsolutePath().replaceAll("\\\\", "/"), hasRef, hasAlt, annotationType);
-
+        
         //populate
         Connection conn = ConnectionController.connectPooled();
         conn.setAutoCommit(false);
         for(int i = 0; i < annotationFields.size(); i++){
             AnnotationField a = annotationFields.get(i);
-            AnnotationQueryUtil.addAnnotationFormat(id, i, a.getColumnName(), a.getColumnType(), a.isFilterable(), a.getAlias(), a.getDescription());
+            AnnotationQueryUtil.addAnnotationFormat(id, i, id + "_" + a.getColumnName(), a.getColumnType(), a.isFilterable(), a.getAlias(), a.getDescription());
         }
         conn.commit();
         conn.setAutoCommit(true);
