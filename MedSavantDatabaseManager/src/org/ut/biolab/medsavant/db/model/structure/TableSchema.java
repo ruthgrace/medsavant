@@ -47,6 +47,8 @@ public class TableSchema implements TableSchemaAdapter {
             return ColumnType.DATE;
         } else if(typeNameSQL.equals("decimal")){
             return ColumnType.DECIMAL;
+        } else if (typeNameSQL.equals("date")){
+            return ColumnType.DATE;
         }
         
         throw new UnsupportedOperationException("Type not supported: " + typeNameSQL);

@@ -51,6 +51,8 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.PatientFormatTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.PatientTablemapTableSchema;
+import org.ut.biolab.medsavant.db.format.AnnotationField;
+import org.ut.biolab.medsavant.db.format.AnnotationField.Category;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
@@ -132,7 +134,7 @@ public class PatientQueryUtil {
         return result;
     }
     
-    public static List<CustomField> getPatientFields(int projectId) throws SQLException {
+    public static List<AnnotationField> getPatientFields(int projectId) throws SQLException {
         
         TableSchema table = MedSavantDatabase.PatientformatTableSchema;
         SelectQuery query = new SelectQuery();
@@ -148,21 +150,22 @@ public class PatientQueryUtil {
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
-        List<CustomField> result = new ArrayList<CustomField>();
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, "int(11)", false, DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, ""));
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_FAMILY_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_FAMILY_ID, ""));
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, ""));
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, ""));
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS, "varchar(1000)", false, DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS, ""));
-        result.add(new CustomField(DefaultPatientTableSchema.COLUMNNAME_OF_BAM_URL, "varchar(5000)", false, DefaultPatientTableSchema.COLUMNNAME_OF_BAM_URL, ""));
+        List<AnnotationField> result = new ArrayList<AnnotationField>();
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, "int(11)", false, DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID, "", Category.PATIENT));
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_FAMILY_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_FAMILY_ID, "", Category.PATIENT));
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_PEDIGREE_ID, "", Category.PATIENT));
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, "varchar(100)", false, DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID, "", Category.PATIENT));
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS, "varchar(1000)", false, DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS, "", Category.PATIENT));
+        result.add(new AnnotationField(DefaultPatientTableSchema.COLUMNNAME_OF_BAM_URL, "varchar(5000)", false, DefaultPatientTableSchema.COLUMNNAME_OF_BAM_URL, "", Category.PATIENT));
         
         while(rs.next()){
-            result.add(new CustomField(
+            result.add(new AnnotationField(
                     rs.getString(PatientFormatTableSchema.COLUMNNAME_OF_COLUMN_NAME), 
                     rs.getString(PatientFormatTableSchema.COLUMNNAME_OF_COLUMN_TYPE), 
                     rs.getBoolean(PatientFormatTableSchema.COLUMNNAME_OF_FILTERABLE), 
                     rs.getString(PatientFormatTableSchema.COLUMNNAME_OF_ALIAS), 
-                    rs.getString(PatientFormatTableSchema.COLUMNNAME_OF_DESCRIPTION)));
+                    rs.getString(PatientFormatTableSchema.COLUMNNAME_OF_DESCRIPTION), 
+                    Category.PATIENT));
         }
         return result;
     }
@@ -350,11 +353,10 @@ public class PatientQueryUtil {
         return result;
     }
     
-     
-    public static List<String> getDNAIdsForList(TableSchema table, List<String> list, String columnAlias) throws NonFatalDatabaseException, SQLException {
+    public static List<String> getDNAIdsForStringList(TableSchema table, List<String> list, String columnname) throws NonFatalDatabaseException, SQLException {
  
         DbColumn currentDNAId = table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS);
-        DbColumn testColumn = table.getDBColumn(columnAlias);
+        DbColumn testColumn = table.getDBColumn(columnname);
         
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
@@ -381,5 +383,36 @@ public class PatientQueryUtil {
         }
         return result;
     }
+    
+    /*public static List<String> getDNAIdsForIntList(TableSchema table, List<Integer> list, String columnname) throws NonFatalDatabaseException, SQLException {
+ 
+        DbColumn currentDNAId = table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS);
+        DbColumn testColumn = table.getDBColumn(columnname);
+        
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.setIsDistinct(true);
+        q.addColumns(currentDNAId);
+        
+        Condition[] conditions = new Condition[list.size()];
+        for(int i = 0; i < list.size(); i++){
+            conditions[i] = BinaryCondition.equalTo(testColumn, list.get(i));
+        }
+        q.addCondition(ComboCondition.or(conditions));   
+        
+        Statement s = ConnectionController.connectPooled().createStatement();
+        ResultSet rs = s.executeQuery(q.toString());
 
+        List<String> result = new ArrayList<String>();
+        while(rs.next()){          
+            String[] dnaIds = rs.getString(1).split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }
+        }
+        return result;
+    }*/
+    
 }
