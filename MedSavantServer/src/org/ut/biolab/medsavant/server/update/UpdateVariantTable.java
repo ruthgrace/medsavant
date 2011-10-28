@@ -16,11 +16,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
-import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.VariantQueryUtil;
@@ -160,15 +157,22 @@ public class UpdateVariantTable {
         ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
 
         //upload file
+        ServerLogger.log(UpdateVariantTable.class, "Creating new table from file");
         VariantQueryUtil.uploadFileToVariantTable(new File(outputFilenameMerged), tableName);
 
         ServerLogger.log(UpdateVariantTable.class, "Removing temp files");
 
         //remove temporary files
+        ServerLogger.log(UpdateVariantTable.class, "Removing temp files");      
         removeTemp(tempFilename);
         removeTemp(annotatedFilename);
         removeTemp(sortedVariants);
         removeTemp(outputFilenameMerged);
+        
+        for (File f : splitDir.listFiles()) {
+            removeTemp(f);
+        }
+        splitDir.delete();
 
         ServerLogger.log(UpdateVariantTable.class, "Removing staging tables");
         
