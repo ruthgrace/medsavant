@@ -165,18 +165,15 @@ public class UpdateVariantTable {
         ServerLogger.log(UpdateVariantTable.class, "Removing temp files");
 
         //remove temporary files
-        /*
         removeTemp(tempFilename);
         removeTemp(annotatedFilename);
         removeTemp(sortedVariants);
         removeTemp(outputFilenameMerged);
-         * 
-         */
 
         ServerLogger.log(UpdateVariantTable.class, "Removing staging tables");
         
         //drop staging table
-        //dropTable(stagingTableName);
+        dropTable(stagingTableName);
 
         ServerLogger.log(UpdateVariantTable.class, "Annotation complete!");
     }
