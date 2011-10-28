@@ -697,35 +697,6 @@ public class MedSavantDatabase {
         }
     }
 
-    public static class UserTableSchema extends TableSchema {
-        public static final String TABLE_NAME = "user";
-        public UserTableSchema(DbSchema s) {
-                super(s.addTable(TABLE_NAME));
-                addColumns();
-        }
-
-        // user.id
-        public static final int INDEX_OF_ID = 0;
-        public static final ColumnType TYPE_OF_ID = TableSchema.ColumnType.INTEGER;
-        public static final int LENGTH_OF_ID = 11;
-        public static final String COLUMNNAME_OF_ID = "id";
-        // user.name
-        public static final int INDEX_OF_NAME = 1;
-        public static final ColumnType TYPE_OF_NAME = TableSchema.ColumnType.VARCHAR;
-        public static final int LENGTH_OF_NAME = 50;
-        public static final String COLUMNNAME_OF_NAME = "name";
-        // user.is_admin
-        public static final int INDEX_OF_IS_ADMIN = 2;
-        public static final ColumnType TYPE_OF_IS_ADMIN = TableSchema.ColumnType.INTEGER;
-        public static final int LENGTH_OF_IS_ADMIN = 1;
-        public static final String COLUMNNAME_OF_IS_ADMIN = "is_admin";
-        private void addColumns() {
-                addColumn(COLUMNNAME_OF_ID,COLUMNNAME_OF_ID,TableSchema.ColumnType.INTEGER,11);
-                addColumn(COLUMNNAME_OF_NAME,COLUMNNAME_OF_NAME,TableSchema.ColumnType.VARCHAR,50);
-                addColumn(COLUMNNAME_OF_IS_ADMIN,COLUMNNAME_OF_IS_ADMIN,TableSchema.ColumnType.INTEGER,1);
-        }
-    }
-
     public static class VariantPendingUpdateTableSchema extends TableSchema {
         public static final String TABLE_NAME = "variant_pending_update";
         public VariantPendingUpdateTableSchema(DbSchema s) {
@@ -851,9 +822,6 @@ public class MedSavantDatabase {
 
     //ServerlogTableSchema
     public static final ServerLogTableSchema ServerlogTableSchema = new ServerLogTableSchema(schema);
-
-    //UserTableSchema
-    public static final UserTableSchema UserTableSchema = new UserTableSchema(schema);
 
     //VariantpendingupdateTableSchema
     public static final VariantPendingUpdateTableSchema VariantpendingupdateTableSchema = new VariantPendingUpdateTableSchema(schema);
