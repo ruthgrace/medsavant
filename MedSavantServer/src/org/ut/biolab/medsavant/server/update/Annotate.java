@@ -234,8 +234,7 @@ public class Annotate {
         this.tdfFilename = tdfFilename;
         this.outputFilename = outputFilename;
         this.annotationIds = annotIds;
-        this.totalNumLinesRead = 0;
-        this.totalNumWarnings = 0;
+        
     }
 
     public void annotate() throws Exception {
@@ -266,6 +265,10 @@ public class Annotate {
         ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Annotating " + inFile.getAbsolutePath() + " with " + annotations.length + " annotations");
         
         for (int i = 0; i < annotations.length; i++) {
+            
+            this.totalNumLinesRead = 0;
+            this.totalNumWarnings = 0;
+        
             ServerLogQueryUtil.addServerLog(ServerLogQueryUtil.LogType.INFO, "Annotating " + inFile.getAbsolutePath() + " with " + annotations[i].toString());
             outFile = new File(outputFilename + "_part" + i);
             tmpFiles[i] = outFile;
@@ -277,9 +280,11 @@ public class Annotate {
         copyFile(outFile.getAbsolutePath(), outputFilename);
 
         // remove tmp files
+        /*
         for (File f : tmpFiles) {
             f.delete();
         }
+         */
 
         ServerLogger.logByEmail(Annotate.class,"Annotation complete", "Annotation of " + this.tdfFilename + " completed. " + annotationIds.length + " annotations were performed.");
     }
