@@ -23,11 +23,11 @@ import org.ut.biolab.medsavant.vcf.VCFParser;
  */
 public class ImportVariants {
     
-    public static void performImport(File[] vcfFiles, int projectId, int referenceId) throws SQLException {
-        performImport(vcfFiles, projectId, referenceId);
+    public static boolean performImport(File[] vcfFiles, int projectId, int referenceId) throws SQLException {
+        return performImport(vcfFiles, projectId, referenceId);
     }
     
-    public static void performImport(File[] vcfFiles, int projectId, int referenceId, JLabel progressLabel) throws SQLException {
+    public static boolean performImport(File[] vcfFiles, int projectId, int referenceId, JLabel progressLabel) throws SQLException {
         
         //add log
         int updateId = AnnotationLogQueryUtil.addAnnotationLogEntry(projectId, referenceId, Action.ADD_VARIANTS);
@@ -55,10 +55,9 @@ public class ImportVariants {
             //parse vcf file
             try {
                 VCFParser.parseVariants(vcfFiles[i], outfile, updateId, i);
-            } catch (FileNotFoundException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(ImportVariants.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ImportVariants.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
             
             //add to staging table
@@ -70,6 +69,7 @@ public class ImportVariants {
                 VariantQueryUtil.uploadFileToVariantTable(outfile, tableName); 
             } catch (SQLException ex) {
                 Logger.getLogger(ImportVariants.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
             
             //cleanup
@@ -79,6 +79,7 @@ public class ImportVariants {
         
         //set log as pending
         AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, AnnotationLogQueryUtil.Status.PENDING);
+        return true;
     }
  
 }

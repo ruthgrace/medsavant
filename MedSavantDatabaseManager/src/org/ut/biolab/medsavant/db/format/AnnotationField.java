@@ -26,15 +26,15 @@ public class AnnotationField extends CustomField {
     public static String categoryToString(Category cat){
         switch(cat){
             case PATIENT:
-                return "Patient";
+                return "Patient & Phenotype";
             case GENOTYPE:
                 return "Genotype";
             case PHENOTYPE:
-                return "Phenotype";
+                return "Variant Annotation";
             case GENOME_COORDS:
-                return "Genome Coordinates";
+                return "Genomic Coordinates";
             case PLUGIN:
-                return "Plugin";
+                return "Plugins";
             default:
                 return "undefined";
         }

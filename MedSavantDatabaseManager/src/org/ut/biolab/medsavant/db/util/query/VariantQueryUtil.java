@@ -162,8 +162,8 @@ public class VariantQueryUtil {
         addConditionsToQuery(q, conditions);
 
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
-        
         rs.next();
+        
         return rs.getInt(1);        
     }
     
@@ -189,8 +189,12 @@ public class VariantQueryUtil {
         
         Map<String, Integer> map = new HashMap<String, Integer>();
         
+        System.out.println("Got frequency values for " + column.getAbsoluteName());
+        
         while (rs.next()) {
-            map.put(rs.getString(1), rs.getInt(2));
+            String key = rs.getString(1);
+            if (key == null) { key = ""; }
+            map.put(key, rs.getInt(2));
         }
 
         return map;     

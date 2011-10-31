@@ -22,6 +22,7 @@ import org.ut.biolab.medsavant.db.exception.FatalDatabaseException;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.BEDRecord;
 import org.ut.biolab.medsavant.db.model.Range;
+import org.ut.biolab.medsavant.db.model.structure.CustomTables;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema.ColumnType;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
@@ -202,6 +203,22 @@ public class QueryUtil {
         results[1] = BinaryCondition.lessThan(col, r.getMax(), false);
 
         return ComboCondition.and(results);
+    }
+    
+    public static int getNumRecordsInTable(String name) throws SQLException {
+        
+        if (name == null) { return -1; }
+        
+        TableSchema table = CustomTables.getCustomTableSchema(name);
+               
+        SelectQuery q = new SelectQuery();
+        q.addFromTable(table.getTable());
+        q.addCustomColumns(FunctionCall.countAll());
+
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(q.toString());
+        
+        rs.next();
+        return rs.getInt(1);
     }
     
    

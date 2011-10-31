@@ -103,7 +103,7 @@ public class ConnectionController {
     private static String dburl = "jdbc:mysql://";
     private static String user = "root";
     private static String pw = "";
-    private static String props = "";//"useCompression=true"; //"useCompression=true&enableQueryTimeouts=false";
+    private static String props = "enableQueryTimeouts=false";//"useCompression=true"; //"useCompression=true&enableQueryTimeouts=false";
 
     private static Connection connectOnce(String dbhost, int port, String dbname) throws SQLException {
         Connection c;
