@@ -14,14 +14,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 import org.ut.biolab.medsavant.db.util.DBSettings;
+import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.VariantQueryUtil;
 import org.ut.biolab.medsavant.server.log.ServerLogger;
+
 
 /**
  *
@@ -29,15 +35,24 @@ import org.ut.biolab.medsavant.server.log.ServerLogger;
  */
 public class UpdateVariantTable {
 
+    public static Random rand = new Random();
+
+    
     public static void performUpdate(int projectId, int referenceId) throws SQLException, Exception {
 
+        Date now = new Date();
+        String basedir = (now.getYear()+1900) + "_" + now.getMonth() + "_" + now.getDay() + "_" + now.getHours() + "_" + now.getMinutes() + "_project_" + projectId + "_reference_" + referenceId + "_" + (rand).nextInt();
+        (new File(basedir)).mkdir();
+        (new File(basedir)).setWritable(true);
+        
         ServerLogger.log(UpdateVariantTable.class, "Updating project=" + projectId + " reference=" + referenceId);
 
         String tableName = ProjectQueryUtil.getVariantTablename(projectId, referenceId);
 
         //create TDF from existing variants
-        String variantDump = "temp_proj" + projectId + "_ref" + referenceId;
-
+        File variantDumpFile = new File(basedir,"temp_proj" + projectId + "_ref" + referenceId);
+        String variantDump = variantDumpFile.getAbsolutePath();
+        
         ServerLogger.log(UpdateVariantTable.class, "File containing dumped variants: " + variantDump);
 
 
@@ -49,24 +64,25 @@ public class UpdateVariantTable {
 
         sortFileByPosition(variantDump, sortedVariants);
 
-        //tempFilename = "variantDumpSortedComma";
-
         //annotate
-        String outputFilename = variantDump + "_annotated";
+        String outputFilename = sortedVariants + "_annotated";
 
         ServerLogger.log(UpdateVariantTable.class, "File containing annotated variants, sorted by position: " + outputFilename);
 
-
         int[] annotationIds = AnnotationQueryUtil.getAnnotationIds(projectId, referenceId);
         annotateTDF(sortedVariants, outputFilename, annotationIds);
-
-        File splitDir = new File("splitDir");
+        
+        File splitDir = new File(basedir,"splitDir");
         splitDir.mkdir();
 
         ServerLogger.log(UpdateVariantTable.class, "Splitting annotation file into multiple files by file ID");
 
+        for (File f : splitDir.listFiles()) {
+            removeTemp(f);
+        }
+        
         splitFileOnColumn(splitDir, outputFilename, 1);
-        String outputFilenameMerged = variantDump + "_annotated_merged";
+        String outputFilenameMerged = outputFilename + "_merged";
 
         ServerLogger.log(UpdateVariantTable.class, "File containing annotated variants, sorted by file: " + outputFilenameMerged);
 
@@ -88,6 +104,7 @@ public class UpdateVariantTable {
         ServerLogger.log(UpdateVariantTable.class, "Removing temp files");
 
         //remove temporary files
+        /*
         removeTemp(variantDump);
         removeTemp(outputFilename);
         removeTemp(outputFilenameMerged);
@@ -96,17 +113,27 @@ public class UpdateVariantTable {
             removeTemp(f);
         }
         splitDir.delete();
+         * 
+         */
 
         ServerLogger.log(UpdateVariantTable.class, "Annotation complete!");
     }
 
     public static void performAddVCF(int projectId, int referenceId, int updateId) throws SQLException, IOException, Exception {
 
+        Date now = new Date();
+        String basedir = (now.getYear()+1900) + "_" + now.getMonth() + "_" + now.getDay() + "_" + now.getHours() + "_" + now.getMinutes() + "_project_" + projectId + "_reference_" + referenceId + "_" + (rand).nextInt();
+        (new File(basedir)).mkdir();
+        (new File(basedir)).setWritable(true);
+        
+        ServerLogger.log(UpdateVariantTable.class, "Adding VCFs to project=" + projectId + " reference=" + referenceId);
+
         String tableName = ProjectQueryUtil.getVariantTablename(projectId, referenceId);
 
         //create TDF from staging table
         String stagingTableName = DBSettings.createVariantStagingTableName(projectId, referenceId, updateId);
-        String tempFilename = "temp_proj" + projectId + "_ref" + referenceId + "_update" + updateId;
+        File tempFile = new File(basedir,"temp_proj" + projectId + "_ref" + referenceId + "_update" + updateId);
+        String tempFilename = tempFile.getAbsolutePath();
 
         ServerLogger.log(UpdateVariantTable.class, "Dumping variants to file");
         variantsToFile(stagingTableName, new File(tempFilename));
@@ -131,7 +158,7 @@ public class UpdateVariantTable {
 
         logFileSize(annotatedFilename);
         
-        File splitDir = new File("splitDir");
+        File splitDir = new File(basedir,"splitDir");
         splitDir.mkdir();
 
         ServerLogger.log(UpdateVariantTable.class, "Splitting annotation file into multiple files by file ID");
@@ -157,22 +184,18 @@ public class UpdateVariantTable {
         ProjectQueryUtil.createVariantTable(projectId, referenceId, 0, AnnotationQueryUtil.getAnnotationIds(projectId, referenceId), false, false);
 
         //upload file
-        ServerLogger.log(UpdateVariantTable.class, "Creating new table from file");
         VariantQueryUtil.uploadFileToVariantTable(new File(outputFilenameMerged), tableName);
 
         ServerLogger.log(UpdateVariantTable.class, "Removing temp files");
 
         //remove temporary files
-        ServerLogger.log(UpdateVariantTable.class, "Removing temp files");      
+        /*
         removeTemp(tempFilename);
         removeTemp(annotatedFilename);
         removeTemp(sortedVariants);
         removeTemp(outputFilenameMerged);
-        
-        for (File f : splitDir.listFiles()) {
-            removeTemp(f);
-        }
-        splitDir.delete();
+         * 
+         */
 
         ServerLogger.log(UpdateVariantTable.class, "Removing staging tables");
         
@@ -272,6 +295,9 @@ public class UpdateVariantTable {
 
         String line;
         for (File inFile : fromDir.listFiles()) {
+            
+            if (inFile.getName().startsWith(".")) { continue; }
+            
             line = "";
 
             ServerLogger.log(UpdateVariantTable.class, "Merging " + inFile.getAbsolutePath() + " with to the result file " + (new File(outputPath)).getAbsolutePath());
