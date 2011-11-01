@@ -37,6 +37,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchem
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.PatientTablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.SimplePatient;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -51,7 +52,7 @@ public class CohortQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -74,8 +75,8 @@ public class CohortQueryUtil {
         query.addColumns(
                 cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), 
                 patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID));
-        query.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
+        query.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -98,8 +99,8 @@ public class CohortQueryUtil {
         query1.addFromTable(patientMapTable.getTable());
         query1.addFromTable(cohortTable.getTable());
         query1.addColumns(patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
+        query1.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         
         ResultSet rs = c.createStatement().executeQuery(query1.toString());
         rs.next();
@@ -111,8 +112,8 @@ public class CohortQueryUtil {
         query2.addFromTable(cohortMembershipTable.getTable());
         query2.addFromTable(patientTable.getTable());
         query2.addColumns(patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID));
+        query2.addCondition(BinaryConditionMS.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryConditionMS.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID));
         
         rs = c.createStatement().executeQuery(query2.toString());
         
@@ -153,8 +154,8 @@ public class CohortQueryUtil {
         query1.addFromTable(patientMapTable.getTable());
         query1.addFromTable(cohortTable.getTable());
         query1.addColumns(patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
+        query1.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         
         ResultSet rs = c.createStatement().executeQuery(query1.toString());
         rs.next();
@@ -166,8 +167,8 @@ public class CohortQueryUtil {
         query2.addFromTable(cohortMembershipTable.getTable());
         query2.addFromTable(patientTable.getTable());
         query2.addColumns(patientTable.getDBColumn(columnname));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
+        query2.addCondition(BinaryConditionMS.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryConditionMS.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
         
         rs = c.createStatement().executeQuery(query2.toString());
         
@@ -215,8 +216,8 @@ public class CohortQueryUtil {
         
         for(int id : patientIds){
             DeleteQuery query = new DeleteQuery(table.getTable());
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
+            query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+            query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
             c.createStatement().executeUpdate(query.toString());
         }
  
@@ -230,7 +231,7 @@ public class CohortQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
       
@@ -259,12 +260,12 @@ public class CohortQueryUtil {
         
         //remove all entries from membership
         DeleteQuery query1 = new DeleteQuery(cohortMembershipTable.getTable());
-        query1.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryConditionMS.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         c.createStatement().execute(query1.toString());
         
         //remove from cohorts
         DeleteQuery query2 = new DeleteQuery(cohortTable.getTable());
-        query2.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryConditionMS.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
         c.createStatement().execute(query2.toString());
         
     }
@@ -281,7 +282,7 @@ public class CohortQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -301,8 +302,8 @@ public class CohortQueryUtil {
         
         for(Integer cohortId : cohortIds){
             DeleteQuery query = new DeleteQuery(table.getTable());
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
+            query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+            query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
             c.createStatement().executeUpdate(query.toString());
         }
     }

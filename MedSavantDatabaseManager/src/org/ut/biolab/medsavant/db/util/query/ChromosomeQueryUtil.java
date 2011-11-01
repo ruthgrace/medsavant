@@ -29,6 +29,7 @@ import org.ut.biolab.medsavant.db.model.Chromosome;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ChromosomeTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -43,7 +44,7 @@ public class ChromosomeQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
         query.addOrdering(table.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_CONTIG_ID), Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());

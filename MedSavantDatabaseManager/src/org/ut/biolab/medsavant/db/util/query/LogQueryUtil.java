@@ -29,6 +29,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ServerLogTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantPendingUpdateTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -55,7 +56,7 @@ public class LogQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
         query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
         return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
@@ -80,14 +81,14 @@ public class LogQueryUtil {
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 projectTable.getTable(), 
-                BinaryCondition.equalTo(
+                BinaryConditionMS.equalTo(
                         updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_PROJECT_ID), 
                         projectTable.getDBColumn(ProjectTableSchema.COLUMNNAME_OF_PROJECT_ID)));
         query.addJoin(
                 SelectQuery.JoinType.LEFT_OUTER, 
                 updateTable.getTable(), 
                 referenceTable.getTable(), 
-                BinaryCondition.equalTo(
+                BinaryConditionMS.equalTo(
                         updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
         

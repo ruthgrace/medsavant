@@ -55,6 +55,7 @@ import org.ut.biolab.medsavant.db.format.AnnotationField;
 import org.ut.biolab.medsavant.db.format.AnnotationField.Category;
 import org.ut.biolab.medsavant.db.format.PatientFormat;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.DBSettings;
 
 /**
@@ -100,7 +101,7 @@ public class PatientQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID), patientId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -118,7 +119,7 @@ public class PatientQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_ALIAS));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         query.addOrdering(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
@@ -146,7 +147,7 @@ public class PatientQueryUtil {
                 table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_FILTERABLE),
                 table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_ALIAS),
                 table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_DESCRIPTION));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         query.addOrdering(table.getDBColumn(PatientFormatTableSchema.COLUMNNAME_OF_POSITION), Dir.ASCENDING);
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
@@ -177,7 +178,7 @@ public class PatientQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -274,7 +275,7 @@ public class PatientQueryUtil {
             
             //remove from patient table
             DeleteQuery query = new DeleteQuery(table.getTable());
-            query.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
+            query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID), id));
         }
         c.commit();
         c.setAutoCommit(true);
@@ -366,7 +367,7 @@ public class PatientQueryUtil {
         
         Condition[] conditions = new Condition[list.size()];
         for(int i = 0; i < list.size(); i++){
-            conditions[i] = BinaryCondition.equalTo(testColumn, list.get(i));
+            conditions[i] = BinaryConditionMS.equalTo(testColumn, list.get(i));
         }
         q.addCondition(ComboCondition.or(conditions));   
         
@@ -397,7 +398,7 @@ public class PatientQueryUtil {
         
         Condition[] conditions = new Condition[list.size()];
         for(int i = 0; i < list.size(); i++){
-            conditions[i] = BinaryCondition.equalTo(testColumn, list.get(i));
+            conditions[i] = BinaryConditionMS.equalTo(testColumn, list.get(i));
         }
         q.addCondition(ComboCondition.or(conditions));   
         

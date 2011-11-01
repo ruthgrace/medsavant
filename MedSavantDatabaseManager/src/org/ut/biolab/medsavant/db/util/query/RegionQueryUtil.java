@@ -40,6 +40,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.RegionSetTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.RegionSetMembershipTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -92,12 +93,12 @@ public class RegionQueryUtil {
         
         //remove members
         DeleteQuery q1 = new DeleteQuery(regionMemberTable.getTable());
-        q1.addCondition(BinaryCondition.equalTo(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        q1.addCondition(BinaryConditionMS.equalTo(regionMemberTable.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         c.createStatement().execute(q1.toString());
         
         //remove from region regionSetTable
         DeleteQuery q2 = new DeleteQuery(regionSetTable.getTable());
-        q2.addCondition(BinaryCondition.equalTo(regionSetTable.getDBColumn(RegionSetTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        q2.addCondition(BinaryConditionMS.equalTo(regionSetTable.getDBColumn(RegionSetTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         c.createStatement().execute(q2.toString());
     }
     
@@ -125,7 +126,7 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addCustomColumns(FunctionCall.countAll());
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
 
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -140,7 +141,7 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
 
@@ -158,7 +159,7 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -178,7 +179,7 @@ public class RegionQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(RegionSetMembershipTableSchema.COLUMNNAME_OF_REGION_SET_ID), regionSetId));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
         

@@ -38,6 +38,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ChromosomeTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ReferenceTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.VariantTablemapTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -69,7 +70,7 @@ public class ReferenceQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addColumns(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID));
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), refName));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), refName));
         
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
         
@@ -86,7 +87,7 @@ public class ReferenceQueryUtil {
         SelectQuery query = new SelectQuery();
         query.addFromTable(table.getTable());
         query.addAllColumns();
-        query.addCondition(BinaryCondition.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), name));
+        query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_NAME), name));
 
         ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
 
@@ -142,23 +143,23 @@ public class ReferenceQueryUtil {
          SelectQuery q1 = new SelectQuery();
          q1.addFromTable(annotationTable.getTable());
          q1.addAllColumns();
-         q1.addCondition(BinaryCondition.equalTo(annotationTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+         q1.addCondition(BinaryConditionMS.equalTo(annotationTable.getDBColumn(AnnotationTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
          ResultSet rs = c.createStatement().executeQuery(q1.toString());
          if (rs.next()) { return false; }
          
          SelectQuery q2 = new SelectQuery();
          q2.addFromTable(variantMapTable.getTable());
          q2.addAllColumns();
-         q2.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+         q2.addCondition(BinaryConditionMS.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
          rs = c.createStatement().executeQuery(q2.toString());
          if (rs.next()) { return false; }
          
          DeleteQuery q3 = new DeleteQuery(refTable.getTable());
-         q3.addCondition(BinaryCondition.equalTo(refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+         q3.addCondition(BinaryConditionMS.equalTo(refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
          c.createStatement().execute(q3.toString());
 
          DeleteQuery q4 = new DeleteQuery(chromTable.getTable());
-         q4.addCondition(BinaryCondition.equalTo(chromTable.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
+         q4.addCondition(BinaryConditionMS.equalTo(chromTable.getDBColumn(ChromosomeTableSchema.COLUMNNAME_OF_REFERENCE_ID), refid));
          c.createStatement().execute(q4.toString());
          
          return true;
@@ -175,10 +176,10 @@ public class ReferenceQueryUtil {
         query.addJoin(SelectQuery.JoinType.LEFT_OUTER, 
                 variantMapTable.getTable(), 
                 refTable.getTable(), 
-                BinaryCondition.equalTo(
+                BinaryConditionMS.equalTo(
                         refTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
-        query.addCondition(BinaryCondition.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
+        query.addCondition(BinaryConditionMS.equalTo(variantMapTable.getDBColumn(VariantTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID), projectid));
         
         String a = query.toString();
         

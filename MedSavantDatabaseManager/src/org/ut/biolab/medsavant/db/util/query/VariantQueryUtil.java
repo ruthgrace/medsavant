@@ -41,6 +41,7 @@ import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultVariantTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
+import org.ut.biolab.medsavant.db.util.BinaryConditionMS;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
 /**
@@ -207,7 +208,7 @@ public class VariantQueryUtil {
         SelectQuery q = new SelectQuery();
         q.addFromTable(table.getTable());
         q.addCustomColumns(FunctionCall.countAll());
-        q.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
+        q.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
         q.addCondition(BinaryCondition.greaterThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), start, true));
         q.addCondition(BinaryCondition.lessThan(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION), end, false));
         addConditionsToQuery(q, conditions);
@@ -225,7 +226,7 @@ public class VariantQueryUtil {
         SelectQuery queryBase = new SelectQuery();
         queryBase.addFromTable(table.getTable());
         queryBase.addColumns(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_POSITION));
-        queryBase.addCondition(BinaryCondition.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
+        queryBase.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM), chrom));
         addConditionsToQuery(queryBase, conditions);
         
         /*String queryBase = 
