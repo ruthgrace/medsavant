@@ -33,14 +33,9 @@ public class MedSavantServerUtility {
         String name = null;
         
         boolean isAnnotation = false;
+        boolean isPreFormatted = false;
         String annotationFile = null;
         String annotationFormat = null;
-        String emailadd = null;
-        
-        try {
-            emailadd = args[3];
-            
-        } catch (Exception e) {}
         
         try {
             for(int i = 0; i < args.length; i++){
@@ -55,8 +50,15 @@ public class MedSavantServerUtility {
                     isAnnotation = true;
                     annotationFile = args[++i];
                     annotationFormat = args[++i];
+                } else if (arg.equals("-af")){
+                    isAnnotation = true;
+                    isPreFormatted = true;
+                    annotationFile = args[++i];
+                    annotationFormat = args[++i];
                 } else if (arg.equals("-e")) {
                     ServerLogger.setMailRecipient(args[++i]);
+                } else if (arg.equals("--help")){
+                    exitWithUsage();
                 }
             }
         } catch (Exception e){
@@ -79,7 +81,7 @@ public class MedSavantServerUtility {
                 exitWithUsage();
             } else {
                 ServerLogQueryUtil.addServerLog(LogType.INFO, "Server adding annotation");
-                AddAnnotation.addAnnotation(annotationFile, annotationFormat);
+                AddAnnotation.addAnnotation(annotationFile, annotationFormat, isPreFormatted);
                 return;
             }
         }        
@@ -110,10 +112,14 @@ public class MedSavantServerUtility {
         System.out.println(
                 "Usage: MedSavantServer -d databasename [OPTION]\n\n"
                 + "Options:\n"
-                + "-h hostname\t\t\tSpecify the host name\n"
-                + "-p portnumber\t\t\tSpecify the port number\n"
-                + "-d databasename\t\t\tSpecify the database name (mandatory)\n"
-                + "-a annotationfile formatfile\tAdd annotation file (overrides default behaviour)"
+                + "-h hostName\t\t\t\tSpecify the host name.\n"
+                + "-p portNumber\t\t\t\tSpecify the port number.\n"
+                + "-d databaseName\t\t\t\tSpecify the database name (mandatory).\n"
+                + "-a annotationFile formatFile\t\tAdd text annotation file \n\t\t\t\t\t(overrides default behaviour)\n"
+                + "-af formattedAnnotationFile formatFile\tAdd tabix annotation file.\n"
+                + "\t\t\t\t\tIndex file should be in same directory.\n"
+                + "\t\t\t\t\t(overrides default behaviour)\n"
+                + "-e emailAddress\t\t\t\tSpecify email address for notifications."
                 + "");
         System.exit(0);
     }

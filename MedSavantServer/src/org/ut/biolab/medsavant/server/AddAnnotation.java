@@ -53,14 +53,18 @@ public class AddAnnotation {
     
     private static List<AnnotationField> annotationFields = new ArrayList<AnnotationField>();
     
-    public static void addAnnotation(String annotationFile, String annotationFormat){
+    public static void addAnnotation(String annotationFile, String annotationFormat, boolean isPreFormatted){
         path = annotationFile;
         tabixPath = path + ".tabix";
         try {
             ServerLogger.log(AddAnnotation.class, "parsing format");
             parseFormat(annotationFormat);
-            ServerLogger.log(AddAnnotation.class, "formatting tabix");
-            formatTabix(getFieldNames(), new File(path), new File(tabixPath));
+            if(!isPreFormatted){
+                ServerLogger.log(AddAnnotation.class, "formatting tabix");
+                formatTabix(getFieldNames(), new File(path), new File(tabixPath));
+            } else {
+                tabixPath = path;
+            }
             ServerLogger.log(AddAnnotation.class, "generating tables");
             generateTable();
             ServerLogger.log(AddAnnotation.class, "done adding annotation");
