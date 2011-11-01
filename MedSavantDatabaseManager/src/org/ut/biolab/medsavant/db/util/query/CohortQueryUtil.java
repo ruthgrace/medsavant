@@ -35,6 +35,7 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase.CohortTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.CohortMembershipTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchema;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.PatientTablemapTableSchema;
+import org.ut.biolab.medsavant.db.model.SimplePatient;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.ConnectionController;
 
@@ -44,7 +45,7 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class CohortQueryUtil {
     
-    public static List<Integer> getIndividualsInCohort(int cohortId) throws SQLException {
+    /*public static List<Integer> getIndividualsInCohort(int cohortId) throws SQLException {
         
         TableSchema table = MedSavantDatabase.CohortmembershipTableSchema;
         SelectQuery query = new SelectQuery();
@@ -59,9 +60,33 @@ public class CohortQueryUtil {
             result.add(rs.getInt(1));
         }
         return result;
+    }*/
+    
+    public static List<SimplePatient> getIndividualsInCohort(int projectId, int cohortId) throws SQLException {
+        
+        String tablename = PatientQueryUtil.getPatientTablename(projectId);
+        TableSchema cohortTable = MedSavantDatabase.CohortmembershipTableSchema;
+        TableSchema patientTable = CustomTables.getCustomTableSchema(tablename);
+                
+        SelectQuery query = new SelectQuery();
+        query.addFromTable(cohortTable.getTable());
+        query.addFromTable(patientTable.getTable());
+        query.addColumns(
+                cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), 
+                patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_HOSPITAL_ID));
+        query.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
+        
+        ResultSet rs = ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
+        
+        List<SimplePatient> result = new ArrayList<SimplePatient>();
+        while(rs.next()){
+            result.add(new SimplePatient(rs.getInt(1), rs.getString(2)));
+        }
+        return result;
     }
     
-    public static List<String> getDNAIdsInCohort(int cohortId) throws SQLException {
+    /*public static List<String> getDNAIdsInCohort(int cohortId) throws SQLException {
 
         Connection c = ConnectionController.connectPooled();
         TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
@@ -99,6 +124,62 @@ public class CohortQueryUtil {
                     result.add(id);
                 }
             }
+        }
+        return result;
+    }*/
+    
+    public static List<String> getDNAIdsInCohort(int cohortId) throws SQLException {
+        List<String> list = getIndividualFieldFromCohort(cohortId, DefaultPatientTableSchema.COLUMNNAME_OF_DNA_IDS);
+        List<String> result = new ArrayList<String>();
+        for(String s : list){
+            String[] dnaIds = s.split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }
+        }
+        return result;
+    }
+    
+    public static List<String> getIndividualFieldFromCohort(int cohortId, String columnname) throws SQLException {
+        Connection c = ConnectionController.connectPooled();
+        TableSchema patientMapTable = MedSavantDatabase.PatienttablemapTableSchema;
+        TableSchema cohortTable = MedSavantDatabase.CohortTableSchema;
+        TableSchema cohortMembershipTable = MedSavantDatabase.CohortmembershipTableSchema;
+        
+        //get patient tablename
+        SelectQuery query1 = new SelectQuery();
+        query1.addFromTable(patientMapTable.getTable());
+        query1.addFromTable(cohortTable.getTable());
+        query1.addColumns(patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PATIENT_TABLENAME));
+        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query1.addCondition(BinaryCondition.equalTo(cohortTable.getDBColumn(CohortTableSchema.COLUMNNAME_OF_PROJECT_ID), patientMapTable.getDBColumn(PatientTablemapTableSchema.COLUMNNAME_OF_PROJECT_ID)));
+        
+        ResultSet rs = c.createStatement().executeQuery(query1.toString());
+        rs.next();
+        String patientTablename = rs.getString(1);
+        
+        //get field lists
+        TableSchema patientTable = CustomTables.getCustomTableSchema(patientTablename);
+        SelectQuery query2 = new SelectQuery();
+        query2.addFromTable(cohortMembershipTable.getTable());
+        query2.addFromTable(patientTable.getTable());
+        query2.addColumns(patientTable.getDBColumn(columnname));
+        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_COHORT_ID), cohortId));
+        query2.addCondition(BinaryCondition.equalTo(cohortMembershipTable.getDBColumn(CohortMembershipTableSchema.COLUMNNAME_OF_PATIENT_ID), patientTable.getDBColumn(DefaultPatientTableSchema.COLUMNNAME_OF_PATIENT_ID)));
+        
+        rs = c.createStatement().executeQuery(query2.toString());
+        
+        List<String> result = new ArrayList<String>();
+        while(rs.next()){          
+            /*String[] dnaIds = rs.getString(1).split(",");
+            for(String id : dnaIds){
+                if(!result.contains(id)){
+                    result.add(id);
+                }
+            }*/
+            result.add(rs.getString(1));
         }
         return result;
     }
