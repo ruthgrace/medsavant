@@ -116,8 +116,6 @@ public class IndividualDetailedView extends DetailedView {
         int patientId = (Integer) item.get(0);
         String hospitalId = (String) item.get(3);
         
-        ClientLogger.log(IndividualDetailedView.class,"Patient set to " + patientId,Level.SEVERE);
-        
         setTitle(hospitalId);
         
         details.removeAll();
@@ -138,6 +136,9 @@ public class IndividualDetailedView extends DetailedView {
         for(int i = 0; i < items.size(); i++){
             patientIds[i] = (Integer) items.get(i).get(0);
         }
+        setTitle("Multiple individuals (" + items.size() + ")");
+        details.removeAll();
+        details.updateUI();
     }
     
     private JButton addIndividualsButton(){

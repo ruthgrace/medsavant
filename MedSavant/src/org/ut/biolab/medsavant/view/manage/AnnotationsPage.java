@@ -191,7 +191,9 @@ public class AnnotationsPage extends SubSectionView {//implements ExternalAnnota
 
         @Override
         public void setMultipleSelections(List<Vector> selectedRows) {
-            //throw new UnsupportedOperationException("Not supported yet.");
+            setTitle("Multiple annotations (" + selectedRows.size() + ")");
+            details.removeAll();
+            details.updateUI();
         }
     }
 

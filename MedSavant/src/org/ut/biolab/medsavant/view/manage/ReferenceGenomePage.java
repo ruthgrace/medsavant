@@ -183,7 +183,9 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
 
         @Override
         public void setMultipleSelections(List<Vector> selectedRows) {
-            //throw new UnsupportedOperationException("Not supported yet.");
+            setTitle("Multiple references (" + selectedRows.size() + ")");
+        details.removeAll();
+        details.updateUI();
         }
     }
 

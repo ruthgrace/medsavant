@@ -21,7 +21,6 @@ import javax.swing.event.ListSelectionListener;
 import org.ut.biolab.medsavant.view.component.ListViewTablePanel;
 import org.ut.biolab.medsavant.view.util.PeekingPanel;
 
-
 /**
  *
  * @author mfiume
@@ -58,8 +57,8 @@ public class SplitScreenView extends JPanel {
 
             showWaitCard();
             fetchList();
-            
-            this.setPreferredSize(new Dimension(300,9999));
+
+            this.setPreferredSize(new Dimension(300, 9999));
         }
 
         private void showWaitCard() {
@@ -75,8 +74,8 @@ public class SplitScreenView extends JPanel {
             updateShowCard();
             showShowCard();
         }
-                   
-        public void refreshList(){
+
+        public void refreshList() {
             showWaitCard();
             fetchList();
         }
@@ -115,9 +114,10 @@ public class SplitScreenView extends JPanel {
             List<Class> columnClasses = listModel.getColumnClasses();
             List<Integer> columnVisibility = listModel.getHiddenColumns();
 
-            stp = new ListViewTablePanel(Util.listToVector(data), columnNames, columnClasses, columnVisibility){
+            stp = new ListViewTablePanel(Util.listToVector(data), columnNames, columnClasses, columnVisibility) {
+
                 @Override
-                public void forceRefreshData(){
+                public void forceRefreshData() {
                     refreshList();
                 }
             };
@@ -126,38 +126,42 @@ public class SplitScreenView extends JPanel {
             stp.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
                 public void valueChanged(ListSelectionEvent e) {
-                    
-                    //set last selection
-                    int row = stp.getTable().getSelectedRow(); 
-                    if(row != -1 && !data.isEmpty() && row >= 0 && row < data.size()){
-                        detailedView.setSelectedItem(data.get(row));
-                    }
-                    
-                    //set all selected
-                    int[] allRows = stp.getTable().getSelectedRows();
-                    int length = allRows.length;
-                    if(allRows.length > 0 && allRows[allRows.length-1] >= data.size()) length--;
-                    List<Vector> selected = new ArrayList<Vector>();
-                    for(int i = 0; i < length; i++){
-                        int currentRow = allRows[i];
-                        if(currentRow >= 0 && !data.isEmpty() && currentRow < data.size()){
-                            selected.add(data.get(currentRow));
+
+                    if (stp.getTable().getSelectedRows().length == 1) {
+
+                        //set last selection
+                        int row = stp.getTable().getSelectedRow();
+                        if (row != -1 && !data.isEmpty() && row >= 0 && row < data.size()) {
+                            detailedView.setSelectedItem(data.get(row));
                         }
+                    } else {
+                        //set all selected
+                        int[] allRows = stp.getTable().getSelectedRows();
+                        int length = allRows.length;
+                        if (allRows.length > 0 && allRows[allRows.length - 1] >= data.size()) {
+                            length--;
+                        }
+                        List<Vector> selected = new ArrayList<Vector>();
+                        for (int i = 0; i < length; i++) {
+                            int currentRow = allRows[i];
+                            if (currentRow >= 0 && !data.isEmpty() && currentRow < data.size()) {
+                                selected.add(data.get(currentRow));
+                            }
+                        }
+                        detailedView.setMultipleSelections(selected);
                     }
-                    detailedView.setMultipleSelections(selected);
                 }
             });
-            
+
             stp.getTable().getSelectionModel().setSelectionInterval(0, 0);
 
             showCard.add(stp, BorderLayout.CENTER);
         }
     }
- 
 
     public SplitScreenView(DetailedListModel lm, DetailedView view) {
         this.detailedListModel = lm;
-        this.detailedView = view;        
+        this.detailedView = view;
         initGUI();
         detailedView.setSplitScreenParent(this);
     }
@@ -165,14 +169,14 @@ public class SplitScreenView extends JPanel {
     private void initGUI() {
         this.setLayout(new BorderLayout());
 
-        listView = new ListView(detailedListModel,detailedView);
-        
-        this.add(new PeekingPanel("List", BorderLayout.EAST, listView, true,320), BorderLayout.WEST);
-        this.add(detailedView,BorderLayout.CENTER);
+        listView = new ListView(detailedListModel, detailedView);
+
+        this.add(new PeekingPanel("List", BorderLayout.EAST, listView, true, 320), BorderLayout.WEST);
+        this.add(detailedView, BorderLayout.CENTER);
 
     }
-    
-    public void refresh(){
+
+    public void refresh() {
         listView.refreshList();
     }
 }

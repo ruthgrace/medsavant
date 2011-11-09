@@ -147,6 +147,9 @@ public class CohortDetailedView extends DetailedView {
         for(int i = 0; i < items.size(); i++){
             cohorts[i] = (Cohort) items.get(i).get(0);
         }
+        setTitle("Multiple cohorts (" + items.size() + ")");
+        details.removeAll();
+        details.updateUI();
     }
     
     /*

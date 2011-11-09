@@ -284,6 +284,9 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
         @Override
         public void setMultipleSelections(List<Vector> items) {
+            setTitle("Multiple projects (" + items.size() + ")");
+            details.removeAll();
+            details.updateUI();
         }
 
         public static synchronized void updateDetails(JPanel p) {

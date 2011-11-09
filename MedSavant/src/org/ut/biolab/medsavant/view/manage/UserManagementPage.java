@@ -114,6 +114,9 @@ public class UserManagementPage extends SubSectionView implements UserListener {
     
     @Override
     public void setMultipleSelections(List<Vector> items){
+        setTitle("Multiple users (" + items.size() + ")");
+        details.removeAll();
+        details.updateUI();
     }
     
     }
