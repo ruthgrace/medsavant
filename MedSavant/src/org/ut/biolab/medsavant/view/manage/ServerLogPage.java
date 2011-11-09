@@ -72,12 +72,14 @@ public class ServerLogPage extends SubSectionView {
     private SwingWorker serverCardUpdater;
     private SwingWorker annotationCardUpdater;
 
+    private static int ROW_LIMIT = 100;
+    
     private class ClientCardUpdater extends SwingWorker {
 
         @Override
         protected Object doInBackground() throws Exception {
             try {
-                ResultSet rs = LogQueryUtil.getClientLog();
+                ResultSet rs = LogQueryUtil.getClientLog(ROW_LIMIT);
                 Vector v = new Vector();
                 while (rs.next()) {
                     TableSchema table = MedSavantDatabase.ServerlogTableSchema;
@@ -121,7 +123,7 @@ public class ServerLogPage extends SubSectionView {
         @Override
         protected Object doInBackground() throws Exception {
             try {
-                ResultSet rs = LogQueryUtil.getServerLog();
+                ResultSet rs = LogQueryUtil.getServerLog(ROW_LIMIT);
                 Vector v = new Vector();
                 while (rs.next()) {
                     TableSchema table = MedSavantDatabase.ServerlogTableSchema;
@@ -164,7 +166,7 @@ public class ServerLogPage extends SubSectionView {
         @Override
         protected Object doInBackground() throws Exception {
             try {
-                ResultSet rs = LogQueryUtil.getAnnotationLog();
+                ResultSet rs = LogQueryUtil.getAnnotationLog(ROW_LIMIT);
                 Vector v = new Vector();
                 while (rs.next()) {
 
