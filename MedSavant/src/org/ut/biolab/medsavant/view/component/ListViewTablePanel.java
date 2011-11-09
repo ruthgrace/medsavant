@@ -31,6 +31,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import org.ut.biolab.medsavant.view.images.IconFactory;
+import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
  *
@@ -125,12 +126,15 @@ public class ListViewTablePanel extends JPanel {
                 //even index, selected or not selected
 
                 if (isCellSelected(Index_row, Index_col)) {
-                    comp.setBackground(Color.lightGray);
-                    comp.setForeground(Color.BLACK);
+                    comp.setBackground(ViewUtil.detailSelectedBackground);
                 } else {
-                    comp.setBackground(Color.white);
-                    comp.setForeground(Color.black);
+                    if (Index_row % 2 == 0) {
+                        comp.setBackground(ViewUtil.evenRowColor);
+                    } else {
+                        comp.setBackground(ViewUtil.oddRowColor);
+                    }
                 }
+                comp.setForeground(ViewUtil.detailForeground);
                 
                 comp.setFont(new Font((comp.getFont().getFamily()),Font.PLAIN,14));
                 

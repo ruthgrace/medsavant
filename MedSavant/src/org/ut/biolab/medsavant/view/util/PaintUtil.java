@@ -96,8 +96,8 @@ public class PaintUtil {
     }
 
     public static void paintDrillDown(Graphics g, Component c) {
-        g.setColor(ViewUtil.getDetailsBackgroundColor());
-        g.fillRect(0, 0, c.getWidth(), c.getHeight());
+        paintSolid(g,c,Color.white);
+        //paintEvenGradient(g,c,Color.lightGray,Color.white);
     }
 
     

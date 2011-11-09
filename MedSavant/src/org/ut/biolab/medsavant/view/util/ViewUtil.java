@@ -23,19 +23,24 @@ import java.text.NumberFormat;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.table.TableCellRenderer;
 import org.ut.biolab.medsavant.view.images.IconFactory;
 import org.ut.biolab.medsavant.view.images.IconFactory.StandardIcon;
 
@@ -84,6 +89,10 @@ public class ViewUtil {
         return new EmptyBorder(0,5,5,0);
     }
     
+    public static Border getBottomBorder() {
+        return new MatteBorder(1,0,0,0,Color.lightGray);
+    }
+    
 
     public static Border getBigBorder() {
         return new EmptyBorder(10,10,10,10);
@@ -120,7 +129,8 @@ public class ViewUtil {
     
     public static JLabel getDetailLabel(String txt) {
         JLabel l = new JLabel(txt);
-        l.setForeground(Color.white);
+        l.setFont(detailFontPlain);
+        l.setForeground(detailForeground);
         return l;
     }
     
@@ -385,6 +395,50 @@ public class ViewUtil {
     public static void applyHorizontalBoxLayout(JPanel p) {
         p.setLayout(new BoxLayout(p,BoxLayout.X_AXIS));
     }
+    
+    private static class DetailListCellRenderer extends JLabel implements ListCellRenderer {
+
+          public DetailListCellRenderer() {
+            setOpaque(true);
+          }
+
+          public Component getListCellRendererComponent(JList list, Object value, int index,
+              boolean isSelected, boolean cellHasFocus) {
+            setText(value.toString());
+
+            this.setBorder(ViewUtil.getSmallBorder());
+            
+            if (isSelected) {
+              setBackground(ViewUtil.detailSelectedBackground);
+              
+              //setForeground(list.getSelectionForeground());
+              setForeground(ViewUtil.detailForeground);
+            } else {
+                if (index % 2 == 0) {
+                    setBackground(ViewUtil.evenRowColor);
+                } else {
+                    setBackground(ViewUtil.oddRowColor);
+                }
+                setForeground(ViewUtil.detailForeground);
+            }
+            return this;
+          }
+        }
+    
+    private static final ListCellRenderer listCellRenderer = new DetailListCellRenderer();
+
+    public static JList getDetailList(DefaultListModel lm) {
+        
+        
+        JList list = new JList(lm);
+        list.setCellRenderer(listCellRenderer);
+        
+
+        list = (JList) ViewUtil.clear(list);
+        list.setForeground(ViewUtil.detailForeground);
+        list.setFont(ViewUtil.detailFontPlain);
+        return list;
+    }
 
     /*
     public static JPanel getSubSubBannerPanel(String title) {
@@ -457,39 +511,75 @@ public class ViewUtil {
     
     public static JLabel getDetailTitleLabel(String label) {
         JLabel l = new JLabel(label);
-        l.setForeground(Color.white);
+        l.setForeground(Color.darkGray);
         l.setFont(new Font(l.getFont().getFamily(),Font.PLAIN,24));
         return l; 
     }
     
     public static JLabel getDetailHeaderLabel(String s) {
         JLabel l = getDetailLabel(s);
-        l.setFont(new Font(l.getFont().getFamily(),Font.BOLD,l.getFont().getSize()));
+        l.setFont(detailFontBold);
         return l;
     }
-    
+
     public static JPanel getKeyValuePairPanel(String key, String val) {
         JLabel keyl = new JLabel(key + ": ");
             keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,14));
-            keyl.setForeground(Color.white);
+            keyl.setForeground(Color.darkGray);
 
             JLabel value = new JLabel(val);
             value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,14));
-            value.setForeground(Color.white);
+            value.setForeground(Color.black);
             
-            JPanel h1 = ViewUtil.getClearPanel(); h1.setLayout(new BoxLayout(h1,BoxLayout.X_AXIS));
-            h1.setBorder(ViewUtil.getMediumTopBorder());
-            h1.add(keyl); h1.add(value); h1.add(Box.createHorizontalGlue());
+            JPanel h1 = ViewUtil.getClearPanel(); 
+            h1.setLayout(new BoxLayout(h1,BoxLayout.X_AXIS));
+            h1.add(keyl); 
+            h1.add(value); 
+            h1.add(Box.createHorizontalGlue());
             
             return h1;
     }
     
-    public static JPanel getKeyValuePairPanel(String[][] keyPairs) {
+    public static JPanel getKeyValuePairPanelListItem(String key, String val, boolean dark) {
+        JLabel keyl = new JLabel(key);
+            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,14));
+            keyl.setForeground(detailForeground);
+
+            JLabel value = new JLabel(val);
+            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,14));
+            value.setForeground(detailForeground);
+            
+            JPanel h1 = new JPanel(); 
+            h1.setLayout(new BoxLayout(h1,BoxLayout.X_AXIS));
+            h1.setBorder(ViewUtil.getSmallBorder());
+            if (dark) {
+                h1.setBackground(evenRowColor);
+            } else {
+                h1.setBackground(oddRowColor);
+            }
+            
+            //h1.setBorder(ViewUtil.getBottomBorder());
+            h1.add(keyl); 
+            h1.add(Box.createHorizontalGlue());
+            h1.add(value); 
+            
+            return h1;
+    }
+    
+    public final static Font detailFontBold = new Font((new JLabel()).getFont().getFamily(),Font.BOLD,14);
+    public final static Font detailFontPlain = new Font((new JLabel()).getFont().getFamily(),Font.PLAIN,14);
+    public final static Color detailForeground = new Color(10,10,10);
+    public final static Color detailBackground = Color.white;
+    public final static Color detailSelectedBackground = new Color(92,168,229);
+    public final static Color evenRowColor = Color.white;//new Color(250,250,250);
+    public final static Color oddRowColor = new Color(242, 245, 249);//new Color(235,235,235);
+    
+    public static JPanel getKeyValuePairList(String[][] keyPairs) {
         JPanel p = new JPanel();
         p.setOpaque(false);
         p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
         for (int i = 0; i < keyPairs.length; i++) {
-            p.add(getKeyValuePairPanel(keyPairs[i][0],keyPairs[i][1]));
+            p.add(getKeyValuePairPanelListItem(keyPairs[i][0],keyPairs[i][1],i%2==0));
         }
         p.add(Box.createVerticalGlue());
         return p;

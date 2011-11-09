@@ -34,6 +34,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import org.ut.biolab.medsavant.view.images.IconFactory;
+import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
  *
@@ -174,9 +175,9 @@ public class SearchableTablePanel extends JPanel {
 
                 } else {
                     if (Index_row % 2 == 0 && !isCellSelected(Index_row, Index_col)) {
-                        comp.setBackground(Color.white);
+                        comp.setBackground(ViewUtil.evenRowColor);
                     } else {
-                        comp.setBackground(new Color(242, 245, 249));
+                        comp.setBackground(ViewUtil.oddRowColor);//new Color(242, 245, 249));
                     }
                 }
                 return comp;

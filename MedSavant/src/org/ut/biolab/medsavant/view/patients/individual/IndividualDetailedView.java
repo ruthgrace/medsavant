@@ -81,7 +81,7 @@ public class IndividualDetailedView extends DetailedView {
         details.removeAll();
         details.setLayout(new BoxLayout(details,BoxLayout.Y_AXIS));
         
-        details.add(ViewUtil.getKeyValuePairPanel(values));
+        details.add(ViewUtil.getKeyValuePairList(values));
         
         details.add(Box.createVerticalGlue());
         
