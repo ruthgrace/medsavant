@@ -78,6 +78,12 @@ public class ViewUtil {
     public static Border getMediumBorder() {
         return new EmptyBorder(5,5,5,5);
     }
+    
+    
+    public static Border getMediumTopBorder() {
+        return new EmptyBorder(0,5,5,0);
+    }
+    
 
     public static Border getBigBorder() {
         return new EmptyBorder(10,10,10,10);
@@ -452,7 +458,7 @@ public class ViewUtil {
     public static JLabel getDetailTitleLabel(String label) {
         JLabel l = new JLabel(label);
         l.setForeground(Color.white);
-        l.setFont(new Font("Arial",Font.BOLD,28));
+        l.setFont(new Font(l.getFont().getFamily(),Font.PLAIN,24));
         return l; 
     }
     
@@ -464,14 +470,15 @@ public class ViewUtil {
     
     public static JPanel getKeyValuePairPanel(String key, String val) {
         JLabel keyl = new JLabel(key + ": ");
-            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,keyl.getFont().getSize()));
+            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,14));
             keyl.setForeground(Color.white);
 
             JLabel value = new JLabel(val);
+            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,14));
             value.setForeground(Color.white);
             
             JPanel h1 = ViewUtil.getClearPanel(); h1.setLayout(new BoxLayout(h1,BoxLayout.X_AXIS));
-            
+            h1.setBorder(ViewUtil.getMediumTopBorder());
             h1.add(keyl); h1.add(value); h1.add(Box.createHorizontalGlue());
             
             return h1;

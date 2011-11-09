@@ -61,7 +61,12 @@ public class IndividualListModel implements DetailedListModel {
     }
 
     public List<Integer> getHiddenColumns() {
-        return new ArrayList<Integer>();
+        List<Integer> hidden = new ArrayList<Integer>();
+        hidden.add(0);
+        hidden.add(1);
+        hidden.add(2);
+        hidden.add(4);
+        return hidden;
     }
     
     public static String getIndividualID(Vector r) {

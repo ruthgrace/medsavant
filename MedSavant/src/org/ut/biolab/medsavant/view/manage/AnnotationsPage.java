@@ -128,6 +128,8 @@ public class AnnotationsPage extends SubSectionView {//implements ExternalAnnota
         public List<Integer> getHiddenColumns() {
             if (chidden == null) {
                 chidden = new ArrayList<Integer>();
+                chidden.add(1);
+                chidden.add(2);
             }
             return chidden;
         }

@@ -40,7 +40,7 @@ public abstract class DetailedView extends JPanel {
         JPanel h1 = ViewUtil.getPrimaryBannerPanel();
         h1.setLayout(new BoxLayout(h1, BoxLayout.X_AXIS));
         this.title = ViewUtil.getDetailTitleLabel("");
-
+        
         h1.add(Box.createHorizontalGlue());
         h1.add(title);
         h1.add(Box.createHorizontalGlue());

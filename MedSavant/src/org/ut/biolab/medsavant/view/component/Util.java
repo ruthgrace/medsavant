@@ -5,6 +5,7 @@
 
 package org.ut.biolab.medsavant.view.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -18,6 +19,18 @@ public class Util {
         Vector v = new Vector(l.size());
         v.addAll(l);
         return v;
+    }
+
+    static List<List> doubleVectorToDoubleList(Vector data) {
+        List<List> result = new ArrayList<List>();
+        for (Object v : data) {
+            List l = new ArrayList<Object>();
+            for (Object o : (Vector) v) {
+                l.add(o);
+            }
+            result.add(l);
+        }
+        return result;
     }
 
 }
