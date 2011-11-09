@@ -38,7 +38,7 @@ import org.ut.biolab.medsavant.db.util.ConnectionController;
  */
 public class LogQueryUtil {
 
-    public static ResultSet getClientLog() throws SQLException {
+    public static ResultSet getClientLog(int limit) throws SQLException {
         
         TableSchema table = MedSavantDatabase.ServerlogTableSchema;
         SelectQuery query = new SelectQuery();
@@ -47,10 +47,10 @@ public class LogQueryUtil {
         query.addCondition(BinaryCondition.notEqualTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
         query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
-        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
     }
 
-    public static ResultSet getServerLog() throws SQLException {
+    public static ResultSet getServerLog(int limit) throws SQLException {
         
         TableSchema table = MedSavantDatabase.ServerlogTableSchema;
         SelectQuery query = new SelectQuery();
@@ -59,10 +59,10 @@ public class LogQueryUtil {
         query.addCondition(BinaryConditionMS.equalTo(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_USER), "server"));
         query.addOrdering(table.getDBColumn(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP), Dir.DESCENDING);
         
-        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
     }
 
-    public static ResultSet getAnnotationLog() throws SQLException {
+    public static ResultSet getAnnotationLog(int limit) throws SQLException {
         
         TableSchema projectTable = MedSavantDatabase.ProjectTableSchema;
         TableSchema referenceTable = MedSavantDatabase.ReferenceTableSchema;
@@ -91,7 +91,6 @@ public class LogQueryUtil {
                 BinaryConditionMS.equalTo(
                         updateTable.getDBColumn(VariantPendingUpdateTableSchema.COLUMNNAME_OF_REFERENCE_ID), 
                         referenceTable.getDBColumn(ReferenceTableSchema.COLUMNNAME_OF_REFERENCE_ID)));
-        
-        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString());
+        return ConnectionController.connectPooled().createStatement().executeQuery(query.toString() + " LIMIT " + limit);
     }
 }
