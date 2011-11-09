@@ -289,6 +289,15 @@ public class ViewUtil {
         aligned.add(Box.createHorizontalGlue());
         return aligned;
     }
+    
+    public static JPanel alignRight(Component c) {
+        JPanel aligned = new JPanel();
+        aligned.setOpaque(false);
+        aligned.setLayout(new BoxLayout(aligned,BoxLayout.X_AXIS));
+        aligned.add(Box.createHorizontalGlue());
+        aligned.add(c);
+        return aligned;
+    }
 
     public static Border getMediumSideBorder() {
         return BorderFactory.createEmptyBorder(0, 5, 0, 5);
@@ -517,10 +526,21 @@ public class ViewUtil {
         
     }
     
-    public static JLabel createIconButton(ImageIcon i) {
+    public static JLabel createIconLabel(ImageIcon i) {
         JLabel b = new JLabel();
         b.setBorder(null);
         //b.setBorderPainted(false);
+        b.setOpaque(false);
+        b.setPreferredSize(new Dimension(i.getIconWidth(),i.getIconHeight()));
+        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setIcon(i);
+        return b;
+    }
+    
+    public static JButton createIconButton(ImageIcon i) {
+        JButton b = new JButton();
+        b.setBorder(null);
+        b.setBorderPainted(false);
         b.setOpaque(false);
         b.setPreferredSize(new Dimension(i.getIconWidth(),i.getIconHeight()));
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));

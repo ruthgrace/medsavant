@@ -22,6 +22,7 @@ import org.ut.biolab.medsavant.view.dialog.SavantExportForm;
 import org.ut.biolab.medsavant.view.dialog.VCFUploadForm;
 //import org.ut.biolab.medsavant.view.genetics.filter.FilterProgressPanel;
 import org.ut.biolab.medsavant.view.genetics.filter.FilterProgressPanel;
+import org.ut.biolab.medsavant.view.manage.ImportVariantsWizard;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 
@@ -64,7 +65,9 @@ public class GeneticsSection extends SectionView implements ProjectListener {
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                new VCFUploadForm();
+                
+                new ImportVariantsWizard();
+                //new VCFUploadForm();
             }
         });
 

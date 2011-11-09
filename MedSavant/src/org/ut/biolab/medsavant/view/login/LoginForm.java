@@ -58,8 +58,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         
         initComponents();
         
-        cb_rememberpassword.setVisible(false);
-        cb_autosignin.setVisible(false);
         
         field_username.setText(LoginController.getUsername());
         field_password.setText(LoginController.getPassword());
@@ -68,17 +66,10 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         if (SettingsController.getInstance().getRememberPassword()) {
             this.field_password.setText(SettingsController.getInstance().getPassword());
         }
-        this.cb_rememberpassword.setSelected(SettingsController.getInstance().getRememberPassword());
-        this.cb_autosignin.setSelected(SettingsController.getInstance().getAutoLogin());
 
         this.label_versioninformation.setText(MedSavantProgramInformation.getVersion() + " " + MedSavantProgramInformation.getReleaseType().toUpperCase());
 
-        ViewUtil.clear(this.cb_autosignin);
-        ViewUtil.clear(this.cb_rememberpassword);
-
-        updateAutoSignInCheckBoxBasedOnPasswordCheckbox();
-
-        label_status.setText("");
+        label_status.setText(" ");
         this.panel_title.add(Box.createVerticalGlue(),0); 
         
         spiralPanel.setLayout(new BorderLayout());
@@ -110,8 +101,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         panel_title = new javax.swing.JPanel();
         field_username = new javax.swing.JTextField();
         field_password = new javax.swing.JPasswordField();
-        cb_rememberpassword = new javax.swing.JCheckBox();
-        cb_autosignin = new javax.swing.JCheckBox();
         spiralPanel = new javax.swing.JPanel();
         label_versioninformation = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -158,22 +147,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             }
         });
 
-        cb_rememberpassword.setBackground(new java.awt.Color(255, 255, 255));
-        cb_rememberpassword.setText("Remember my password");
-        cb_rememberpassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_rememberpasswordActionPerformed(evt);
-            }
-        });
-
-        cb_autosignin.setBackground(new java.awt.Color(255, 255, 255));
-        cb_autosignin.setText("Sign me in automatically");
-        cb_autosignin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_autosigninActionPerformed(evt);
-            }
-        });
-
         spiralPanel.setPreferredSize(new java.awt.Dimension(150, 150));
 
         javax.swing.GroupLayout spiralPanelLayout = new javax.swing.GroupLayout(spiralPanel);
@@ -197,7 +170,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("password");
 
-        jToggleButton1.setText("Connection Details");
+        jToggleButton1.setText("Connection Settings");
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
@@ -209,6 +182,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("hostname");
 
+        field_hostname.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         field_hostname.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_hostname.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -219,6 +193,7 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("port");
 
+        field_port.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         field_port.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_port.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -237,17 +212,21 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         panel_details.setLayout(panel_detailsLayout);
         panel_detailsLayout.setHorizontalGroup(
             panel_detailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_detailsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_detailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(field_hostname, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(field_port, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(button_create_db, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGroup(panel_detailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_detailsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(button_create_db)
+                    .addGap(106, 106, 106))
+                .addComponent(field_hostname, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addGroup(panel_detailsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(panel_detailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
+                    .addContainerGap())
+                .addComponent(field_port, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
         );
         panel_detailsLayout.setVerticalGroup(
             panel_detailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -276,10 +255,11 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             }
         });
 
-        label_status.setFont(new java.awt.Font("Tahoma", 0, 14));
-        label_status.setText("Label");
+        label_status.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        label_status.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        label_status.setText("  ");
 
-        field_database.setFont(new java.awt.Font("Arial", 1, 18));
+        field_database.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         field_database.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         field_database.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -301,23 +281,15 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
             .addComponent(field_password, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
             .addGroup(panel_titleLayout.createSequentialGroup()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(field_database, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            .addComponent(panel_details, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel_titleLayout.createSequentialGroup()
-                .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(panel_titleLayout.createSequentialGroup()
-                .addGroup(panel_titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cb_rememberpassword)
-                    .addComponent(cb_autosignin))
-                .addContainerGap())
-            .addComponent(panel_details, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panel_titleLayout.createSequentialGroup()
-                .addComponent(label_status, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                .addGap(171, 171, 171)
-                .addComponent(button_login)
-                .addContainerGap())
+                .addComponent(jToggleButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                .addComponent(button_login))
+            .addComponent(label_status, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
         );
         panel_titleLayout.setVerticalGroup(
             panel_titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,16 +310,12 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(field_database, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton1)
+                .addComponent(panel_details, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cb_autosignin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cb_rememberpassword)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_details, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(label_status)
+                .addGap(3, 3, 3)
                 .addGroup(panel_titleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(label_status)
+                    .addComponent(jToggleButton1)
                     .addComponent(button_login)))
         );
 
@@ -407,17 +375,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         }
     }//GEN-LAST:event_field_passwordKeyPressed
 
-    private void cb_rememberpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_rememberpasswordActionPerformed
-        String value = SettingsController.booleanToString(this.cb_rememberpassword.isSelected());
-        SettingsController.getInstance().setValue(SettingsController.KEY_REMEMBER_PASSWORD, value);
-        updateAutoSignInCheckBoxBasedOnPasswordCheckbox();
-    }//GEN-LAST:event_cb_rememberpasswordActionPerformed
-
-    private void cb_autosigninActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_autosigninActionPerformed
-        String value = SettingsController.booleanToString(this.cb_autosignin.isSelected());
-        SettingsController.getInstance().setValue(SettingsController.KEY_AUTOLOGIN, value);
-    }//GEN-LAST:event_cb_autosigninActionPerformed
-
     private void button_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_loginActionPerformed
         this.loginUsingEnteredUsernameAndPassword();
     }//GEN-LAST:event_button_loginActionPerformed
@@ -464,8 +421,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_create_db;
     private javax.swing.JButton button_login;
-    private javax.swing.JCheckBox cb_autosignin;
-    private javax.swing.JCheckBox cb_rememberpassword;
     private javax.swing.JTextField field_database;
     private javax.swing.JTextField field_hostname;
     private javax.swing.JPasswordField field_password;
@@ -514,20 +469,6 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
             }
         });
         //new Thread(new RunLogin(this,this.field_username.getText(),this.field_password.getText())).start();
-    }
-
-    private void updateAutoSignInCheckBoxBasedOnPasswordCheckbox() {
-        boolean rememberpw = this.cb_rememberpassword.isSelected();
-        boolean autosignin = this.cb_autosignin.isSelected();
-        if (!rememberpw) {
-            this.cb_autosignin.setEnabled(false);
-            if (autosignin) {
-                this.cb_autosignin.setSelected(false);
-                SettingsController.getInstance().setAutoLogin(false);
-            }
-        } else {
-            this.cb_autosignin.setEnabled(true);
-        }
     }
 
     public void notifyOfUnsuccessfulLogin(Exception ex) {
