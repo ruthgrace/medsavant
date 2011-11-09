@@ -524,11 +524,11 @@ public class ViewUtil {
 
     public static JPanel getKeyValuePairPanel(String key, String val) {
         JLabel keyl = new JLabel(key + ": ");
-            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,14));
+            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,keyl.getFont().getSize()));
             keyl.setForeground(Color.darkGray);
 
             JLabel value = new JLabel(val);
-            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,14));
+            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,keyl.getFont().getSize()));
             value.setForeground(Color.black);
             
             JPanel h1 = ViewUtil.getClearPanel(); 
@@ -542,11 +542,11 @@ public class ViewUtil {
     
     public static JPanel getKeyValuePairPanelListItem(String key, String val, boolean dark) {
         JLabel keyl = new JLabel(key);
-            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,14));
+            keyl.setFont(new Font(keyl.getFont().getFamily(),Font.BOLD,keyl.getFont().getSize()));
             keyl.setForeground(detailForeground);
 
             JLabel value = new JLabel(val);
-            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,14));
+            value.setFont(new Font(keyl.getFont().getFamily(),Font.PLAIN,keyl.getFont().getSize()));
             value.setForeground(detailForeground);
             
             JPanel h1 = new JPanel(); 

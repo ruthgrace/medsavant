@@ -77,8 +77,8 @@ public class GeneticsFilterPage extends SubSectionView {
             view.setLayout(new BorderLayout());
             fp = new FilterPanel();
             view.add(fp,BorderLayout.CENTER);
-            view.add(new PeekingPanel("SQL Statement", BorderLayout.NORTH, new FilterSQLPanel(),false,150),BorderLayout.SOUTH);
-            view.add(new PeekingPanel("History", BorderLayout.WEST, new FilterProgressPanel(), true), BorderLayout.EAST);
+            //view.add(new PeekingPanel("SQL Statement", BorderLayout.NORTH, new FilterSQLPanel(),false,150),BorderLayout.SOUTH);
+            view.add(new PeekingPanel("History", BorderLayout.EAST, new FilterProgressPanel(), true), BorderLayout.WEST);
         } else {
             fp.refreshSubPanels();
         }
