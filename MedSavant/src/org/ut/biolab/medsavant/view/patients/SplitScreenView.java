@@ -126,15 +126,14 @@ public class SplitScreenView extends JPanel {
             stp.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
                 public void valueChanged(ListSelectionEvent e) {
+                    
                     //set last selection
                     int row = stp.getTable().getSelectedRow(); 
-                    
                     if(row != -1 && !data.isEmpty() && row >= 0 && row < data.size()){
                         detailedView.setSelectedItem(data.get(row));
                     }
                     
                     //set all selected
-                    //TODO: adjust for page
                     int[] allRows = stp.getTable().getSelectedRows();
                     int length = allRows.length;
                     if(allRows.length > 0 && allRows[allRows.length-1] >= data.size()) length--;
@@ -145,13 +144,11 @@ public class SplitScreenView extends JPanel {
                             selected.add(data.get(currentRow));
                         }
                     }
-                    
-                    
                     detailedView.setMultipleSelections(selected);
                 }
             });
             
-            stp.getTable().getSelectionModel().setSelectionInterval(0, 1);
+            stp.getTable().getSelectionModel().setSelectionInterval(0, 0);
 
             showCard.add(stp, BorderLayout.CENTER);
         }

@@ -71,8 +71,7 @@ public class Menu extends JPanel implements MenuItemSelected {
             this.addMouseListener(new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
-                    //l.setForeground(Color.red);
-                    setSelected(true);
+                    
                 }
 
                 public void mousePressed(MouseEvent e) {
@@ -81,6 +80,7 @@ public class Menu extends JPanel implements MenuItemSelected {
 
                 public void mouseReleased(MouseEvent e) {
                     setPressed(false);
+                    setSelected(true);
                 }
 
                 public void mouseEntered(MouseEvent e) {

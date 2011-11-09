@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import org.ut.biolab.medsavant.view.images.IconFactory;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
@@ -155,6 +156,7 @@ public class ListViewTablePanel extends JPanel {
         table.setSortingEnabled(allowSort);
         table.setFocusable(allowSelection);
         table.setCellSelectionEnabled(allowSelection);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         //table.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 
         table.setAutoResizeMode(SortableTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
