@@ -170,11 +170,14 @@ public class SearchableTablePanel extends JPanel {
                 Component comp = super.prepareRenderer(renderer, Index_row, Index_col);
                 //even index, selected or not selected
 
-                if (isCellSelected(Index_row, Index_col)) {
+                if (isRowSelected(Index_row)
+                    //isCellSelected(Index_row, Index_col)
+                            ) {
                     comp.setBackground(new Color(75, 149, 229));
-
                 } else {
-                    if (Index_row % 2 == 0 && !isCellSelected(Index_row, Index_col)) {
+                    if (Index_row % 2 == 0 && !isRowSelected(Index_row)
+                            //!isCellSelected(Index_row, Index_col)
+                                    ) {
                         comp.setBackground(ViewUtil.evenRowColor);
                     } else {
                         comp.setBackground(ViewUtil.oddRowColor);//new Color(242, 245, 249));
