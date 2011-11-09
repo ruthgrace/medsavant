@@ -106,9 +106,8 @@ public class IntervalDetailedView extends DetailedView {
             //l.setForeground(Color.white);
             lm.addElement(region);
         }
-        JList list = (JList) ViewUtil.clear(new JList(lm));
-        list.setBackground(ViewUtil.getDetailsBackgroundColor());
-        list.setForeground(Color.white);
+        
+        JList list = ViewUtil.getDetailList(lm);
         JScrollPane jsp = ViewUtil.getClearBorderlessJSP(list);
         details.add(jsp, BorderLayout.CENTER);
         //list.setOpaque(false);

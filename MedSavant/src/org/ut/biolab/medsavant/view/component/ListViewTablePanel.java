@@ -125,7 +125,7 @@ public class ListViewTablePanel extends JPanel {
                 Component comp = super.prepareRenderer(renderer, Index_row, Index_col);
                 //even index, selected or not selected
 
-                if (isCellSelected(Index_row, Index_col)) {
+                if (isRowSelected(Index_row)) {
                     comp.setBackground(ViewUtil.detailSelectedBackground);
                 } else {
                     if (Index_row % 2 == 0) {
