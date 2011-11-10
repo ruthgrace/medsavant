@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ut.biolab.medsavant.view.patients;
+package org.ut.biolab.medsavant.view.list;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,13 +41,14 @@ public abstract class DetailedView extends JPanel {
 
         JPanel h1 = new JPanel();
         h1.setBorder(BorderFactory.createCompoundBorder(
-                ViewUtil.getTinyLineBorder(), ViewUtil.getMediumBorder()
+                ViewUtil.getTinyLineBorder(), ViewUtil.getBigBorder()
                 ));
         
         h1.setLayout(new BoxLayout(h1, BoxLayout.X_AXIS));
         this.title = ViewUtil.getDetailTitleLabel("");
         h1.add(title);
         h1.add(Box.createHorizontalGlue());
+        //h1.setBorder(ViewUtil.getMediumBorder());
 
         this.add(h1, BorderLayout.NORTH);
 
@@ -71,6 +72,7 @@ public abstract class DetailedView extends JPanel {
         PaintUtil.paintDrillDown(g, this);
     }
 
+    
     public abstract void setSelectedItem(Vector selectedRow);
 
     public abstract void setMultipleSelections(List<Vector> selectedRows);

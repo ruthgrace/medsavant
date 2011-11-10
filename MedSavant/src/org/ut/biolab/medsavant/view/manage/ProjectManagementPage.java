@@ -32,12 +32,14 @@ import org.ut.biolab.medsavant.db.model.ProjectDetails;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 import org.ut.biolab.medsavant.listener.ProjectListener;
+import org.ut.biolab.medsavant.view.list.DetailedListEditor;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
 import org.ut.biolab.medsavant.view.MainFrame;
-import org.ut.biolab.medsavant.view.patients.DetailedListModel;
-import org.ut.biolab.medsavant.view.patients.DetailedView;
-import org.ut.biolab.medsavant.view.patients.SplitScreenView;
+import org.ut.biolab.medsavant.view.list.DetailedListModel;
+import org.ut.biolab.medsavant.view.list.DetailedView;
+import org.ut.biolab.medsavant.view.list.SplitScreenView;
+import org.ut.biolab.medsavant.view.util.DialogUtils;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -46,18 +48,90 @@ import org.ut.biolab.medsavant.view.util.ViewUtil;
  */
 public class ProjectManagementPage extends SubSectionView implements ProjectListener {
 
+    private static class ProjectDetailedListEditor extends DetailedListEditor {
+
+        @Override
+        public boolean doesImplementAdding() {
+            return true;
+        }
+
+        @Override
+        public boolean doesImplementDeleting() {
+            return true;
+        }
+        
+        @Override
+        public boolean doesImplementEditing() {
+            return true;
+        }
+
+        @Override
+        public void addItems() {
+            new ProjectWizard();
+        }
+
+        @Override
+        public void editItems(Vector items) {
+            try {
+                
+                String projectName = (String) items.get(0);
+                
+                        int projectId = ProjectQueryUtil.getProjectId(projectName);
+                        ProjectWizard wiz = new ProjectWizard(
+                                projectId,
+                                projectName,
+                                PatientQueryUtil.getCustomPatientFields(projectId),
+                                ProjectQueryUtil.getProjectDetails(projectId));
+                        if (wiz.isModified()) {
+                            ProjectController.getInstance().fireProjectRemovedEvent(projectName);
+                            ProjectController.getInstance().fireProjectAddedEvent(ProjectQueryUtil.getProjectName(projectId));
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ProjectManagementPage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+        }
+
+        @Override
+        public void deleteItems(List<Vector> items) {
+           int nameIndex = 0;
+           int keyIndex = 0;
+            
+            int result;
+            
+            if (items.size() == 1) {
+                String name = (String) items.get(0).get(nameIndex);
+                result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
+                             "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
+                             "Confirm", JOptionPane.YES_NO_OPTION);
+            } else {
+                result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
+                             "Are you sure you want to remove these " + items.size() + " projects?\nThis cannot be undone.",
+                             "Confirm", JOptionPane.YES_NO_OPTION);
+            }
+            
+            if (result == JOptionPane.YES_OPTION) {
+                for (Vector v : items) {
+                    String projectName = (String) v.get(keyIndex);
+                    ProjectController.getInstance().removeProject(projectName);
+                }
+                
+                DialogUtils.displayMessage("Successfully removed " + items.size() + " project(s)");
+            }
+        }
+    }
+
     public void projectAdded(String projectName) {
         if (panel != null) {
             /*try {
-                int projectid = ProjectController.getInstance().getProjectName(projectName);
-
-                NewVariantTableDialog d = new NewVariantTableDialog(projectid, MainFrame.getInstance(), true);
-                d.setCancellable(false);
-                d.setVisible(true);
-
+            int projectid = ProjectController.getInstance().getProjectName(projectName);
+            
+            NewVariantTableDialog d = new NewVariantTableDialog(projectid, MainFrame.getInstance(), true);
+            d.setCancellable(false);
+            d.setVisible(true);
+            
             } catch (SQLException ex) {
-                ex.printStackTrace();
-                Logger.getLogger(ProjectManagementPage.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            Logger.getLogger(ProjectManagementPage.class.getName()).log(Level.SEVERE, null, ex);
             }*/
 
             panel.refresh();
@@ -76,7 +150,8 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         }
     }
 
-    public void projectTableRemoved(int projid, int refid) {}
+    public void projectTableRemoved(int projid, int refid) {
+    }
 
     private static class ProjectsDetailedView extends DetailedView implements ProjectListener {
 
@@ -89,8 +164,8 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
             content = this.getContentPanel();
 
-            this.addBottomComponent(deleteProjectButton());
-            this.addBottomComponent(modifyProjecButton());
+            //this.addBottomComponent(deleteProjectButton());
+            //this.addBottomComponent(modifyProjecButton());
 
             content.setLayout(new BorderLayout());
 
@@ -98,49 +173,6 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
             ProjectController.getInstance().addProjectListener(this);
 
-        }
-       
-        public final JButton deleteProjectButton() {
-            JButton b = new JButton("Delete Project");
-            b.setOpaque(false);
-            b.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent ae) {
-
-                    int result = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
-                            "Are you sure you want to delete " + projectName + "?\nThis cannot be undone.",
-                            "Confirm", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        ProjectController.getInstance().removeProject(projectName);
-                    }
-                }
-            });
-            return b;
-        }
-        
-        public final JButton modifyProjecButton() {
-            JButton b = new JButton("Modify Project");
-            b.setOpaque(false);
-            b.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent ae) {
-                    try {
-                        int projectId = ProjectQueryUtil.getProjectId(projectName);
-                        ProjectWizard wiz = new ProjectWizard(
-                                projectId,
-                                projectName, 
-                                PatientQueryUtil.getCustomPatientFields(projectId),
-                                ProjectQueryUtil.getProjectDetails(projectId));
-                        if(wiz.isModified()){
-                            ProjectController.getInstance().fireProjectRemovedEvent(projectName);
-                            ProjectController.getInstance().fireProjectAddedEvent(ProjectQueryUtil.getProjectName(projectId));   
-                        }                              
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ProjectManagementPage.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });
-            return b;
         }
 
         @Override
@@ -189,13 +221,13 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
                 final int projectId = ProjectController.getInstance().getProjectId(projectName);
 
                 List<ProjectDetails> projectDetails = ProjectQueryUtil.getProjectDetails(projectId);
-                
+
                 JPanel p = ViewUtil.getClearPanel();
                 ViewUtil.applyVerticalBoxLayout(p);
 
                 int numTables = 0;
                 p.add(ViewUtil.getLeftAlignedComponent(ViewUtil.getDetailHeaderLabel("Variant Tables:")));
-                
+
 
                 JPanel tablePanel = ViewUtil.getClearPanel();
                 tablePanel.setLayout(new GridBagLayout());
@@ -207,11 +239,11 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
                 c.fill = GridBagConstraints.NONE;
                 c.weightx = 0;
                 c.weighty = 0;
-                
+
                 JButton removeTable = null;
 
                 //while (rs.next()) {
-                for(ProjectDetails pd : projectDetails){
+                for (ProjectDetails pd : projectDetails) {
                     numTables++;
 
                     c.gridx = 0;
@@ -219,12 +251,12 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
                     //defaultTableBox.addItem(rs.getString("name"));
 
                     //tablePanel.add(ViewUtil.getDetailLabel("  " + ));
-                    
+
                     //final int refId = rs.getInt("reference_id");
                     //final String refName = rs.getString("name");
                     final int refId = pd.getReferenceId();
                     final String refName = pd.getReferenceName();
-                    tablePanel.add(ViewUtil.getDetailLabel(refName),c);
+                    tablePanel.add(ViewUtil.getDetailLabel(refName), c);
                     c.gridx++;
                     //tablePanel.add(Box.createHorizontalGlue());
 
@@ -238,9 +270,9 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
                     tablePanel.add(ViewUtil.getDetailLabel(numAnnotations + " annotation(s) applied"), c);
                     c.gridx++;
-                    
-                    tablePanel.add(Box.createHorizontalGlue(),c);
-                    
+
+                    tablePanel.add(Box.createHorizontalGlue(), c);
+
                     c.gridy++;
                 }
 
@@ -252,14 +284,14 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
                     if (numTables == 1 && removeTable != null) {
                         removeTable.setEnabled(false);
                     }
-                    
+
                     // TODO: this isn't the best way to force GridBagLayout to top-left
                     JPanel p0 = ViewUtil.getClearPanel();
                     p0.setLayout(new BorderLayout());
-                    p0.add(tablePanel,BorderLayout.WEST);
+                    p0.add(tablePanel, BorderLayout.WEST);
                     JPanel p1 = ViewUtil.getClearPanel();
                     p1.setLayout(new BorderLayout());
-                    p1.add(p0,BorderLayout.NORTH);
+                    p1.add(p0, BorderLayout.NORTH);
                     p.add(p1);
                 }
 
@@ -388,14 +420,15 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
     public void setPanel() {
         panel = new SplitScreenView(
                 new ProjectsListModel(),
-                new ProjectsDetailedView());
+                new ProjectsDetailedView(),
+                new ProjectDetailedListEditor());
     }
 
     @Override
     public Component[] getBanner() {
-        Component[] result = new Component[1];
-        result[0] = getAddPatientsButton();
-        
+        Component[] result = new Component[0];
+        //result[0] = getAddPatientsButton();
+
         return result;
     }
 
@@ -405,12 +438,12 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
             public void actionPerformed(ActionEvent e) {
                 new ProjectWizard();
-                
+
             }
         });
         return button;
     }
-    
+
     @Override
     public void viewDidLoad() {
     }

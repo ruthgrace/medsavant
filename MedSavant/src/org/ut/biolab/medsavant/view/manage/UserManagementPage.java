@@ -4,6 +4,7 @@
  */
 package org.ut.biolab.medsavant.view.manage;
 
+import org.ut.biolab.medsavant.view.dialog.NewUserDialog;
 import com.jidesoft.utils.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,11 +20,13 @@ import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.controller.UserController;
 import org.ut.biolab.medsavant.controller.UserController.UserListener;
 import org.ut.biolab.medsavant.view.MainFrame;
-import org.ut.biolab.medsavant.view.patients.DetailedListModel;
-import org.ut.biolab.medsavant.view.patients.DetailedView;
-import org.ut.biolab.medsavant.view.patients.SplitScreenView;
+import org.ut.biolab.medsavant.view.list.DetailedListEditor;
+import org.ut.biolab.medsavant.view.list.DetailedListModel;
+import org.ut.biolab.medsavant.view.list.DetailedView;
+import org.ut.biolab.medsavant.view.list.SplitScreenView;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
+import org.ut.biolab.medsavant.view.util.DialogUtils;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -31,6 +34,52 @@ import org.ut.biolab.medsavant.view.util.ViewUtil;
  * @author mfiume
  */
 public class UserManagementPage extends SubSectionView implements UserListener {
+
+    private static class UserDetailedListEditor extends DetailedListEditor {
+
+        @Override
+        public boolean doesImplementAdding() { return true; }
+        
+        @Override
+        public boolean doesImplementDeleting() { return true; }
+        
+        @Override
+        public void addItems() {
+            NewUserDialog npd = new NewUserDialog(MainFrame.getInstance(),true);
+            npd.setVisible(true);
+        }
+
+        @Override
+        public void editItems(Vector results) {
+        }
+
+        @Override
+        public void deleteItems(List<Vector> results) {
+            int nameIndex = 0;
+            
+            int result;
+            
+            if (results.size() == 1) {
+                String name = (String) results.get(0).get(nameIndex);
+                result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
+                             "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
+                             "Confirm", JOptionPane.YES_NO_OPTION);
+            } else {
+                result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
+                             "Are you sure you want to remove these " + results.size() + " users?\nThis cannot be undone.",
+                             "Confirm", JOptionPane.YES_NO_OPTION);
+            }
+            
+            if (result == JOptionPane.YES_OPTION) {
+                for (Vector v : results) {
+                    String name = (String) v.get(nameIndex);
+                    UserController.getInstance().removeUser(name);
+                }
+                
+                DialogUtils.displayMessage("Successfully removed " + results.size() + " user(s)");
+            }
+        }
+    }
 
     public void userAdded(String name) {
         panel.refresh();
@@ -44,45 +93,23 @@ public class UserManagementPage extends SubSectionView implements UserListener {
         panel.refresh();
     }
 
-     private static class ThisDetailedView extends DetailedView  {
+     private static class UserDetailedView extends DetailedView  {
         private final JPanel details;
         private final JPanel content;
         private String name;
         private DetailsSW sw;
 
-        public ThisDetailedView() {
+        public UserDetailedView() {
         
         content = this.getContentPanel();
         
         details = ViewUtil.getClearPanel();
-        
-        this.addBottomComponent(deleteButton());
-
         
         content.setLayout(new BorderLayout());
         
         content.add(details,BorderLayout.CENTER);
     }
         
-        public final JButton deleteButton() {
-            JButton b = new JButton("Delete User");
-            b.setOpaque(false);
-            b.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent ae) {
-                    
-                    int result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
-                             "Are you sure you want to delete " + name + "?\nThis cannot be undone.",
-                             "Confirm", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        UserController.getInstance().removeUser(name);
-                    }
-                }
-                
-            });
-            return b;
-        }
-    
     @Override
     public void setSelectedItem(Vector item) {
         name = (String) item.get(0);
@@ -121,12 +148,12 @@ public class UserManagementPage extends SubSectionView implements UserListener {
     
     }
 
-    private static class ThisListModel implements DetailedListModel {
+    private static class UserListModel implements DetailedListModel {
         private ArrayList<String> cnames;
         private ArrayList<Class> cclasses;
         private ArrayList<Integer> chidden;
 
-        public ThisListModel() {
+        public UserListModel() {
         }
 
         public List<Vector> getList(int limit) throws Exception {
@@ -184,14 +211,15 @@ public class UserManagementPage extends SubSectionView implements UserListener {
     
     public void setPanel() { 
         panel = new SplitScreenView(
-                new ThisListModel(), 
-                new ThisDetailedView());
+                new UserListModel(), 
+                new UserDetailedView(),
+                new UserDetailedListEditor());
     }
     
     @Override
     public Component[] getBanner() {
-        Component[] result = new Component[1];
-        result[0] = getAddButton();
+        Component[] result = new Component[0];
+        //result[0] = getAddButton();
         return result;
     }
     

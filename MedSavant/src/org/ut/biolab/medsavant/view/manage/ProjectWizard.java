@@ -4,6 +4,7 @@
  */
 package org.ut.biolab.medsavant.view.manage;
 
+import org.ut.biolab.medsavant.view.dialog.NewReferenceDialog;
 import com.jidesoft.dialog.ButtonEvent;
 import com.jidesoft.dialog.ButtonNames;
 import com.jidesoft.dialog.ButtonPanel;

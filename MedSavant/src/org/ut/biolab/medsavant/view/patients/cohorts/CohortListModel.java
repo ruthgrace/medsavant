@@ -10,7 +10,7 @@ import java.util.Vector;
 import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.db.model.Cohort;
 import org.ut.biolab.medsavant.db.util.query.CohortQueryUtil;
-import org.ut.biolab.medsavant.view.patients.DetailedListModel;
+import org.ut.biolab.medsavant.view.list.DetailedListModel;
 
 /**
  *

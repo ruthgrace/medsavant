@@ -70,7 +70,6 @@ public class ImportFileView extends javax.swing.JDialog {
         
         h1.setLayout(new BoxLayout(h1,BoxLayout.Y_AXIS));
         
-        /*
         JPanel delimiterBarPanel = new JPanel();
         delimiterBarPanel.setLayout(new BoxLayout(delimiterBarPanel,BoxLayout.X_AXIS));
         
@@ -86,8 +85,7 @@ public class ImportFileView extends javax.swing.JDialog {
 
         h1.add(ViewUtil.getCenterAlignedComponent(ViewUtil.getDialogLabel("Delimiter")));
         h1.add(delimiterBarPanel);
-         * 
-         */
+         
         h1.add(ViewUtil.getSmallVerticalSeparator());
         
         h1.add(ViewUtil.getCenterAlignedComponent(ViewUtil.getDialogLabel("Format")));
@@ -319,9 +317,6 @@ public class ImportFileView extends javax.swing.JDialog {
                 
                 List<String[]> header = (List<String[]>) preview[0];
                 List<String[]> rest = (List<String[]>) preview[1];
-                
-                
-
                 
                 setPreview(header,rest);
 

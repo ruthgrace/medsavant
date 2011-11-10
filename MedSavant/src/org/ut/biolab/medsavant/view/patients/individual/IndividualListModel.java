@@ -4,6 +4,8 @@
  */
 package org.ut.biolab.medsavant.view.patients.individual;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -12,7 +14,8 @@ import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultPatientTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
-import org.ut.biolab.medsavant.view.patients.DetailedListModel;
+import org.ut.biolab.medsavant.view.dialog.AddPatientsForm;
+import org.ut.biolab.medsavant.view.list.DetailedListModel;
 
 /**
  *
@@ -72,4 +75,8 @@ public class IndividualListModel implements DetailedListModel {
     public static String getIndividualID(Vector r) {
         return (String) r.get(0);
     }
+
+
+
+    
 }

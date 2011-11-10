@@ -31,6 +31,7 @@ public class IconFactory {
     public enum StandardIcon {
         ADD,
         REMOVE,
+        EDIT,
         FILTER,
         RESULTS,
         CHART,
@@ -49,9 +50,11 @@ public class IconFactory {
     public ImageIcon getIcon(StandardIcon icon) {
         switch (icon) {
             case ADD:
-                return getIcon(iconroot + "open_normal_green.png");
+                return getIcon(iconroot + "mac_add.png");//"open_normal_green.png");
             case REMOVE:
-                return getIcon(iconroot + "close_normal_green.png");
+                return getIcon(iconroot + "mac_remove.png");//"close_normal_green.png");
+            case EDIT:
+                return getIcon(iconroot + "mac_edit.png");//"close_normal_green.png");
             case FILTER:
                 return getIcon(iconroot + "filter.gif");
             case RESULTS:
@@ -62,9 +65,9 @@ public class IconFactory {
                 return getIcon(iconroot + "loggedin.png");
             case SPIRAL:
                 return getIcon(iconroot + "spiral_green.png");
-                case LOGO:
+            case LOGO:
                 return getIcon(iconroot + "medsavantlogo.png");
-                    case FIRST:
+            case FIRST:
                 return getIcon(iconroot + "first.png");
             case PREVIOUS:
                 return getIcon(iconroot + "previous.png");

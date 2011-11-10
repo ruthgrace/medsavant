@@ -199,8 +199,12 @@ public class ListViewTablePanel extends JPanel {
         jsp.setBorder(null);
         this.add(jsp, BorderLayout.CENTER);
         
+        
+        
         this.updateData(data);
     }
+    
+    
 
     private int getTotalRowCount() {
         if (data == null) {
@@ -224,6 +228,8 @@ public class ListViewTablePanel extends JPanel {
     public void forceRefreshData(){
         //override this in parent
     }
+
+    
     
     private class ColumnChooser extends TableColumnChooserPopupMenuCustomizer {
 

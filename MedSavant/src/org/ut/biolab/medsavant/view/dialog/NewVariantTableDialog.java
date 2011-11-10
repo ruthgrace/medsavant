@@ -8,7 +8,7 @@
  *
  * Created on Sep 19, 2011, 12:29:03 PM
  */
-package org.ut.biolab.medsavant.view.manage;
+package org.ut.biolab.medsavant.view.dialog;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

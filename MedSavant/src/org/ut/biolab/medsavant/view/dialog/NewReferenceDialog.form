@@ -27,15 +27,15 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="328" max="32767" attributes="0"/>
-                  <Component id="text_reference_name" alignment="0" pref="328" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="330" max="32767" attributes="0"/>
+                  <Component id="text_reference_name" alignment="0" pref="330" max="32767" attributes="0"/>
                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="button_ok" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="button_cancel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="328" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="330" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel2" min="-2" pref="103" max="-2" attributes="0"/>
                       <EmptySpace pref="118" max="32767" attributes="0"/>

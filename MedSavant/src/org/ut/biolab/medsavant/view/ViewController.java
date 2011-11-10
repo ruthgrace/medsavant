@@ -238,7 +238,7 @@ public class ViewController extends JPanel {
 
         @Override
         public void paintComponent(Graphics g) {
-            PaintUtil.paintLightMenu(g, this);
+            PaintUtil.paintDarkMenu(g, this);
         }
         
         private void setTitle(String sectionName, String subsectionName) {

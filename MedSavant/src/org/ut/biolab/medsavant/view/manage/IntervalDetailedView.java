@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.ut.biolab.medsavant.db.model.RegionSet;
 import org.ut.biolab.medsavant.db.util.query.RegionQueryUtil;
-import org.ut.biolab.medsavant.view.patients.DetailedView;
+import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -35,19 +35,42 @@ public class IntervalDetailedView extends DetailedView {
 
     private int limitNumberOfRegionsShown = 500;
     
-    //private List<String> fieldNames;
-    //private List<Object> fieldValues;
     private RegionDetailsSW sw;
     private final JPanel content;
     private final JPanel details;
-    private RegionSet regionSet;
     
     private int numRegionsInRegionList;
+    private RegionSet regionSet;
 
     @Override
     public void setMultipleSelections(List<Vector> selectedRows) {
-        //System.err.println("Multiple selections of regions not supported yet!");
+        
+        //TODO: actually store them for possible deletion
+        
+        setTitle("Multiple cohorts (" + selectedRows + ")");
+        details.removeAll();
+        details.updateUI();
     }
+
+    /*
+    void removeSelectedRegionLists() {
+        if(regionSet != null){
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            "Are you sure you want to delete " + regionSet.getName() + "?\nThis cannot be undone.",
+                            "Confirm", 
+                            JOptionPane.YES_NO_OPTION);
+                    if (result != JOptionPane.YES_OPTION) return;
+                    try {
+                        RegionQueryUtil.removeRegionList(regionSet.getId());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(IntervalDetailedView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    parent.refresh();
+                }
+    }
+     * 
+     */
     
     private class RegionDetailsSW extends SwingWorker {
         private final RegionSet regionSet;
@@ -122,28 +145,18 @@ public class IntervalDetailedView extends DetailedView {
         
         details = ViewUtil.getClearPanel();
         
+        /*
         JButton deleteButton = new JButton("Delete region list");
         deleteButton.setOpaque(false);
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(regionSet != null){
-                    int result = JOptionPane.showConfirmDialog(
-                            null,
-                            "Are you sure you want to delete " + regionSet.getName() + "?\nThis cannot be undone.",
-                            "Confirm", 
-                            JOptionPane.YES_NO_OPTION);
-                    if (result != JOptionPane.YES_OPTION) return;
-                    try {
-                        RegionQueryUtil.removeRegionList(regionSet.getId());
-                    } catch (SQLException ex) {
-                        Logger.getLogger(IntervalDetailedView.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    parent.refresh();
-                }
+                removeSelectedRegionLists();
             }
         });
         
         this.addBottomComponent(deleteButton);
+         * 
+         */
         
         content.setLayout(new BorderLayout());
         
@@ -152,7 +165,6 @@ public class IntervalDetailedView extends DetailedView {
     
     @Override
     public void setSelectedItem(Vector item) {
-        
         
         RegionSet regionList = (RegionSet) item.get(0);
         setTitle(regionList.getName());

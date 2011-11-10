@@ -166,7 +166,7 @@ public class Menu extends JPanel implements MenuItemSelected {
             PaintUtil.paintSolid(g, this, ViewUtil.getMenuColor());
 
             if (isSelected()) {
-                PaintUtil.paintSolid(g, this, Color.lightGray);
+                PaintUtil.paintSolid(g, this, Color.gray);
                 return;
             }
 

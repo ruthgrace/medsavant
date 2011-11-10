@@ -247,11 +247,11 @@ public class ViewUtil {
             p = new JPanel();
             p.setLayout(new BoxLayout(p,BoxLayout.X_AXIS));
             p.setBorder(ViewUtil.getSmallBorder());
-            p.setBackground(Color.white);
+            //p.setBackground(Color.white);
             //p.setBorder(ViewUtil.getTinyLineBorder());
         }
         JLabel l = new JLabel(str);
-        l.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        //l.setFont(new Font("Tahoma", Font.PLAIN, 14));
         l.setOpaque(false);
         p.add(l);
         return p;
@@ -267,7 +267,7 @@ public class ViewUtil {
     public static JLabel getHeaderLabel(String str) {
         JLabel l = new JLabel(str);
         l.setFont(new Font(getDefaultFontFamily(),Font.PLAIN,15));
-        l.setForeground(Color.black);
+        l.setForeground(Color.white);
         return l;
     }
     
@@ -439,19 +439,6 @@ public class ViewUtil {
         list.setFont(ViewUtil.detailFontPlain);
         return list;
     }
-
-    /*
-    public static JPanel getSubSubBannerPanel(String title) {
-        JPanel p = new JPanel();
-        boxXLayout(p);
-        p.setBackground(new Color(250,250,250));
-        //Border aquaBorder = UIManager.getBorder( "InsetBorder.aquaVariant" );
-        p.setBorder(BorderFactory.createTitledBorder(title));
-        //p.setBorder(new CompoundBorder(ViewUtil.getTinyLineBorder(),ViewUtil.getMediumBorder()));
-        return p;
-    }
-     * 
-     */
     
     public enum OS { Unknown, Windows, Linux, Mac };
     
@@ -512,7 +499,7 @@ public class ViewUtil {
     public static JLabel getDetailTitleLabel(String label) {
         JLabel l = new JLabel(label);
         l.setForeground(Color.darkGray);
-        l.setFont(new Font(l.getFont().getFamily(),Font.PLAIN,24));
+        l.setFont(new Font(l.getFont().getFamily(),Font.PLAIN,20));
         return l; 
     }
     

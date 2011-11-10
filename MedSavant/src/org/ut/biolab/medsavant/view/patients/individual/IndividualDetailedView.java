@@ -24,7 +24,7 @@ import org.ut.biolab.medsavant.db.util.query.CohortQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.log.ClientLogger;
 import org.ut.biolab.medsavant.view.dialog.ComboForm;
-import org.ut.biolab.medsavant.view.patients.DetailedView;
+import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -40,7 +40,7 @@ public class IndividualDetailedView extends DetailedView {
     private final JPanel details;
     private final JPanel menu;
     private int[] patientIds;
-    
+
     private class IndividualDetailsSQ extends SwingWorker {
         private final int pid;
 
@@ -102,7 +102,7 @@ public class IndividualDetailedView extends DetailedView {
         menu = ViewUtil.getButtonPanel();
         
         menu.add(addIndividualsButton());
-        menu.add(deleteIndividualsButton());
+        //menu.add(deleteIndividualsButton());
         menu.setVisible(false);
         
         content.setLayout(new BorderLayout());
@@ -160,30 +160,6 @@ public class IndividualDetailedView extends DetailedView {
                     }
                     parent.refresh();                   
                 }                   
-            }
-        }); 
-        return button;
-    }
-    
-    private JButton deleteIndividualsButton(){
-        JButton button = new JButton("Delete individual(s)");
-        button.setBackground(ViewUtil.getDetailsBackgroundColor());
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if(patientIds != null && patientIds.length > 0){
-                    int result = JOptionPane.showConfirmDialog(
-                            null,
-                            "Are you sure you want to delete these individuals?\nThis cannot be undone.",
-                            "Confirm", 
-                            JOptionPane.YES_NO_OPTION);
-                    if (result != JOptionPane.YES_OPTION) return;
-                    try {
-                        PatientQueryUtil.removePatient(ProjectController.getInstance().getCurrentProjectId(), patientIds);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(IndividualDetailedView.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    parent.refresh();
-                }
             }
         }); 
         return button;

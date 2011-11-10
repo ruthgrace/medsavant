@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.ut.biolab.medsavant.view.manage;
+package org.ut.biolab.medsavant.view.dialog;
 
 import java.sql.SQLException;
 import java.util.logging.Level;

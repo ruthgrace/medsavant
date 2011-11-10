@@ -17,18 +17,55 @@ import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ExternalAnnotationController;
 import org.ut.biolab.medsavant.db.model.Annotation;
 import org.ut.biolab.medsavant.view.MainFrame;
-import org.ut.biolab.medsavant.view.patients.DetailedListModel;
-import org.ut.biolab.medsavant.view.patients.DetailedView;
-import org.ut.biolab.medsavant.view.patients.SplitScreenView;
+import org.ut.biolab.medsavant.view.list.DetailedListEditor;
+import org.ut.biolab.medsavant.view.list.DetailedListModel;
+import org.ut.biolab.medsavant.view.list.DetailedView;
+import org.ut.biolab.medsavant.view.list.SplitScreenView;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
+import org.ut.biolab.medsavant.view.util.DialogUtils;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
  *
  * @author mfiume
  */
-public class AnnotationsPage extends SubSectionView {//implements ExternalAnnotationListener {
+public class AnnotationsPage extends SubSectionView {
+
+    private static class ExternalAnnotationDetailedListEditer extends DetailedListEditor {
+
+         @Override
+        public boolean doesImplementAdding() {
+            return true;
+        }
+
+        @Override
+        public boolean doesImplementDeleting() {
+            return true;
+        }
+
+        @Override
+        public void addItems() {
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), 
+                        "Annotations can only be added using the \n"
+                        + "MedSavant Database Utility.", 
+                        "",JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        @Override
+        public void editItems(Vector items) {
+        }
+
+        @Override
+        public void deleteItems(List<Vector> items) {
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), 
+                        "Annotations can only be deleted using the \n"
+                        + "MedSavant Database Utility.", 
+                        "",JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+    }
+//implements ExternalAnnotationListener {
 
     public void referenceAdded(String name) {
         panel.refresh();
@@ -56,14 +93,15 @@ public class AnnotationsPage extends SubSectionView {//implements ExternalAnnota
     public JPanel getView(boolean update) {
         panel = new SplitScreenView(
                 new ExternalAnnotationListModel(),
-                new ExternalAnnotationDetailedView());
+                new ExternalAnnotationDetailedView(),
+                new ExternalAnnotationDetailedListEditer());
         return panel;
     }
 
     @Override
     public Component[] getBanner() {
-        Component[] result = new Component[1];
-        result[0] = getAddExternalAnnotationButton();
+        Component[] result = new Component[0];
+        //result[0] = getAddExternalAnnotationButton();
         return result;
     }
 
@@ -154,7 +192,7 @@ public class AnnotationsPage extends SubSectionView {//implements ExternalAnnota
             content = this.getContentPanel();
 
             details = ViewUtil.getClearPanel();
-            this.addBottomComponent(deleteButton());
+            //this.addBottomComponent(deleteButton());
 
             content.setLayout(new BorderLayout());
 

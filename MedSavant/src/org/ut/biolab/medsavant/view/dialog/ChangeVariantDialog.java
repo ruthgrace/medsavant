@@ -8,7 +8,7 @@
  *
  * Created on 21-Sep-2011, 12:10:38 PM
  */
-package org.ut.biolab.medsavant.view.manage;
+package org.ut.biolab.medsavant.view.dialog;
 
 import java.awt.Component;
 import java.awt.event.MouseAdapter;

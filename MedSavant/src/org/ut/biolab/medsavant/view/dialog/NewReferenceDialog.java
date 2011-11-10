@@ -8,7 +8,7 @@
  *
  * Created on Sep 19, 2011, 12:29:03 PM
  */
-package org.ut.biolab.medsavant.view.manage;
+package org.ut.biolab.medsavant.view.dialog;
 
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -183,11 +183,11 @@ public class NewReferenceDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Contig Information:");
 
-        clearButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        clearButton.setFont(new java.awt.Font("Tahoma", 1, 11));
         clearButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         clearButton.setText("clear");
 
-        addRowButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        addRowButton.setFont(new java.awt.Font("Tahoma", 1, 11));
         addRowButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         addRowButton.setText("add row");
 

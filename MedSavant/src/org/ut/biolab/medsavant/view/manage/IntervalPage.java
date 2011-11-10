@@ -9,17 +9,23 @@ import com.jidesoft.utils.SwingWorker;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Level;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ReferenceController;
+import org.ut.biolab.medsavant.db.model.RegionSet;
 import org.ut.biolab.medsavant.db.util.query.RegionQueryUtil;
 import org.ut.biolab.medsavant.importfile.BedFormat;
 import org.ut.biolab.medsavant.importfile.FileFormat;
 import org.ut.biolab.medsavant.importfile.ImportDelimitedFile;
 import org.ut.biolab.medsavant.importfile.ImportFileView;
-import org.ut.biolab.medsavant.view.patients.SplitScreenView;
+import org.ut.biolab.medsavant.view.list.DetailedListEditor;
+import org.ut.biolab.medsavant.view.list.SplitScreenView;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
 
@@ -43,24 +49,22 @@ public class IntervalPage extends SubSectionView {
     public JPanel getView(boolean update) {
         view = new SplitScreenView(
                 new IntervalListModel(), 
-                new IntervalDetailedView());
+                new IntervalDetailedView(),
+                new IntervalDetailedListEditor());
+        
+        
+        
         return view;
     }
     
     public Component[] getBanner() {
-        Component[] result = new Component[1];
-        result[0] = getAddCohortButton();
+        Component[] result = new Component[0];
+        //result[0] = getAddCohortButton();
         return result;
     }
-
-    private Component getAddCohortButton() {
-        JButton b = new JButton("Add region list");
-        
-        b.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                
-                String geneListName = (String) JOptionPane.showInputDialog(
+    
+    private void addCohort() {
+        String geneListName = (String) JOptionPane.showInputDialog(
                     null,
                     "Name of Region List:",
                     "Import Region List",
@@ -101,6 +105,16 @@ public class IntervalPage extends SubSectionView {
                 
                 d.dispose();
                 view.refresh();
+    }
+
+    private Component getAddCohortButton() {
+        JButton b = new JButton("Add region list");
+        
+        b.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                
+                addCohort();
             }
             
         });
