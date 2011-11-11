@@ -199,19 +199,19 @@ public class ViewUtil {
     }
 
     public static Component getSmallSeparator() {
-        return Box.createHorizontalStrut(2);
+        return Box.createRigidArea(new Dimension(2,1));
     }
     
     public static Component getMediumSeparator() {
-        return Box.createHorizontalStrut(5);
+        return Box.createRigidArea(new Dimension(5,1));
     }
     
     public static Component getLargeSeparator() {
-        return Box.createHorizontalStrut(15);
+        return Box.createRigidArea(new Dimension(15,1));
     }
 
     public static Component getSmallVerticalSeparator() {
-        return Box.createVerticalStrut(2);
+        return Box.createRigidArea(new Dimension(1,2));
     }
 
     public static Border getTinyLineBorder() {

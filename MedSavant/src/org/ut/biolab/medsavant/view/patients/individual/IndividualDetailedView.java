@@ -16,13 +16,13 @@ import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.db.model.Cohort;
 import org.ut.biolab.medsavant.db.util.query.CohortQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.log.ClientLogger;
+import org.ut.biolab.medsavant.view.component.CollapsablePanel;
 import org.ut.biolab.medsavant.view.dialog.ComboForm;
 import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
@@ -96,19 +96,30 @@ public class IndividualDetailedView extends DetailedView {
             ClientLogger.log(IndividualDetailedView.class,ex.getLocalizedMessage(),Level.SEVERE);
         }
         
-        content = this.getContentPanel();
+        JPanel viewContainer = (JPanel) ViewUtil.clear(this.getContentPanel());
+        viewContainer.setLayout(new BorderLayout());
+        
+        JPanel infoContainer = ViewUtil.getClearPanel();
+        ViewUtil.applyVerticalBoxLayout(infoContainer);
+        
+        viewContainer.add(ViewUtil.getClearBorderlessJSP(infoContainer),BorderLayout.CENTER);
+        
+        CollapsablePanel cp = new CollapsablePanel("Patient Information");
+        infoContainer.add(cp);
+        infoContainer.add(Box.createVerticalGlue());
+        
+        content = cp.getContentPane();
         
         details = ViewUtil.getClearPanel();
         menu = ViewUtil.getButtonPanel();
         
         menu.add(addIndividualsButton());
-        //menu.add(deleteIndividualsButton());
         menu.setVisible(false);
-        
         content.setLayout(new BorderLayout());
         
-        content.add(ViewUtil.getClearBorderlessJSP(details),BorderLayout.CENTER);
-        content.add(menu,BorderLayout.SOUTH);
+        content.add(details,BorderLayout.CENTER);
+        
+        viewContainer.add(menu,BorderLayout.SOUTH);
     }
     
     @Override

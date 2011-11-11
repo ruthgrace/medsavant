@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Vector;
@@ -16,7 +17,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
+import javax.swing.JScrollPane;
+import org.ut.biolab.medsavant.view.swing.WrapLayout;
 import org.ut.biolab.medsavant.view.util.PaintUtil;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
@@ -55,6 +57,10 @@ public abstract class DetailedView extends JPanel {
         contentPanel = ViewUtil.getClearPanel();
         contentPanel.setBorder(ViewUtil.getBigBorder());
         contentPanel.setForeground(Color.darkGray);
+        
+        //JScrollPane jsp = new JScrollPane(contentPanel);
+        //jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
         this.add(contentPanel, BorderLayout.CENTER);
 
         bottomPanel = new JPanel();//ViewUtil.getPrimaryBannerPanel();

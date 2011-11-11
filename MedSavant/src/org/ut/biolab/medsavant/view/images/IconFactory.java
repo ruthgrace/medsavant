@@ -31,6 +31,8 @@ public class IconFactory {
     public enum StandardIcon {
         ADD,
         REMOVE,
+        EXPAND,
+        COLLAPSE,
         EDIT,
         FILTER,
         RESULTS,
@@ -49,6 +51,10 @@ public class IconFactory {
 
     public ImageIcon getIcon(StandardIcon icon) {
         switch (icon) {
+            case EXPAND:
+                return getIcon(iconroot + "expand.png");//"open_normal_green.png");
+            case COLLAPSE:
+                return getIcon(iconroot + "collapse.png");//"close_normal_green.png");
             case ADD:
                 return getIcon(iconroot + "mac_add.png");//"open_normal_green.png");
             case REMOVE:

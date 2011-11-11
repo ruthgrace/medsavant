@@ -30,6 +30,7 @@ import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.db.model.Cohort;
 import org.ut.biolab.medsavant.db.model.SimplePatient;
 import org.ut.biolab.medsavant.db.util.query.CohortQueryUtil;
+import org.ut.biolab.medsavant.view.component.CollapsablePanel;
 import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
@@ -48,6 +49,7 @@ public class CohortDetailedView extends DetailedView {
     private JList list;
     private Cohort cohort;
     private Cohort[] cohorts;
+    private final CollapsablePanel membersPane;
 
 
     private class CohortDetailsSW extends SwingWorker {
@@ -83,7 +85,6 @@ public class CohortDetailedView extends DetailedView {
         details.setLayout(new BorderLayout());
         //.setLayout(new BoxLayout(details,BoxLayout.Y_AXIS));
 
-        details.add(ViewUtil.getKeyValuePairPanel("Patients in cohort", patients.size() + ""), BorderLayout.NORTH);
         DefaultListModel lm = new DefaultListModel();
         /*for (Vector v : patients) {
         JLabel l = new JLabel(v.get(CohortViewTableSchema.INDEX_HOSPITALID-1).toString()); l.setForeground(Color.white);
@@ -98,7 +99,7 @@ public class CohortDetailedView extends DetailedView {
         }
         list = ViewUtil.getDetailList(lm);
 
-
+        membersPane.setDescription(ViewUtil.numToString(patients.size()));
 
         JScrollPane jsp = ViewUtil.getClearBorderlessJSP(list);
         details.add(jsp, BorderLayout.CENTER);
@@ -108,10 +109,23 @@ public class CohortDetailedView extends DetailedView {
     }
 
     public CohortDetailedView() {
-        content = this.getContentPanel();
-
+        
+        JPanel viewContainer = (JPanel) ViewUtil.clear(this.getContentPanel());
+        viewContainer.setLayout(new BorderLayout());
+        
+        JPanel infoContainer = ViewUtil.getClearPanel();
+        ViewUtil.applyVerticalBoxLayout(infoContainer);
+        
+        viewContainer.add(ViewUtil.getClearBorderlessJSP(infoContainer),BorderLayout.CENTER);
+        
+        membersPane = new CollapsablePanel("Members");
+        infoContainer.add(membersPane);
+        infoContainer.add(Box.createVerticalGlue());
+        
+        content = membersPane.getContentPane();
+        
         details = ViewUtil.getClearPanel();
-        menu = ViewUtil.getButtonPanel();
+        menu = ViewUtil.getClearPanel();// ViewUtil.getButtonPanel();
 
         //menu.add(setDefaultCaseButton());
         //menu.add(setDefaultControlButton());
@@ -122,7 +136,7 @@ public class CohortDetailedView extends DetailedView {
         content.setLayout(new BorderLayout());
 
         content.add(details, BorderLayout.CENTER);
-        content.add(menu, BorderLayout.SOUTH);
+        this.addBottomComponent(menu);
     }
 
     @Override
