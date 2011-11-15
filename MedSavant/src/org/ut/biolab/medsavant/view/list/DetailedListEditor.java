@@ -14,7 +14,7 @@ public abstract class DetailedListEditor {
     public boolean doesImplementEditing() {return false;}
     
     public abstract void addItems();
-    public abstract void editItems(Vector item);
-    public abstract void deleteItems(List<Vector> items);
+    public abstract void editItems(Object[] item);
+    public abstract void deleteItems(List<Object[]> items);
     
 }

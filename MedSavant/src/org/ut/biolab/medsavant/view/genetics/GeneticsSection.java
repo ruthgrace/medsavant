@@ -34,6 +34,7 @@ public class GeneticsSection extends SectionView implements ProjectListener {
 
     private JPanel[] panels;
     private JComboBox referenceDropDown;
+    public static boolean isInitialized = false;
 
     public GeneticsSection() {
         setPersistencePanels();
@@ -109,7 +110,8 @@ public class GeneticsSection extends SectionView implements ProjectListener {
         result[2] = addShowInSavantButton();
         result[3] = createVcfButton();
         //result[0] = addSaveResultSetButton();
-
+        
+        isInitialized = true;
         return result;
     }
 

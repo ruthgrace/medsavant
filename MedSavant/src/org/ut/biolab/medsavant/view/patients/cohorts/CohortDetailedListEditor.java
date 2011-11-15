@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.ut.biolab.medsavant.db.model.Cohort;
 import org.ut.biolab.medsavant.db.util.query.CohortQueryUtil;
 import org.ut.biolab.medsavant.view.MainFrame;
-import org.ut.biolab.medsavant.view.dialog.AddCohortForm;
+import org.ut.biolab.medsavant.view.dialog.CohortWizard;
 import org.ut.biolab.medsavant.view.list.DetailedListEditor;
 import org.ut.biolab.medsavant.view.util.DialogUtils;
 
@@ -31,21 +31,20 @@ public class CohortDetailedListEditor extends DetailedListEditor {
 
     @Override
     public void addItems() {
-        new AddCohortForm();
-
+        new CohortWizard();
     }
 
     @Override
-    public void editItems(Vector results) {
+    public void editItems(Object[] results) {
     }
 
     @Override
-    public void deleteItems(List<Vector> items) {
+    public void deleteItems(List<Object[]> items) {
 
         int result;
 
         if (items.size() == 1) {
-            String name = ((Cohort) items.get(0).get(0)).getName();
+            String name = ((Cohort) items.get(0)[0]).getName();
             result = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
                     "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                     "Confirm", JOptionPane.YES_NO_OPTION);
@@ -58,13 +57,13 @@ public class CohortDetailedListEditor extends DetailedListEditor {
 
         if (result == JOptionPane.YES_OPTION) {
             int numCouldntRemove = 0;
-            for (Vector v : items) {
-                int id = ((Cohort) v.get(0)).getId();
+            for (Object[] v : items) {
+                int id = ((Cohort) v[0]).getId();
                 try {
                     CohortQueryUtil.removeCohort(id);
                 } catch (SQLException ex) {
                     numCouldntRemove++;
-                    DialogUtils.displayErrorMessage("Couldn't remove " + ((Cohort) v.get(0)).getName(), ex);
+                    DialogUtils.displayErrorMessage("Couldn't remove " + ((Cohort) v[0]).getName(), ex);
                 }
             }
 

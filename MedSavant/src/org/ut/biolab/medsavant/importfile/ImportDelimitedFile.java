@@ -94,12 +94,8 @@ public class ImportDelimitedFile {
         return i;
     }
 
-    static Object[] getPreview(
-            String path,
-            char separator,
-            int numHeaderLines,
-            int numLines,
-            FileFormat ff) throws FileNotFoundException {
+    @SuppressWarnings("unchecked")
+    static List<String[]>[] getPreview(String path, char separator, int numHeaderLines, int numLines, FileFormat ff) throws FileNotFoundException {
 
         int[] fields;
         if (ff != null) {
@@ -117,13 +113,8 @@ public class ImportDelimitedFile {
         } catch (Exception e){
             e.printStackTrace();
         }
-        
-        
-        Object[] lines = new Object[2];
-        lines[0] = headerLines;
-        lines[1] = previewLines;
 
-        return lines;
+        return (List<String[]>[])new List[] { headerLines, previewLines };
     }
 
     private static List<String[]> getLinesFromReader(CSVReader reader, int numLines) {

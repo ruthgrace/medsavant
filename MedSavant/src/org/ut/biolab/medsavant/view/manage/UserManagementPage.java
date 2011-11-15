@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ProjectController;
+import org.ut.biolab.medsavant.controller.ThreadController;
 import org.ut.biolab.medsavant.controller.UserController;
 import org.ut.biolab.medsavant.controller.UserController.UserListener;
 import org.ut.biolab.medsavant.view.MainFrame;
@@ -50,17 +51,17 @@ public class UserManagementPage extends SubSectionView implements UserListener {
         }
 
         @Override
-        public void editItems(Vector results) {
+        public void editItems(Object[] results) {
         }
 
         @Override
-        public void deleteItems(List<Vector> results) {
+        public void deleteItems(List<Object[]> results) {
             int nameIndex = 0;
             
             int result;
             
             if (results.size() == 1) {
-                String name = (String) results.get(0).get(nameIndex);
+                String name = (String) results.get(0)[nameIndex];
                 result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
                              "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                              "Confirm", JOptionPane.YES_NO_OPTION);
@@ -71,8 +72,8 @@ public class UserManagementPage extends SubSectionView implements UserListener {
             }
             
             if (result == JOptionPane.YES_OPTION) {
-                for (Vector v : results) {
-                    String name = (String) v.get(nameIndex);
+                for (Object[] v : results) {
+                    String name = (String) v[nameIndex];
                     UserController.getInstance().removeUser(name);
                 }
                 
@@ -111,8 +112,8 @@ public class UserManagementPage extends SubSectionView implements UserListener {
     }
         
     @Override
-    public void setSelectedItem(Vector item) {
-        name = (String) item.get(0);
+    public void setSelectedItem(Object[] item) {
+        name = (String) item[0];
         setTitle(name);
         
         details.removeAll();
@@ -140,7 +141,7 @@ public class UserManagementPage extends SubSectionView implements UserListener {
     }
     
     @Override
-    public void setMultipleSelections(List<Vector> items){
+    public void setMultipleSelections(List<Object[]> items){
         setTitle("Multiple users (" + items.size() + ")");
         details.removeAll();
         details.updateUI();
@@ -156,13 +157,13 @@ public class UserManagementPage extends SubSectionView implements UserListener {
         public UserListModel() {
         }
 
-        public List<Vector> getList(int limit) throws Exception {
+        public List<Object[]> getList(int limit) throws Exception {
             List<String> projects = UserController.getInstance().getUserNames();
-            List<Vector> projectVector = new ArrayList<Vector>();
+            List<Object[]> projectVector = new ArrayList<Object[]>();
             for (String p : projects) {
-                Vector v = new Vector();
-                v.add(p);
-                projectVector.add(v);
+                Object[] oarr = new Object[1];
+                oarr[0] = p;
+                projectVector.add(oarr);
             }
             return projectVector;
         }
@@ -240,6 +241,7 @@ public class UserManagementPage extends SubSectionView implements UserListener {
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
     
     

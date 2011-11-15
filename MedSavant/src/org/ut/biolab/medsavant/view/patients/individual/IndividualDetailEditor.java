@@ -36,7 +36,7 @@ class IndividualDetailEditor extends DetailedListEditor {
         new AddPatientsForm();
     }
 
-    public void deleteItems(List<Vector> items) {
+    public void deleteItems(List<Object[]> items) {
 
         int keyIndex = 0;
         int nameIndex = 3;
@@ -44,7 +44,7 @@ class IndividualDetailEditor extends DetailedListEditor {
         int result;
 
         if (items.size() == 1) {
-            String name = (String) items.get(0).get(nameIndex);
+            String name = (String) items.get(0)[nameIndex];
             result = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
                     "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                     "Confirm", JOptionPane.YES_NO_OPTION);
@@ -57,8 +57,8 @@ class IndividualDetailEditor extends DetailedListEditor {
         if (result == JOptionPane.YES_OPTION) {
             int[] patients = new int[items.size()];
             int index = 0;
-            for (Vector v : items) {
-                int id = (Integer) v.get(keyIndex);
+            for (Object[] v : items) {
+                int id = (Integer) v[keyIndex];
                 System.out.println("Removing individual " + id);
                 patients[index++] = id;
             }
@@ -98,6 +98,6 @@ class IndividualDetailEditor extends DetailedListEditor {
     }
 
     @Override
-    public void editItems(Vector results) {
+    public void editItems(Object[] results) {
     }
 }

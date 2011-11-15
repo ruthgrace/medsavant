@@ -454,9 +454,9 @@ public class LoginForm extends javax.swing.JPanel implements LoginListener {
         SettingsController.getInstance().setValue(SettingsController.KEY_DB_PORT,this.field_port.getText());
         SettingsController.getInstance().setValue(SettingsController.KEY_DB_HOST,this.field_hostname.getText());
         
-        ConnectionController.setDbname(SettingsController.getInstance().getValue(SettingsController.KEY_DB_NAME));
+        ConnectionController.setDBName(SettingsController.getInstance().getValue(SettingsController.KEY_DB_NAME));
         ConnectionController.setPort(Integer.parseInt(SettingsController.getInstance().getValue(SettingsController.KEY_DB_PORT)));
-        ConnectionController.setDbhost(SettingsController.getInstance().getValue(SettingsController.KEY_DB_HOST));
+        ConnectionController.setHost(SettingsController.getInstance().getValue(SettingsController.KEY_DB_HOST));
         
         this.label_status.setText("signing in...");
         this.label_status.setFont(new Font("Tahoma", Font.PLAIN, 14));

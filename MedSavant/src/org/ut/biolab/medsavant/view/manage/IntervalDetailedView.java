@@ -43,11 +43,11 @@ public class IntervalDetailedView extends DetailedView {
     private RegionSet regionSet;
 
     @Override
-    public void setMultipleSelections(List<Vector> selectedRows) {
+    public void setMultipleSelections(List<Object[]> selectedRows) {
         
         //TODO: actually store them for possible deletion
         
-        setTitle("Multiple cohorts (" + selectedRows + ")");
+        setTitle("Multiple lists (" + selectedRows.size() + ")");
         details.removeAll();
         details.updateUI();
     }
@@ -164,9 +164,9 @@ public class IntervalDetailedView extends DetailedView {
     }
     
     @Override
-    public void setSelectedItem(Vector item) {
+    public void setSelectedItem(Object[] item) {
         
-        RegionSet regionList = (RegionSet) item.get(0);
+        RegionSet regionList = (RegionSet) item[0];
         setTitle(regionList.getName());
         this.regionSet = regionList;
         

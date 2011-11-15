@@ -1,10 +1,28 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
+
 package org.ut.biolab.medsavant.view.genetics.charts;
 
-import org.ut.biolab.medsavant.view.genetics.charts.ChartMapGenerator;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.Comparator;
+import java.util.Map;
+import javax.swing.JPanel;
+
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.ChartType;
 import com.jidesoft.chart.axis.Axis;
@@ -20,18 +38,11 @@ import com.jidesoft.chart.render.RaisedPieSegmentRenderer;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.range.CategoryRange;
 import com.jidesoft.range.NumericRange;
-import com.jidesoft.utils.SwingWorker;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JPanel;
+
 import org.ut.biolab.medsavant.controller.FilterController;
 import org.ut.biolab.medsavant.model.event.FiltersChangedListener;
+import org.ut.biolab.medsavant.util.MedSavantWorker;
+import org.ut.biolab.medsavant.view.ViewController;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 import org.ut.biolab.medsavant.view.util.WaitPanel;
 
@@ -39,21 +50,32 @@ import org.ut.biolab.medsavant.view.util.WaitPanel;
  *
  * @author mfiume
  */
-public class SummaryChart extends JPanel implements FiltersChangedListener {
-
+public class SummaryChart extends JPanel {
     private boolean isLogscale = false;
     private boolean isPie = false;
     private boolean isSorted = false;
     private static final int DEFAULT_NUM_QUANTITATIVE_CATEGORIES = 15;
-    //private String currentChart;
-    private ChartMapSW cmsw;
+    private ChartMapWorker mapWorker;
     private ChartMapGenerator mapGenerator;
     private boolean isSortedKaryotypically;
+    private String pageName;
 
-    public SummaryChart() {
-        this.setLayout(new BorderLayout());
-        //updateDataAndDrawChart();
-        FilterController.addFilterListener(this);
+    private final Object updateLock = new Object();
+    private boolean updateRequired = false;
+    
+    public SummaryChart(final String pageName) {
+        this.pageName = pageName;
+        setLayout(new BorderLayout());
+        FilterController.addFilterListener(new FiltersChangedListener() {
+            public void filtersChanged() {
+                synchronized (updateLock){
+                    updateRequired = true;
+                }
+                if(ViewController.getInstance().getCurrentSectionView() != null && ViewController.getInstance().getCurrentSectionView().getName().equals(pageName)){
+                    updateIfRequired();
+                }
+            }
+        });
     }
 
     public void setIsLogscale(boolean isLogscale) {
@@ -91,24 +113,25 @@ public class SummaryChart extends JPanel implements FiltersChangedListener {
         this.mapGenerator = cmg;
         updateDataAndDrawChart();
     }
+    
+    public void updateIfRequired() {
+        synchronized (updateLock){
+            if(updateRequired){
+                updateRequired = false;     
+                updateDataAndDrawChart();
+            }
+        }
+    }
 
     private void updateDataAndDrawChart() {
+        
+        System.out.println("update");
 
         this.removeAll();
         this.add(new WaitPanel("Getting chart data"), BorderLayout.CENTER);
         this.updateUI();
 
-        // kill existing thread, if any
-        if (cmsw != null && !cmsw.isDone()) {
-            try {
-                cmsw.cancel(true);
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-            }
-        }
-
-        cmsw = new ChartMapSW();
-        cmsw.execute();
+        new ChartMapWorker().execute();
     }
 
     private synchronized void drawChart(ChartFrequencyMap chartMap) {
@@ -198,43 +221,43 @@ public class SummaryChart extends JPanel implements FiltersChangedListener {
             chart.setChartType(ChartType.PIE);
         }
 
-        this.removeAll();
-        //this.add(bar, BorderLayout.NORTH);
         this.add(chart, BorderLayout.CENTER);
-        //this.add(bottombar, BorderLayout.SOUTH);
     }
 
     void setIsSortedKaryotypically(boolean b) {
         this.isSortedKaryotypically = b;
     }
 
-    public class ChartMapSW extends SwingWorker {
+    public class ChartMapWorker extends MedSavantWorker<ChartFrequencyMap> {
+
+        @SuppressWarnings("LeakingThisInConstructor")
+        ChartMapWorker() {
+            super(pageName);
+            if (mapWorker != null) {
+                mapWorker.cancel(true);
+            }
+            mapWorker = this;
+        }
 
         @Override
-        protected Object doInBackground() throws Exception {
-            try {
-                if (mapGenerator == null) { return null; }
-                return mapGenerator.generateChartMap();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+        protected ChartFrequencyMap doInBackground() throws Exception {
+            if (mapGenerator == null) { return null; }
+            if(this.isThreadCancelled()) return null;
+            return mapGenerator.generateChartMap();
+        }
+
+        public void showSuccess(ChartFrequencyMap result) {
+            if (result != null) {
+                drawChart(result);
             }
         }
 
-        protected void done() {
-            try {
-                ChartFrequencyMap chartMap = (ChartFrequencyMap) get();
-                if (chartMap == null) { return; }
-                drawChart(chartMap);
-            } catch (Exception ex) {
-                //ex.printStackTrace();
-                //Logger.getLogger(SummaryChart.class.getName()).log(Level.SEVERE, null, ex);
+        public void showProgress(double prog) {
+            if (prog == 1.0) {
+                mapWorker = null;
+                removeAll();        // Clear away the WaitPanel.
             }
         }
-    }
-
-    public void filtersChanged() {
-        updateDataAndDrawChart();
     }
 
     static class ValueComparator implements Comparator {

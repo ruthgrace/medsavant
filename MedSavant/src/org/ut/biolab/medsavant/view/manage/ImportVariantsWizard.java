@@ -183,7 +183,7 @@ public class ImportVariantsWizard extends WizardDialog {
         chooseFileButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                variantFiles = DialogUtils.chooseFilesForOpen(MainFrame.getInstance(), "Import Variants", new ExtensionFileFilter(new String[]{"vcf", "vcf.gz"}), null);
+                variantFiles = DialogUtils.chooseFilesForOpen("Import Variants", new ExtensionFileFilter(new String[]{"vcf", "vcf.gz"}), null);
                 String path = getPathString(variantFiles);
                 outputFileField.setText(path);
                 if (variantFiles.length > 0) {

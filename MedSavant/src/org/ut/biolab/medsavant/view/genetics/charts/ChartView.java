@@ -22,7 +22,7 @@ import org.ut.biolab.medsavant.db.format.CustomField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.DefaultVariantTableSchema;
-import org.ut.biolab.medsavant.db.util.DBUtil.FieldType;
+import org.ut.biolab.medsavant.db.model.structure.TableSchema.ColumnType;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
@@ -37,8 +37,10 @@ public class ChartView extends JPanel {
     private JCheckBox bPie;
     private JCheckBox bSort;
     private JCheckBox bLog;
+    private String pageName;
 
-    public ChartView() {
+    public ChartView(String pageName) {
+        this.pageName = pageName;
         mapGenerators = new HashMap<String, ChartMapGenerator>();
         initGUI();
         this.chartChooser.setSelectedItem(MedSavantDatabase.DefaultvariantTableSchema.getFieldAlias(DefaultVariantTableSchema.COLUMNNAME_OF_CHROM));
@@ -106,7 +108,7 @@ public class ChartView extends JPanel {
         JPanel h1 = new JPanel();
         h1.setLayout(new GridLayout(1, 1));
 
-        sc = new SummaryChart();
+        sc = new SummaryChart(pageName);
 
         h1.add(sc, BorderLayout.CENTER);
 
@@ -114,7 +116,7 @@ public class ChartView extends JPanel {
     }
 
     private void addCMG(ChartMapGenerator cmg) {
-        sc.setChartMapGenerator(cmg);
+        //sc.setChartMapGenerator(cmg);
         chartChooser.addItem(cmg.getName());
         mapGenerators.put(cmg.getName(), cmg);
     }
@@ -124,13 +126,23 @@ public class ChartView extends JPanel {
         AnnotationFormat[] afs = ProjectController.getInstance().getCurrentAnnotationFormats();
         for(AnnotationFormat af : afs){
             for(CustomField field : af.getCustomFields()){
-                FieldType type = field.getFieldType();
+                ColumnType type = field.getColumnType();
                 if(field.isFilterable() &&
-                        (type.equals(FieldType.VARCHAR) || type.equals(FieldType.BOOLEAN) || type.equals(FieldType.DECIMAL) || type.equals(FieldType.FLOAT) || type.equals(FieldType.INT))){
-                    addCMG(new VariantFieldChartMapGenerator(field));
+                        (type.equals(ColumnType.VARCHAR) || type.equals(ColumnType.BOOLEAN) || type.equals(ColumnType.DECIMAL) || type.equals(ColumnType.FLOAT) || type.equals(ColumnType.INTEGER))){
+                    addCMG(VariantFieldChartMapGenerator.createVariantChart(field));
                 }
             }
         }
+        for(CustomField field : ProjectController.getInstance().getCurrentPatientFormat()){
+            ColumnType type = field.getColumnType();
+            if(field.isFilterable() &&
+                        (type.equals(ColumnType.VARCHAR) || type.equals(ColumnType.BOOLEAN) || type.equals(ColumnType.DECIMAL) || type.equals(ColumnType.FLOAT) || type.equals(ColumnType.INTEGER))){
+                addCMG(VariantFieldChartMapGenerator.createPatientChart(field));
+            }
+        }
+        
+        String alias = (String) chartChooser.getSelectedItem();
+        sc.setChartMapGenerator(mapGenerators.get(alias));
         
     }
 
@@ -196,6 +208,12 @@ public class ChartView extends JPanel {
         if (bLog.isEnabled()) {
             sc.setIsLogscale(!sc.isLogscale());
             bLog.setSelected(sc.isLogscale());
+        }
+    }
+    
+    public void updateIfRequired(){
+        if(sc != null){
+            sc.updateIfRequired();
         }
     }
 }

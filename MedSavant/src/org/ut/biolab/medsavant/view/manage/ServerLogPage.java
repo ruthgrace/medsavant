@@ -1,9 +1,22 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
+
 package org.ut.biolab.medsavant.view.manage;
 
+import com.jidesoft.grid.SortableTableModel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -16,17 +29,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTable;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
+import java.util.logging.Logger;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import org.ut.biolab.medsavant.controller.ThreadController;
+
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase;
 import org.ut.biolab.medsavant.db.api.MedSavantDatabase.ServerLogTableSchema;
 import org.ut.biolab.medsavant.db.model.structure.TableSchema;
@@ -34,8 +43,8 @@ import org.ut.biolab.medsavant.db.util.DBUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.AnnotationLogQueryUtil.Status;
 import org.ut.biolab.medsavant.db.util.query.LogQueryUtil;
-import org.ut.biolab.medsavant.log.ClientLogger;
 import org.ut.biolab.medsavant.view.component.SearchableTablePanel;
+import org.ut.biolab.medsavant.view.component.SearchableTablePanel.DataRetriever;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
@@ -68,170 +77,6 @@ public class ServerLogPage extends SubSectionView {
     private static final List<Class> annotationsColumnClasses = Arrays.asList(new Class[]{String.class, String.class, String.class, String.class, String.class, JButton.class});
     private String currentCard;
     private WaitPanel waitPanel;
-    private SwingWorker clientCardUpdater;
-    private SwingWorker serverCardUpdater;
-    private SwingWorker annotationCardUpdater;
-
-    private static int ROW_LIMIT = 100;
-    
-    private class ClientCardUpdater extends SwingWorker {
-
-        @Override
-        protected Object doInBackground() throws Exception {
-            try {
-                ResultSet rs = LogQueryUtil.getClientLog(ROW_LIMIT);
-                Vector v = new Vector();
-                while (rs.next()) {
-                    TableSchema table = MedSavantDatabase.ServerlogTableSchema;
-                    Vector r = new Vector();
-                    r.add(rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_USER)));
-                    r.add(rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_EVENT)));
-                    r.add(rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION)));
-                    r.add(rs.getTimestamp(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP)));
-                    v.add(r);
-                }
-                if (Thread.currentThread().isInterrupted()) {
-                    return null;
-                }
-                return v;
-            } catch (SQLException ex) {
-                ClientLogger.log(ServerLogPage.class, ex.getLocalizedMessage(), Level.SEVERE);
-                return null;
-            }
-        }
-
-        @Override
-        protected void done() {
-            try {
-                Vector v = (Vector) get();
-                if (v == null) {
-                    return;
-                }
-                clientTable.updateData(v);
-                changeToCard(CARDNAME_CLIENT);
-            } catch (java.util.concurrent.CancellationException ex0) {
-            } catch (Exception ex) {
-                waitPanel.setComplete();
-                waitPanel.setStatus("Problem getting log");
-                showWaitPanel();
-            }
-        }
-    };
-
-    private class ServerCardUpdater extends SwingWorker {
-
-        @Override
-        protected Object doInBackground() throws Exception {
-            try {
-                ResultSet rs = LogQueryUtil.getServerLog(ROW_LIMIT);
-                Vector v = new Vector();
-                while (rs.next()) {
-                    TableSchema table = MedSavantDatabase.ServerlogTableSchema;
-                    Vector r = new Vector();
-                    r.add(rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_EVENT)));
-                    r.add(rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION)));
-                    r.add(rs.getTimestamp(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP)));
-                    v.add(r);
-                }
-                if (Thread.currentThread().isInterrupted()) {
-                    return null;
-                }
-                return v;
-            } catch (SQLException ex) {
-                ClientLogger.log(ServerLogPage.class, ex.getLocalizedMessage(), Level.SEVERE);
-                return null;
-            }
-        }
-
-        @Override
-        protected void done() {
-            try {
-                Vector v = (Vector) get();
-                if (v == null) {
-                    return;
-                }
-                serverTable.updateData(v);
-                changeToCard(CARDNAME_SERVER);
-            } catch (java.util.concurrent.CancellationException ex0) {
-            } catch (Exception ex) {
-                waitPanel.setComplete();
-                waitPanel.setStatus("Problem getting log");
-                showWaitPanel();
-            }
-        }
-    };
-
-    private class AnnotationCardUpdater extends SwingWorker {
-
-        @Override
-        protected Object doInBackground() throws Exception {
-            try {
-                ResultSet rs = LogQueryUtil.getAnnotationLog(ROW_LIMIT);
-                Vector v = new Vector();
-                while (rs.next()) {
-
-                    Status status = AnnotationLogQueryUtil.intToStatus(rs.getInt(4));
-
-                    final int updateId = rs.getInt("update_id");
-                    JButton button = new JButton("Retry");
-                    button.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent ae) {
-                            try {
-                                AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, Status.PENDING, DBUtil.getCurrentTimestamp());
-                            } catch (SQLException ex) {
-                                ClientLogger.log(ServerLogPage.class, ex.getLocalizedMessage(), Level.SEVERE);
-                            }
-                            refreshCurrentCard();
-                        }
-                    });
-
-                    Vector r = new Vector();
-                    r.add(rs.getString(1));
-                    r.add(rs.getString(2));
-                    r.add(AnnotationLogQueryUtil.intToAction(rs.getInt(3)));
-                    r.add(status);
-
-                    try {
-                        r.add(rs.getTimestamp(5));
-                    } catch (Exception e) {
-                        r.add(null);
-                    }
-
-                    if (status != Status.ERROR) {
-                        r.add(new JPanel());
-                    } else {
-                        r.add(button);
-                    }
-
-                    v.add(r);
-                }
-                if (Thread.currentThread().isInterrupted()) {
-                    return null;
-                }
-                return v;
-            } catch (SQLException ex) {
-                ClientLogger.log(ServerLogPage.class, ex.getLocalizedMessage(), Level.SEVERE);
-                return null;
-            }
-        }
-
-        @Override
-        protected void done() {
-            try {
-                Vector v = (Vector) get();
-                if (v == null) {
-                    return;
-                }
-                annotationTable.updateData(v);
-                changeToCard(CARDNAME_ANNOTATION);
-            } catch (java.util.concurrent.CancellationException ex0) {
-            } catch (Exception ex) {
-                waitPanel.setComplete();
-                waitPanel.setStatus("Problem getting log");
-                showWaitPanel();
-            }
-        }
-    };
 
     public ServerLogPage(SectionView parent) {
         super(parent);
@@ -355,12 +200,31 @@ public class ServerLogPage extends SubSectionView {
         CardLayout cl = (CardLayout) (listPanel.getLayout());
         cl.show(listPanel, CARDNAME_WAIT);
     }
+    
+    private synchronized void hideWaitPanel() {
+        CardLayout cl = (CardLayout) (listPanel.getLayout());
+        cl.show(listPanel, currentCard);
+    }
+    
     private int limit = 1000;
 
     private JPanel getClientCard() {
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
-        clientTable = new SearchableTablePanel(new Vector(), clientColumnNames, clientColumnClasses, new ArrayList<Integer>(), limit);
+        DataRetriever retriever = new DataRetriever(){
+            public List<Object[]> retrieve(int start, int limit) {
+                return retrieveClientData(start, limit);
+            }
+            public int getTotalNum() {
+                try {
+                    return LogQueryUtil.getClientLogSize();
+                } catch (SQLException ex) {
+                    return 0;
+                }
+            }
+            public void retrievalComplete() {}
+        };
+        clientTable = new SearchableTablePanel(getName(), clientColumnNames, clientColumnClasses, new ArrayList<Integer>(), limit, retriever);
         p.add(clientTable, BorderLayout.CENTER);
         return p;
     }
@@ -368,7 +232,20 @@ public class ServerLogPage extends SubSectionView {
     private JPanel getServerCard() {
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
-        serverTable = new SearchableTablePanel(new Vector(), serverColumnNames, serverColumnClasses, new ArrayList<Integer>(), limit);
+        DataRetriever retriever = new DataRetriever(){
+            public List<Object[]> retrieve(int start, int limit) {
+                return retrieveServerData(start, limit);
+            }
+            public int getTotalNum() {
+                try {
+                    return LogQueryUtil.getServerLogSize();
+                } catch (SQLException ex) {
+                    return 0;
+                }
+            }    
+            public void retrievalComplete() {}
+        };
+        serverTable = new SearchableTablePanel(getName(), serverColumnNames, serverColumnClasses, new ArrayList<Integer>(), limit, retriever);
         p.add(serverTable, BorderLayout.CENTER);
         return p;
     }
@@ -376,7 +253,20 @@ public class ServerLogPage extends SubSectionView {
     private JPanel getAnnotationCard() {
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
-        annotationTable = new SearchableTablePanel(new Vector(), annotationsColumnNames, annotationsColumnClasses, new ArrayList<Integer>(), limit);
+        DataRetriever retriever = new DataRetriever(){
+            public List<Object[]> retrieve(int start, int limit) {
+                return retrieveAnnotationData(start, limit);
+            }
+            public int getTotalNum() {
+                try {
+                    return LogQueryUtil.getAnnotationLogSize();
+                } catch (SQLException ex) {
+                    return 0;
+                }
+            }      
+            public void retrievalComplete() {}
+        };
+        annotationTable = new SearchableTablePanel(getName(), annotationsColumnNames, annotationsColumnClasses, new ArrayList<Integer>(), limit, retriever);
         annotationTable.getTable().getColumn("Restart").setCellRenderer(new JTableButtonRenderer());
         annotationTable.getTable().addMouseListener(new JTableButtonMouseListener(annotationTable.getTable()));
         p.add(annotationTable, BorderLayout.CENTER);
@@ -384,39 +274,15 @@ public class ServerLogPage extends SubSectionView {
     }
 
     private void refreshClientCard() {
-        if (clientCardUpdater != null) {
-            clientCardUpdater.cancel(true);
-        }
-        clientCardUpdater = new ClientCardUpdater();
-
-        waitPanel.setIndeterminate();
-        waitPanel.setStatus("");
-        showWaitPanel();
-        this.clientCardUpdater.execute();
+        clientTable.forceRefreshData();      
     }
 
     private void refreshServerCard() {
-        if (serverCardUpdater != null) {
-            serverCardUpdater.cancel(true);
-        }
-        serverCardUpdater = new ServerCardUpdater();
-
-        waitPanel.setIndeterminate();
-        waitPanel.setStatus("");
-        showWaitPanel();
-        this.serverCardUpdater.execute();
+        serverTable.forceRefreshData();        
     }
 
     private void refreshAnnotationCard() {
-        if (annotationCardUpdater != null) {
-            annotationCardUpdater.cancel(true);
-        }
-        annotationCardUpdater = new AnnotationCardUpdater();
-
-        waitPanel.setIndeterminate();
-        waitPanel.setStatus("");
-        showWaitPanel();
-        this.annotationCardUpdater.execute();
+        annotationTable.forceRefreshData();
     }
 
     @Override
@@ -430,11 +296,126 @@ public class ServerLogPage extends SubSectionView {
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
 
     private WaitPanel getWaitPanel() {
         waitPanel = new WaitPanel("Getting log...");
         return waitPanel;
+    }
+    
+    
+    private List<Object[]> retrieveAnnotationData(int start, int limit){
+        if(!currentCard.equals(CARDNAME_ANNOTATION)) return new ArrayList<Object[]>();
+        List<Object[]> v = null;
+        waitPanel.setIndeterminate();
+        waitPanel.setStatus("");
+        showWaitPanel();
+        try {
+            ResultSet rs = LogQueryUtil.getAnnotationLog(start, limit);
+            v = new ArrayList<Object[]>();
+            while (rs.next()) {
+
+                Status status = AnnotationLogQueryUtil.intToStatus(rs.getInt(4));
+
+                final int updateId = rs.getInt("update_id");
+                JButton button = new JButton("Retry");
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        try {
+                            AnnotationLogQueryUtil.setAnnotationLogStatus(updateId, Status.PENDING, DBUtil.getCurrentTimestamp());
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ServerLogPage.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        refreshCurrentCard();
+                    }
+                });
+
+                Object[] r = new Object[6];
+                r[0] = rs.getString(1);
+                r[1] = rs.getString(2);
+                r[2] = AnnotationLogQueryUtil.intToAction(rs.getInt(3));
+                r[3] = status;
+
+                try {
+                    r[4] = rs.getTimestamp(5);
+                } catch (Exception e) {
+                }
+
+                if (status != Status.ERROR) {
+                    r[5] = new JPanel();
+                } else {
+                    r[5] = button;
+                }
+
+                v.add(r);
+            }
+        } catch (Exception e){
+            waitPanel.setComplete();
+            waitPanel.setStatus("Problem getting log");
+            showWaitPanel();
+            Logger.getLogger(ServerLogPage.class.getName()).log(Level.SEVERE, null, e);
+        }
+        hideWaitPanel();
+        return v;
+    }
+    
+    private List<Object[]> retrieveServerData(int start, int limit){
+        if(!currentCard.equals(CARDNAME_SERVER)) return new ArrayList<Object[]>();
+        List<Object[]> v = null;
+        waitPanel.setIndeterminate();
+        waitPanel.setStatus("");
+        showWaitPanel();
+        try {
+            ResultSet rs = LogQueryUtil.getServerLog(start, limit);
+            v = new ArrayList<Object[]>();
+            while (rs.next()) {
+                TableSchema table = MedSavantDatabase.ServerlogTableSchema;
+                v.add(new Object[] {
+                    rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_EVENT)),
+                    rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION)),
+                    rs.getTimestamp(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP))
+                });
+            }
+        } catch (Exception e){
+            waitPanel.setComplete();
+            waitPanel.setStatus("Problem getting log");
+            showWaitPanel();
+            Logger.getLogger(ServerLogPage.class.getName()).log(Level.SEVERE, null, e);
+        }
+        hideWaitPanel();
+        return v;
+    }
+    
+    private List<Object[]> retrieveClientData(int start, int limit){
+        if(!currentCard.equals(CARDNAME_CLIENT)) return new ArrayList<Object[]>();
+        List<Object[]> v = null;
+        waitPanel.setIndeterminate();
+        waitPanel.setStatus("");
+        showWaitPanel();
+        try {
+            ResultSet rs = LogQueryUtil.getClientLog(start, limit);
+            v = new ArrayList<Object[]>();
+            while (rs.next()) {
+                TableSchema table = MedSavantDatabase.ServerlogTableSchema;
+                v.add(new Object[] {
+                    rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_USER)),
+                    rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_EVENT)),
+                    rs.getString(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_DESCRIPTION)),
+                    rs.getTimestamp(table.getFieldAlias(ServerLogTableSchema.COLUMNNAME_OF_TIMESTAMP))
+                });
+            }
+            if (Thread.currentThread().isInterrupted()) {
+                return null;
+            }           
+        } catch (Exception e){
+            waitPanel.setComplete();
+            waitPanel.setStatus("Problem getting log");
+            showWaitPanel();
+            Logger.getLogger(ServerLogPage.class.getName()).log(Level.SEVERE, null, e);
+        }
+        hideWaitPanel();
+        return v;
     }
 
     public class JTableButtonRenderer implements TableCellRenderer {

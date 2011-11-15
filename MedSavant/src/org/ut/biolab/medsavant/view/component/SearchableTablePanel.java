@@ -1,16 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Copyright 2011 University of Toronto
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
+
 package org.ut.biolab.medsavant.view.component;
 
-import com.jidesoft.grid.AutoFilterTableHeader;
-import com.jidesoft.grid.AutoResizePopupMenuCustomizer;
-import com.jidesoft.grid.FilterableTableModel;
-import com.jidesoft.grid.QuickTableFilterField;
-import com.jidesoft.grid.SortableTable;
-import com.jidesoft.grid.TableColumnChooserPopupMenuCustomizer;
-import com.jidesoft.grid.TableHeaderPopupMenuInstaller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,21 +25,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
+import com.jidesoft.grid.*;
+import org.ut.biolab.medsavant.util.MedSavantWorker;
 import org.ut.biolab.medsavant.view.images.IconFactory;
-import org.ut.biolab.medsavant.view.util.ViewUtil;
 
 /**
  *
@@ -42,6 +40,7 @@ import org.ut.biolab.medsavant.view.util.ViewUtil;
  */
 public class SearchableTablePanel extends JPanel {
 
+    private String pageName;
     private QuickTableFilterField filterField;
     private GenericTableModel model;
     private SortableTable table;
@@ -57,64 +56,107 @@ public class SearchableTablePanel extends JPanel {
     private JTextField rowsRetrievedBox;
     private int DEFAULT_ROWS_RETRIEVED = 1000;
     private static final int MAX_ROWS_RETRIEVED = 100000;
-    private Vector data;
+    private List<Object[]> data;
     private List<String> columnNames;
     private List<Class> columnClasses;
-    private final JLabel pageLabel;
+    private final JLabel pageLabel1;
+    private final JLabel pageLabel2;
+    private final JTextField pageText;
     private final JButton gotoFirst;
     private final JButton gotoPrevious;
     private final JButton gotoNext;
     private final JButton gotoLast;
     private ColumnChooser columnChooser;
     private List<Integer> hiddenColumns;
+    private DataRetriever retriever;
+    private int totalNumRows;
 
     public SortableTable getTable() {
         return table;
     }
-
-    public synchronized void updateData(Vector data) {
-        this.data = data;
-        this.setPageNumber(1); // updates the view
-        model.fireTableDataChanged();
-        table.repaint();
+    
+    private synchronized void updateView(boolean newData){
+        GetDataSwingWorker x = new GetDataSwingWorker(pageName, newData);
+        x.execute();
     }
+    
+    private class GetDataSwingWorker extends MedSavantWorker {
+        
+        boolean update;
+        
+        protected GetDataSwingWorker(String pageName, boolean newData){
+            super(pageName);
+            this.update = newData;
+        }
+        
+        @Override
+        protected List<Object[]> doInBackground() {
+            try {
+                if(this.isThreadCancelled()) return null;
+                if(update){
+                    setTotalRowCount(retriever.getTotalNum());
+                    pageNum = 1;
+                }
+                if(this.isThreadCancelled()) return null;
+                return retriever.retrieve((pageNum-1) * getRowsPerPage(), getRowsPerPage());
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
+        /*@Override
+        protected void finish(Object result) {  
+            List<Object[]> pageData = (List<Object[]>)result;
+            applyData(pageData);
+        }*/
 
-    public void updateView() {
-
-        if (data == null) {
-            return;
+        @Override
+        protected void showProgress(double fraction) {
+            //do nothing
         }
 
-        List<List> pageData = getDataOnPage(this.getPageNumber(), data);
-
+        @Override
+        protected void showSuccess(Object result) {
+            List<Object[]> pageData = (List<Object[]>)result;
+            applyData(pageData);
+            retriever.retrievalComplete();
+        }
+    }
+         
+    private void applyData(List<Object[]> pageData){
+        
         boolean first = false;
         if (model == null) {
             model = new GenericTableModel(pageData, columnNames, columnClasses);
             first = true;
         } else {
-            model.getDataVector().removeAllElements();
-            model.getDataVector().addAll(pageData);
+            // We can't call setDataVector directly because that blows away any custom table renderers we've set.
+            java.util.Vector v = model.getDataVector();
+            v.removeAllElements();
+            for (Object[] r: pageData) {
+                v.add(new java.util.Vector(Arrays.asList(r)));
+            }
         }
 
-        this.gotoFirst.setEnabled(true);
-        this.gotoPrevious.setEnabled(true);
-        this.gotoNext.setEnabled(true);
-        this.gotoLast.setEnabled(true);
+        gotoFirst.setEnabled(true);
+        gotoPrevious.setEnabled(true);
+        gotoNext.setEnabled(true);
+        gotoLast.setEnabled(true);
 
         if (pageNum == 1 || pageNum == 0) {
-            this.gotoFirst.setEnabled(false);
-            this.gotoPrevious.setEnabled(false);
+            gotoFirst.setEnabled(false);
+            gotoPrevious.setEnabled(false);
         }
         if (pageNum == getTotalNumPages() || pageNum == 0) {
-            this.gotoNext.setEnabled(false);
-            this.gotoLast.setEnabled(false);
+            gotoNext.setEnabled(false);
+            gotoLast.setEnabled(false);
         }
 
-
-        pageLabel.setText("Page " + this.getPageNumber() + " of " + this.getTotalNumPages());
-        int start = getTotalNumPages() == 0 ? 0 : (this.getPageNumber() - 1) * this.getRowsPerPage() + 1;
-        int end = getTotalNumPages() == 0 ? 0 : Math.min(start + this.getRowsPerPage() - 1, this.getTotalRowCount());
-        amountLabel.setText("Showing " + start + " - " + end + " of " + data.size() + " records");
+        pageText.setText(Integer.toString(getPageNumber()));
+        pageLabel2.setText(" of " + getTotalNumPages());
+        int start = getTotalNumPages() == 0 ? 0 : (getPageNumber() - 1) * getRowsPerPage() + 1;
+        int end = getTotalNumPages() == 0 ? 0 : Math.min(start + getRowsPerPage() - 1, getTotalRowCount());
+        amountLabel.setText("Showing " + start + " - " + end + " of " + getTotalRowCount() + " records");
 
         if (first) {
             int[] columns = new int[columnNames.size()];
@@ -124,8 +166,6 @@ public class SearchableTablePanel extends JPanel {
             filterField.setTableModel(model);
             filterField.setColumnIndices(columns);           
             filterField.setObjectConverterManagerEnabled(true);
-            //filterField.setSearchingColumnIndices(columns);
-            //filterField.setTable(table);
 
             table.setModel(new FilterableTableModel(filterField.getDisplayTableModel()));
             columnChooser.hideColumns(table, hiddenColumns);
@@ -142,26 +182,31 @@ public class SearchableTablePanel extends JPanel {
         } else {
             model.fireTableDataChanged();
         }
-    }
+    }  
+    
 
-    private void setTableModel(Vector data, List<String> columnNames, List<Class> columnClasses) {
-        this.data = data;
+    private void setTableModel(List<Object[]> data, List<String> columnNames, List<Class> columnClasses) {
+        if (data == null) {
+            this.data = new ArrayList<Object[]>();
+        } else {
+            this.data = data;
+        }
         this.columnNames = columnNames;
         this.columnClasses = columnClasses;
-        updateView();
     }
     
-    public SearchableTablePanel(Vector data, List<String> columnNames, List<Class> columnClasses, List<Integer> hiddenColumns, int defaultRowsRetrieved) {
-        this(data, columnNames, columnClasses, hiddenColumns, true, true, ROWSPERPAGE_2, true, true, defaultRowsRetrieved);
+    public SearchableTablePanel(String pageName, List<String> columnNames, List<Class> columnClasses, List<Integer> hiddenColumns, int defaultRowsRetrieved, DataRetriever retriever) {
+        this(pageName, columnNames, columnClasses, hiddenColumns, true, true, ROWSPERPAGE_2, true, true, defaultRowsRetrieved, retriever);
     }
 
-    public SearchableTablePanel(
-        Vector data, List<String> columnNames, List<Class> columnClasses, List<Integer> hiddenColumns,
-        boolean allowSearch, boolean allowSort, int defaultRows, boolean allowPages, boolean allowSelection, int defaultRowsRetrieved) {
+    public SearchableTablePanel(String pageName, List<String> columnNames, List<Class> columnClasses, List<Integer> hiddenColumns,
+        boolean allowSearch, boolean allowSort, int defaultRows, boolean allowPages, boolean allowSelection, int defaultRowsRetrieved, DataRetriever retriever) {
 
+        this.pageName = pageName;
         this.ROWSPERPAGE_X = defaultRows;
         this.DEFAULT_ROWS_RETRIEVED = defaultRowsRetrieved;
 
+        this.retriever = retriever;
         this.hiddenColumns = hiddenColumns;
         table = new SortableTable() {
 
@@ -170,17 +215,14 @@ public class SearchableTablePanel extends JPanel {
                 Component comp = super.prepareRenderer(renderer, Index_row, Index_col);
                 //even index, selected or not selected
 
-                if (isRowSelected(Index_row)
-                    //isCellSelected(Index_row, Index_col)
-                            ) {
+                if (isCellSelected(Index_row, Index_col)) {
                     comp.setBackground(new Color(75, 149, 229));
+
                 } else {
-                    if (Index_row % 2 == 0 && !isRowSelected(Index_row)
-                            //!isCellSelected(Index_row, Index_col)
-                                    ) {
-                        comp.setBackground(ViewUtil.evenRowColor);
+                    if (Index_row % 2 == 0 && !isCellSelected(Index_row, Index_col)) {
+                        comp.setBackground(Color.white);
                     } else {
-                        comp.setBackground(ViewUtil.oddRowColor);//new Color(242, 245, 249));
+                        comp.setBackground(new Color(242, 245, 249));
                     }
                 }
                 return comp;
@@ -191,13 +233,11 @@ public class SearchableTablePanel extends JPanel {
         table.setOptimized(true);
         table.setColumnAutoResizable(true);
         table.setAutoResort(false);
-        //table.setDragEnabled(false);
         table.setRowHeight(20);
         table.setSortable(allowSort);
         table.setSortingEnabled(allowSort);
         table.setFocusable(allowSelection);
         table.setCellSelectionEnabled(allowSelection);
-        //table.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 
         table.setAutoResizeMode(SortableTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
@@ -214,7 +254,6 @@ public class SearchableTablePanel extends JPanel {
         table.setTableHeader(header);
 
         filterField = new QuickTableFilterField(model);
-        //filterField.setColumns(50);
         filterField.setHintText("Type to search");
 
         this.setLayout(new BorderLayout(3, 3));
@@ -227,7 +266,7 @@ public class SearchableTablePanel extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
-        gotoFirst = niceButton();//new JButton();
+        gotoFirst = niceButton();
         gotoPrevious = niceButton();
         gotoNext = niceButton();
         gotoLast = niceButton();
@@ -261,17 +300,38 @@ public class SearchableTablePanel extends JPanel {
                 goToLastPage();
             }
         });
+        
+        pageText = new JTextField();
+        pageText.setColumns(5);
+        pageText.setMaximumSize(new Dimension(50,20));
+        pageText.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_ENTER) {
+                    try {
+                        setPageNumber(Integer.parseInt(pageText.getText()));
+                    } catch (NumberFormatException ex){
+                        setPageNumber(0);
+                    }
+                }
+            }                
+        });
 
         amountLabel = new JLabel();
         bottomPanel.add(amountLabel);
 
-        pageLabel = new JLabel();
+        pageLabel1 = new JLabel("Page ");       
+        pageLabel2 = new JLabel();
 
         bottomPanel.add(Box.createHorizontalGlue());
         bottomPanel.add(gotoFirst);
         bottomPanel.add(gotoPrevious);
         strut(bottomPanel);
-        bottomPanel.add(pageLabel);
+        bottomPanel.add(pageLabel1);
+        bottomPanel.add(pageText);
+        bottomPanel.add(pageLabel2);
         strut(bottomPanel);
         bottomPanel.add(gotoNext);
         bottomPanel.add(gotoLast);
@@ -302,6 +362,11 @@ public class SearchableTablePanel extends JPanel {
 
         rowsPerPageDropdown = new JComboBox(finalList);
         rowsPerPageDropdown.setPrototypeDisplayValue(ROWSPERPAGE_3);
+        if (hasDefaultRowsPerPage) {
+            rowsPerPageDropdown.setSelectedIndex(rowsList.indexOf(ROWSPERPAGE_X));
+        } else {
+            rowsPerPageDropdown.setSelectedIndex(1);
+        }
         rowsPerPageDropdown.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -309,38 +374,12 @@ public class SearchableTablePanel extends JPanel {
                 int rowsPerPage = (Integer) cb.getSelectedItem();
                 setNumRowsPerPage(rowsPerPage);
             }
-        });
-        if (hasDefaultRowsPerPage) {
-            rowsPerPageDropdown.setSelectedIndex(rowsList.indexOf(ROWSPERPAGE_X));
-        } else {
-            rowsPerPageDropdown.setSelectedIndex(1);
-        }
+        });       
         rowsPerPageDropdown.setPreferredSize(new Dimension(100, 25));
         rowsPerPageDropdown.setMaximumSize(new Dimension(100, 25));       
-        bottomPanel.add(rowsPerPageDropdown);
-
-        bottomPanel.add(new JLabel("   Results retrieved: "));
-        rowsRetrievedBox = new JTextField();
-        rowsRetrievedBox.setColumns(5);
-        rowsRetrievedBox.setMaximumSize(new Dimension(50,25));
-        rowsRetrievedBox.setText(String.valueOf(DEFAULT_ROWS_RETRIEVED));
-        bottomPanel.add(rowsRetrievedBox);
+        bottomPanel.add(rowsPerPageDropdown);        
         
-        rowsRetrievedBox.addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {}
-            public void keyPressed(KeyEvent e) {}
-            public void keyReleased(KeyEvent e) {
-                int key = e.getKeyCode();
-                if (key == KeyEvent.VK_ENTER) {
-                    forceRefreshData();
-                }
-            }                
-        });
-        
-        setTableModel(
-                data,
-                Util.listToVector(columnNames),
-                Util.listToVector(columnClasses));
+        setTableModel(data, columnNames, columnClasses);
 
         JPanel tablePanel = new JPanel(new BorderLayout(3, 3));
         JScrollPane jsp = new JScrollPane(table);
@@ -357,13 +396,13 @@ public class SearchableTablePanel extends JPanel {
 
         this.add(tablePanel);
         
-        this.updateData(data);
+        applyData(new ArrayList<Object[]>());
+        //updateView(true);
     }
 
     private void setNumRowsPerPage(int num) {
         this.numRowsPerPage = num;
         this.goToFirstPage();
-        updateView();
     }
 
     private void strut(JPanel p) {
@@ -372,14 +411,14 @@ public class SearchableTablePanel extends JPanel {
 
     private void setPageNumber(int i) {
         if (0 == getTotalNumPages()) {
-            i = 0;
+            i = 1;
         } else if (i > getTotalNumPages()) {
             i = getTotalNumPages();
         } else if (i < 1) {
             i = 1;
         }
         this.pageNum = i;
-        this.updateView();
+        this.updateView(false);
     }
 
     public int getPageNumber() {
@@ -403,37 +442,19 @@ public class SearchableTablePanel extends JPanel {
     }
 
     private int getTotalRowCount() {
-        if (data == null) {
-            return 0;
-        }
-        return data.size();
+        return this.totalNumRows;
     }
-
+    
+    private void setTotalRowCount(int num) {
+        this.totalNumRows = num;
+    }
+  
     private int getTotalNumPages() {
         return (int) Math.ceil(((double) getTotalRowCount()) / getRowsPerPage());
     }
-
+    
     public int getRowsPerPage() {
         return this.numRowsPerPage;
-    }
-
-    private List<List> getDataOnPage(int pageNumber, List<List> data) {
-
-        List<List> result = new ArrayList<List>();
-
-        if (pageNumber == 0) {
-            return result;
-        }
-
-        int start = (pageNumber - 1) * this.getRowsPerPage();
-        int end = start + this.getRowsPerPage();
-
-        if (data != null) {
-            for (int i = start; i < end && i < data.size(); i++) {
-                result.add(data.get(i));
-            }
-        }
-        return result;
     }
 
     private JButton niceButton() {
@@ -464,7 +485,7 @@ public class SearchableTablePanel extends JPanel {
     }
     
     public void forceRefreshData(){
-        //override this in parent
+        updateView(true);
     }
     
     private class ColumnChooser extends TableColumnChooserPopupMenuCustomizer {
@@ -475,4 +496,27 @@ public class SearchableTablePanel extends JPanel {
             }
         }
     }
+      
+    public interface DataRetriever {
+        public abstract List<Object[]> retrieve(int start, int limit);
+        public abstract int getTotalNum();
+        public abstract void retrievalComplete();
+    }
+    
+    public static DataRetriever createPrefetchedDataRetriever(final List data){
+        return new DataRetriever() {
+            public List<Object[]> retrieve(int start, int limit) {
+               return data.subList(start, Math.min(start+limit, data.size()));
+            }
+            public int getTotalNum() {
+                return data.size();
+            }
+            public void retrievalComplete(){};
+        };
+    }
+    
+    public int getActualRowAt(int row){
+        return TableModelWrapperUtils.getActualRowAt(table.getModel(), row);
+    }
+
 }

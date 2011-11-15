@@ -209,7 +209,7 @@ public class SplitScreenView extends JPanel {
 
                 public void valueChanged(ListSelectionEvent e) {
 
-                    List<Vector> selectedItems = selectionGrabber.getSelectedItems();
+                    List<Object[]> selectedItems = selectionGrabber.getSelectedItems();
                     if (selectedItems.size() == 1) {
                         detailedView.setSelectedItem(selectedItems.get(0));
                     } else {
@@ -244,11 +244,11 @@ public class SplitScreenView extends JPanel {
             }
 
             @Override
-            public void editItems(Vector i) {
+            public void editItems(Object[] i) {
             }
 
             @Override
-            public void deleteItems(List<Vector> i) {
+            public void deleteItems(List<Object[]> i) {
             }
         });
     }

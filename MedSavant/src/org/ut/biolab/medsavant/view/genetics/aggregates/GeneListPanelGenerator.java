@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +40,7 @@ import org.ut.biolab.medsavant.view.util.WaitPanel;
  * @author mfiume
  */
 public class GeneListPanelGenerator implements AggregatePanelGenerator {
+    private static final Logger LOG = Logger.getLogger(GeneListPanelGenerator.class.getName());
 
     private GeneListPanel panel;
 
@@ -144,7 +144,7 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
 
             List<String> columnNames = Arrays.asList(new String[]{"Name", "Chromosome", "Start", "End", "Variants", "Patients"});
             List<Class> columnClasses = Arrays.asList(new Class[]{String.class, String.class, Integer.class, Integer.class, Integer.class, Integer.class});
-            stp = new SearchableTablePanel(new Vector(), columnNames, columnClasses, new ArrayList<Integer>(), limit){
+            stp = new SearchableTablePanel(GeneListPanelGenerator.class.getName(), columnNames, columnClasses, new ArrayList<Integer>(), limit, null) {
                 @Override
                 public void forceRefreshData(){
                     limit = stp.getRetrievalLimit();
@@ -197,7 +197,7 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
 
         public synchronized void updateData() {
             
-            Vector data = new Vector();
+            List<Object[]> data = new ArrayList<Object[]>();
 
             int i = 0;
             for (BEDRecord r : regionToVariantCountMap.keySet()) {
@@ -206,9 +206,9 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
                 i++;
             }
             
-            stp.updateData(data);
+            //stp.updateData(data);
             stp.updateUI();
-            stp.updateView();
+            stp.forceRefreshData();
         }
 
         public synchronized void updateBEDRecordVariantValue(BEDRecord br, int value) {
@@ -247,15 +247,8 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
             aggregator.execute();
         }
 
-        private Vector BEDToVector(BEDRecord r, Integer numVariants, Integer numIndividuals) {
-            Vector v = new Vector();
-            v.add(r.getName());
-            v.add(r.getChrom());
-            v.add(r.getStart());
-            v.add(r.getEnd());
-            v.add(numVariants);
-            v.add(numIndividuals);
-            return v;
+        private Object[] BEDToVector(BEDRecord r, int numVariants, int numIndividuals) {
+            return new Object[] { r.getName(), r.getChrom(), r.getStart(), r.getEnd(), numVariants, numIndividuals };
         }
 
         public void filtersChanged() throws SQLException, FatalDatabaseException, NonFatalDatabaseException {
@@ -301,7 +294,7 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
 
         }
 
-        private class GeneAggregator extends SwingWorker {
+        private class GeneAggregator extends SwingWorker<List<BEDRecord>, BEDRecord> {
 
             private final RegionSet geneList;
 
@@ -310,40 +303,35 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
             }
 
             @Override
-            protected Object doInBackground() throws Exception {
-                final List<BEDRecord> genes = RegionQueryUtil.getBedRegionsInRegionSet(geneList.getId(), limit);
-                return genes;
+            protected List<BEDRecord> doInBackground() throws Exception {
+                return RegionQueryUtil.getBedRegionsInRegionSet(geneList.getId(), limit);
             }
 
+            @Override
             protected void done() {
                 try {
-                    List<BEDRecord> genes = (List<BEDRecord>) get();
-                    initGeneTable(genes);
-                } catch (java.util.concurrent.CancellationException ex) {
-                } catch (InterruptedException ex) {
-                } catch (ExecutionException ex) {
-                } catch (Exception e) {
+                    initGeneTable(get());
+                } catch (Exception x) {
+                    // TODO: #90
+                    LOG.log(Level.SEVERE, null, x);
                 }
             }
         }
 
-        private class GeneListGetter extends SwingWorker {
+        private class GeneListGetter extends SwingWorker<List<RegionSet>, RegionSet> {
 
             @Override
-            protected Object doInBackground() throws Exception {
-                List<RegionSet> geneLists = RegionQueryUtil.getRegionSets();
-                return geneLists;
+            protected List<RegionSet> doInBackground() throws Exception {
+                return RegionQueryUtil.getRegionSets();
             }
 
+            @Override
             protected void done() {
                 try {
-                    List<RegionSet> geneLists = (List<RegionSet>) get();
-                    updateGeneListDropDown(geneLists);
-                } catch (java.util.concurrent.CancellationException ex) {
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GeneListPanelGenerator.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ExecutionException ex) {
-                    Logger.getLogger(GeneListPanelGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                    updateGeneListDropDown(get());
+                } catch (Exception x) {
+                    // TODO: #90
+                    LOG.log(Level.SEVERE, null, x);
                 }
             }
         }
@@ -378,8 +366,13 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
             
             @Override
             protected void done() {
-                gpiw = new GenePatientIntersectionWorker(records);
-                gpiw.execute();
+                try {
+                    get();
+                    gpiw = new GenePatientIntersectionWorker(records);
+                    gpiw.execute();
+                } catch (Exception x) {
+                    LOG.log(Level.SEVERE, null, x);
+                }
             }
         }
         
@@ -409,6 +402,15 @@ public class GeneListPanelGenerator implements AggregatePanelGenerator {
                     }
                 }
                 return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (Exception x) {
+                    LOG.log(Level.SEVERE, null, x);
+                }
             }
         }
     }

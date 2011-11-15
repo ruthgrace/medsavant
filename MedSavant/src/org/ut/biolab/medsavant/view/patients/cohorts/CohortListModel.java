@@ -18,9 +18,9 @@ import org.ut.biolab.medsavant.view.list.DetailedListModel;
  */
 public class CohortListModel implements DetailedListModel {
 
-    public List<Vector> getList(int limit) throws Exception {
+    public List<Object[]> getList(int limit) throws Exception {
 
-        List<Vector> table = new ArrayList<Vector>();
+        List<Object[]> table = new ArrayList<Object[]>();
 
         /*List<String> dbresults = new ArrayList<String>();//TODO QueryUtil.getDistinctCohortNames(limit);        
         for (String s : dbresults) {
@@ -31,8 +31,7 @@ public class CohortListModel implements DetailedListModel {
         
         List<Cohort> cohorts = CohortQueryUtil.getCohorts(ProjectController.getInstance().getCurrentProjectId());
         for(Cohort c : cohorts){
-            Vector v = new Vector();
-            v.add(c);
+            Object[] v = new Object[] { c };
             table.add(v);
         }
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
@@ -50,15 +51,16 @@ public class IndividualDetailedView extends DetailedView {
         
         @Override
         protected Object doInBackground() throws Exception {
-            Vector fieldValues = PatientQueryUtil.getPatientRecord(ProjectController.getInstance().getCurrentProjectId(), pid);
+            Object[] fieldValues = PatientQueryUtil.getPatientRecord(ProjectController.getInstance().getCurrentProjectId(), pid);
             return fieldValues;
         }
         
         @Override
         protected void done() {
             try {
-                Vector result = (Vector) get();
+                Object[] result = (Object[]) get();
                 setPatientInformation(result);
+            } catch (CancellationException ex){
                 
             } catch (Exception ex) {
                 ClientLogger.log(IndividualDetailedView.class, ex.getLocalizedMessage());
@@ -68,14 +70,14 @@ public class IndividualDetailedView extends DetailedView {
         
     }
 
-    public synchronized void setPatientInformation(Vector result) {
+    public synchronized void setPatientInformation(Object[] result) {
 
         String[][] values = new String[fieldNames.size()][2];
         for (int i = 0; i < fieldNames.size(); i++) {
             values[i][0] = fieldNames.get(i);
             values[i][1] = "";
-            if(result.get(i) != null)
-                values[i][1] = result.get(i).toString();
+            if(result[i] != null)
+                values[i][1] = result[i].toString();
         }
         
         details.removeAll();
@@ -123,9 +125,9 @@ public class IndividualDetailedView extends DetailedView {
     }
     
     @Override
-    public void setSelectedItem(Vector item) {
-        int patientId = (Integer) item.get(0);
-        String hospitalId = (String) item.get(3);
+    public void setSelectedItem(Object[] item) {
+        int patientId = (Integer) item[0];
+        String hospitalId = (String) item[3];
         
         setTitle(hospitalId);
         
@@ -142,10 +144,10 @@ public class IndividualDetailedView extends DetailedView {
     }
     
     @Override
-    public void setMultipleSelections(List<Vector> items){
+    public void setMultipleSelections(List<Object[]> items){
         patientIds = new int[items.size()];
         for(int i = 0; i < items.size(); i++){
-            patientIds[i] = (Integer) items.get(i).get(0);
+            patientIds[i] = (Integer) items.get(i)[0];
         }
         setTitle("Multiple individuals (" + items.size() + ")");
         details.removeAll();

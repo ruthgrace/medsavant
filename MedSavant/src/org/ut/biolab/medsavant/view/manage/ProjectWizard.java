@@ -417,7 +417,7 @@ public class ProjectWizard extends WizardDialog {
                 
                 //add, remove refs
                 if(pd == null && cli.isSelected()){
-                    ProjectQueryUtil.createVariantTable(projectId, cli.getReference().getId());
+                    ProjectQueryUtil.createVariantTable(projectId, cli.getReference().getId(), 0);
                 } else if (pd != null && !cli.isSelected()){
                     ProjectQueryUtil.removeReferenceForProject(projectId, cli.getReference().getId());
                 }
@@ -460,7 +460,7 @@ public class ProjectWizard extends WizardDialog {
             //add references and annotations
             for(CheckListItem cli : checkListItems){
                 if(cli.isSelected()){
-                    ProjectQueryUtil.createVariantTable(projectid, cli.getReference().getId());
+                    ProjectQueryUtil.createVariantTable(projectid, cli.getReference().getId(),0);
                     
                     List<Integer> annotationIds = cli.getAnnotationIds();
                     if(!annotationIds.isEmpty()){

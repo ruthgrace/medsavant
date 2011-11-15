@@ -6,25 +6,24 @@
 package org.ut.biolab.medsavant.view.genetics;
 
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
-import org.ut.biolab.medsavant.view.util.DialogUtils;
-import org.ut.biolab.medsavant.view.component.SearchableTablePanel;
 import java.awt.CardLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.controller.ResultController;
 import org.ut.biolab.medsavant.db.exception.FatalDatabaseException;
 import org.ut.biolab.medsavant.db.format.CustomField;
 import org.ut.biolab.medsavant.db.format.AnnotationFormat;
 import org.ut.biolab.medsavant.controller.FilterController;
-import org.ut.biolab.medsavant.db.util.DBUtil.FieldType;
 import org.ut.biolab.medsavant.model.event.FiltersChangedListener;
+import org.ut.biolab.medsavant.util.MedSavantWorker;
+import org.ut.biolab.medsavant.view.ViewController;
+import org.ut.biolab.medsavant.view.component.SearchableTablePanel;
+import org.ut.biolab.medsavant.view.component.SearchableTablePanel.DataRetriever;
 import org.ut.biolab.medsavant.view.util.WaitPanel;
 
 /**
@@ -33,105 +32,143 @@ import org.ut.biolab.medsavant.view.util.WaitPanel;
  */
 class TablePanel extends JPanel implements FiltersChangedListener {
     
-    private final SearchableTablePanel tablePanel;
+    private SearchableTablePanel tablePanel;
     private static final String CARD_WAIT = "wait";
     private static final String CARD_SHOW = "show";
-    private CardLayout cl;
 
-    public TablePanel() {
+    private CardLayout cl;
+    private boolean init = false;
+    private boolean updateRequired = true;
+    private final Object updateLock = new Object();
+    private String pageName;
     
+    public TablePanel(final String pageName) {
+            
+        this.pageName = pageName;
         cl = new CardLayout();
         this.setLayout(cl);
-
-        List<String> fieldNames = new ArrayList<String>();
-        List<Class> fieldClasses = new ArrayList<Class>();
-        List<Integer> hiddenColumns = new ArrayList<Integer>();
-        
-        AnnotationFormat[] afs = ProjectController.getInstance().getCurrentAnnotationFormats();
-        for(AnnotationFormat af : afs){
-            for(CustomField field : af.getCustomFields()){
-                fieldNames.add(field.getAlias());
-                switch(field.getFieldType()){
-                    case INT:
-                    case BOOLEAN:
-                        fieldClasses.add(Integer.class);
-                        break;
-                    case FLOAT:
-                    case DECIMAL:
-                        fieldClasses.add(Double.class);
-                        break;
-                    case VARCHAR:
-                    default:
-                        fieldClasses.add(String.class);
-                        break;
-                }
-            }
-        }
-
-        tablePanel = new SearchableTablePanel(
-                new Vector(),
-                fieldNames,
-                fieldClasses,
-                hiddenColumns,
-                1000){
-            @Override
-            public void forceRefreshData(){
-                try {
-                    updateTable();
-                } catch (Exception ex) {
-                    Logger.getLogger(TablePanel.class.getName()).log(Level.SEVERE, null, ex);
-                    DialogUtils.displayErrorMessage("Problem getting data.", ex);
-                }
-            }
-        };
-        
-        this.add(tablePanel, CARD_SHOW);             
         this.add(new WaitPanel("Generating List View"), CARD_WAIT);
+        showWaitCard();
 
-        try {
-            updateTable();
-        } catch (Exception ex) {
-            Logger.getLogger(TablePanel.class.getName()).log(Level.SEVERE, null, ex);
-            DialogUtils.displayErrorMessage("Problem getting data.", ex);
-        }
-        FilterController.addFilterListener(this);
-        //ProjectController.getInstance().addProjectListener(this);
+        final TablePanel instance = this;
+        MedSavantWorker worker = new MedSavantWorker(pageName){
+            @Override
+            protected Object doInBackground() {
+
+                List<String> fieldNames = new ArrayList<String>();
+                List<Class> fieldClasses = new ArrayList<Class>();
+                List<Integer> hiddenColumns = new ArrayList<Integer>();
+
+                AnnotationFormat[] afs = ProjectController.getInstance().getCurrentAnnotationFormats();
+                for(AnnotationFormat af : afs){
+                    for(CustomField field : af.getCustomFields()){
+                        fieldNames.add(field.getAlias());
+                        switch(field.getColumnType()){
+                            case INTEGER:
+                            case BOOLEAN:
+                                fieldClasses.add(Integer.class);
+                                break;
+                            case FLOAT:
+                            case DECIMAL:
+                                fieldClasses.add(Double.class);
+                                break;
+                            case VARCHAR:
+                            default:
+                                fieldClasses.add(String.class);
+                                break;
+                        }
+                    }
+                }
+                if(this.isThreadCancelled()) return null;
+                
+                DataRetriever retriever = new DataRetriever(){
+                    public List<Object[]> retrieve(int start, int limit) {
+                        showWaitCard();
+                        List<Object[]> result = null;
+                        try {
+                            result = ResultController.getInstance().getFilteredVariantRecords(start, limit);
+                        } catch (NonFatalDatabaseException ex) {
+                            Logger.getLogger(TablePanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        showShowCard();
+                        return result;
+                    }
+
+                    public int getTotalNum() {
+                        showWaitCard();
+                        int result = 0;
+                        try {
+                            result = ResultController.getInstance().getNumFilteredVariants();
+                        } catch (NonFatalDatabaseException ex) {
+                            Logger.getLogger(TablePanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        showShowCard();
+                        return result;
+                    }
+
+                    public void retrievalComplete() {
+                        synchronized (updateLock){
+                            updateRequired = false;
+                        }
+                    }
+                };
+                tablePanel = new SearchableTablePanel(pageName, fieldNames, fieldClasses, hiddenColumns, 1000, retriever);
+                updateIfRequired();
+                
+                return null;
+            }
+
+            /*@Override
+            protected void finish(Object result) {       
+                instance.add(tablePanel, CARD_SHOW);             
+                FilterController.addFilterListener(instance);       
+            }*/
+
+            @Override
+            protected void showProgress(double fraction) {
+                //do nothing
+            }
+
+            @Override
+            protected void showSuccess(Object result) {
+                instance.add(tablePanel, CARD_SHOW);             
+                FilterController.addFilterListener(instance);  
+                init = true;
+            }
+
+        };
+        worker.execute();
+        
     }
     
-    private synchronized void showWaitCard() {
+    private void showWaitCard() {
         cl.show(this, CARD_WAIT);    
     }
 
-    private synchronized void showShowCard() {
+    private void showShowCard() {
         cl.show(this, CARD_SHOW);
     }
 
-    private void updateTable() throws SQLException, FatalDatabaseException, NonFatalDatabaseException {       
-        showWaitCard();
-        GetVariantsSwingWorker gv = new GetVariantsSwingWorker();
-        gv.execute();
-    }
-
-    public void filtersChanged() throws SQLException, FatalDatabaseException, NonFatalDatabaseException {
-        updateTable();
+    public void filtersChanged() throws SQLException, FatalDatabaseException, NonFatalDatabaseException {       
+        synchronized (updateLock){
+            updateRequired = true;
+        }
+        if(ViewController.getInstance().getCurrentSectionView() != null && ViewController.getInstance().getCurrentSectionView().getName().equals(pageName)){
+            updateIfRequired();
+        }
     }
     
-    private class GetVariantsSwingWorker extends SwingWorker {
-        @Override
-        protected Object doInBackground() throws Exception {
-            return ResultController.getInstance().getFilteredVariantRecords(tablePanel.getRetrievalLimit());
-        }
-        
-        @Override
-        protected void done() {
-            try {
-                tablePanel.updateData((Vector) get());
-                showShowCard();
-            } catch (InterruptedException ex) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }  
+    public boolean isInit(){
+        return init;
     }
-
+    
+    public void updateIfRequired(){
+        if(tablePanel == null) return;
+        synchronized (updateLock){
+            if(updateRequired){
+                tablePanel.forceRefreshData();
+            }
+        }
+    }
+    
 }

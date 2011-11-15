@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.ut.biolab.medsavant.controller.ProjectController;
+import org.ut.biolab.medsavant.controller.ThreadController;
 import org.ut.biolab.medsavant.db.format.CustomField;
 import org.ut.biolab.medsavant.db.model.ProjectDetails;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
@@ -71,10 +72,10 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         }
 
         @Override
-        public void editItems(Vector items) {
+        public void editItems(Object[] items) {
             try {
                 
-                String projectName = (String) items.get(0);
+                String projectName = (String) items[0];
                 
                         int projectId = ProjectQueryUtil.getProjectId(projectName);
                         ProjectWizard wiz = new ProjectWizard(
@@ -92,14 +93,14 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         }
 
         @Override
-        public void deleteItems(List<Vector> items) {
+        public void deleteItems(List<Object[]> items) {
            int nameIndex = 0;
            int keyIndex = 0;
             
             int result;
             
             if (items.size() == 1) {
-                String name = (String) items.get(0).get(nameIndex);
+                String name = (String) items.get(0)[nameIndex];
                 result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
                              "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                              "Confirm", JOptionPane.YES_NO_OPTION);
@@ -110,8 +111,8 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
             }
             
             if (result == JOptionPane.YES_OPTION) {
-                for (Vector v : items) {
-                    String projectName = (String) v.get(keyIndex);
+                for (Object[] v : items) {
+                    String projectName = (String) v[keyIndex];
                     ProjectController.getInstance().removeProject(projectName);
                 }
                 
@@ -176,8 +177,8 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         }
 
         @Override
-        public void setSelectedItem(Vector item) {
-            projectName = (String) item.get(0);
+        public void setSelectedItem(Object[] item) {
+            projectName = (String) item[0];
             refreshSelectedProject();
         }
 
@@ -315,7 +316,7 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         }
 
         @Override
-        public void setMultipleSelections(List<Vector> items) {
+        public void setMultipleSelections(List<Object[]> items) {
             setTitle("Multiple projects (" + items.size() + ")");
             details.removeAll();
             details.updateUI();
@@ -365,12 +366,11 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         public ProjectsListModel() {
         }
 
-        public List<Vector> getList(int limit) throws Exception {
+        public List<Object[]> getList(int limit) throws Exception {
             List<String> projects = ProjectController.getInstance().getProjectNames();
-            List<Vector> projectVector = new ArrayList<Vector>();
+            List<Object[]> projectVector = new ArrayList<Object[]>();
             for (String p : projects) {
-                Vector v = new Vector();
-                v.add(p);
+                Object[] v = new Object[]{ p };
                 projectVector.add(v);
             }
             return projectVector;
@@ -450,5 +450,6 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
 }

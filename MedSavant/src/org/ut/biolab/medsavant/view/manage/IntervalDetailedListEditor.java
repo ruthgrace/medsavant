@@ -82,16 +82,16 @@ class IntervalDetailedListEditor extends DetailedListEditor {
     }
 
     @Override
-    public void editItems(Vector results) {
+    public void editItems(Object[] results) {
     }
 
     @Override
-    public void deleteItems(List<Vector> items) {
+    public void deleteItems(List<Object[]> items) {
 
         int result;
 
         if (items.size() == 1) {
-            String name = ((RegionSet) items.get(0).get(0)).getName();
+            String name = ((RegionSet) items.get(0)[0]).getName();
             result = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
                     "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                     "Confirm", JOptionPane.YES_NO_OPTION);
@@ -105,9 +105,9 @@ class IntervalDetailedListEditor extends DetailedListEditor {
 
             int numCouldntRemove = 0;
 
-            for (Vector v : items) {
-                String listName = ((RegionSet) v.get(0)).getName();
-                int listId = ((RegionSet) v.get(0)).getId();
+            for (Object[] v : items) {
+                String listName = ((RegionSet) v[0]).getName();
+                int listId = ((RegionSet) v[0]).getId();
                 try {
                     RegionQueryUtil.removeRegionList(listId);
                 } catch (SQLException ex) {

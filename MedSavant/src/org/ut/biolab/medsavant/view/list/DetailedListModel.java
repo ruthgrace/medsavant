@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 public interface DetailedListModel {
     
-    public List<Vector> getList(int limit) throws Exception;
+    public List<Object[]> getList(int limit) throws Exception;
 
     public List<String> getColumnNames();
 

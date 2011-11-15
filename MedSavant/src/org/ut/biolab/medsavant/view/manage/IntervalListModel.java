@@ -17,16 +17,13 @@ import org.ut.biolab.medsavant.view.list.DetailedListModel;
  */
 public class IntervalListModel implements DetailedListModel {
 
-    public List<Vector> getList(int limit) throws Exception {
+    public List<Object[]> getList(int limit) throws Exception {
 
-        List<Vector> table = new ArrayList<Vector>();
-
-        //List<String> dbresults = QueryUtil.getDistinctRegionLists(limit);
+        List<Object[]> table = new ArrayList<Object[]>();
         List<RegionSet> regions = RegionQueryUtil.getRegionSets();
         
         for (RegionSet s : regions) {
-            Vector v = new Vector();
-            v.add(s);
+            Object[] v = new Object[] { s };
             table.add(v);
         }
 

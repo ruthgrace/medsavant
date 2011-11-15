@@ -23,21 +23,8 @@ import org.ut.biolab.medsavant.view.list.DetailedListModel;
  */
 public class IndividualListModel implements DetailedListModel {
 
-    public List<Vector> getList(int limit) throws Exception {
-
-        /*List<Vector> table = new ArrayList<Vector>();
-
-        List<String> dbresults = QueryUtil.getDistinctPatientIDs();
-
-        for (String s : dbresults) {
-            Vector v = new Vector();
-            v.add(s);
-            table.add(v);
-        }*/
-        
-        //List<Vector> table = QueryUtil.getDistinctBasicPatientInfo(limit);
-        List<Vector> table = PatientQueryUtil.getBasicPatientInfo(ProjectController.getInstance().getCurrentProjectId(), limit);
-        
+    public List<Object[]> getList(int limit) throws Exception {
+        List<Object[]> table = PatientQueryUtil.getBasicPatientInfo(ProjectController.getInstance().getCurrentProjectId(), limit);
         return table;
     }
 

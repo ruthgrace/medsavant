@@ -9,10 +9,13 @@ import com.healthmarketscience.sqlbuilder.FunctionCall;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import org.ut.biolab.medsavant.controller.FilterController;
+import org.ut.biolab.medsavant.controller.ThreadController;
 import org.ut.biolab.medsavant.db.exception.FatalDatabaseException;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.db.model.structure.CustomTables;
@@ -56,7 +59,9 @@ public class GeneticsFilterPage extends SubSectionView {
             //q.addFromTable(table.getTable());
             VariantQueryUtil.addConditionsToQuery(q, conditions);
             
-            this.content.setText(q.toString());
+            String s = q.toString();
+            Logger.getLogger(GeneticsFilterPage.class.getName()).log(Level.WARNING, s);
+            this.content.setText(s);
         }
     }
 
@@ -92,5 +97,6 @@ public class GeneticsFilterPage extends SubSectionView {
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
 }

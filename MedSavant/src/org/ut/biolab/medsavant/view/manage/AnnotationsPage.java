@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ExternalAnnotationController;
+import org.ut.biolab.medsavant.controller.ThreadController;
 import org.ut.biolab.medsavant.db.model.Annotation;
 import org.ut.biolab.medsavant.view.MainFrame;
 import org.ut.biolab.medsavant.view.list.DetailedListEditor;
@@ -53,11 +54,11 @@ public class AnnotationsPage extends SubSectionView {
         }
 
         @Override
-        public void editItems(Vector items) {
+        public void editItems(Object[] items) {
         }
 
         @Override
-        public void deleteItems(List<Vector> items) {
+        public void deleteItems(List<Object[]> items) {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), 
                         "Annotations can only be deleted using the \n"
                         + "MedSavant Database Utility.", 
@@ -130,14 +131,14 @@ public class AnnotationsPage extends SubSectionView {
         public ExternalAnnotationListModel() {
         }
 
-        public List<Vector> getList(int limit) throws Exception {
+        public List<Object[]> getList(int limit) throws Exception {
             List<Annotation> annotations = ExternalAnnotationController.getInstance().getExternalAnnotations();
-            List<Vector> annotationVector = new ArrayList<Vector>();
+            List<Object[]> annotationVector = new ArrayList<Object[]>();
             for (Annotation p : annotations) {
-                Vector v = new Vector();
-                v.add(p.getProgram());
-                v.add(p.getVersion());
-                v.add(p.getReference());
+                Object[] v = new Object[] {
+                p.getProgram(),
+                p.getVersion(),
+                p.getReferenceName() };
                 annotationVector.add(v);
             }
             return annotationVector;
@@ -179,6 +180,7 @@ public class AnnotationsPage extends SubSectionView {
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
     
     
@@ -216,9 +218,9 @@ public class AnnotationsPage extends SubSectionView {
         }
 
         @Override
-        public void setSelectedItem(Vector item) {
+        public void setSelectedItem(Object[] item) {
             
-            String title = (String) item.get(0) + " (v" + item.get(1) + ")";
+            String title = (String) item[0] + " (v" + item[1] + ")";
             setTitle(title);
 
             details.removeAll();
@@ -228,7 +230,7 @@ public class AnnotationsPage extends SubSectionView {
         }
 
         @Override
-        public void setMultipleSelections(List<Vector> selectedRows) {
+        public void setMultipleSelections(List<Object[]> selectedRows) {
             setTitle("Multiple annotations (" + selectedRows.size() + ")");
             details.removeAll();
             details.updateUI();

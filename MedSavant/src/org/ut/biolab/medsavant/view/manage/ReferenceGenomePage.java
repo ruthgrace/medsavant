@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ReferenceController;
+import org.ut.biolab.medsavant.controller.ThreadController;
 import org.ut.biolab.medsavant.listener.ReferenceListener;
 import org.ut.biolab.medsavant.view.MainFrame;
 import org.ut.biolab.medsavant.view.dialog.NewReferenceDialog;
@@ -52,11 +53,11 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
         }
 
         @Override
-        public void editItems(Vector items) {
+        public void editItems(Object[] items) {
         }
 
         @Override
-        public void deleteItems(List<Vector> items) {
+        public void deleteItems(List<Object[]> items) {
             
             int nameIndex = 0;
            int keyIndex = 0;
@@ -65,7 +66,7 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
 
             
             if (items.size() == 1) {
-                String name = (String) items.get(0).get(nameIndex);
+                String name = (String) items.get(0)[nameIndex];
                 result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), 
                              "Are you sure you want to remove " + name + "?\nThis cannot be undone.",
                              "Confirm", JOptionPane.YES_NO_OPTION);
@@ -77,8 +78,8 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
             
             if (result == JOptionPane.YES_OPTION) {
                 int numCouldntRemove = 0;
-                for (Vector v : items) {
-                    String refName = (String) v.get(keyIndex);
+                for (Object[] v : items) {
+                    String refName = (String) v[keyIndex];
                     boolean refRemoved = ReferenceController.getInstance().removeReference(refName);
                     if (!refRemoved) {
                         JOptionPane.showMessageDialog(MainFrame.getInstance(), "Cannot remove " + refName + " because projects\nor annotations still refer to it.", "", JOptionPane.ERROR_MESSAGE);
@@ -136,7 +137,7 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
         return result;
     }
 
-    private JButton getAddPatientsButton() {
+    private JButton getAddReferenceButton() {
         JButton button = new JButton("New Reference");
         button.addActionListener(new ActionListener() {
 
@@ -157,12 +158,11 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
         public ReferenceGenomeListModel() {
         }
 
-        public List<Vector> getList(int limit) throws Exception {
+        public List<Object[]> getList(int limit) throws Exception {
             List<String> refs = ReferenceController.getInstance().getReferenceNames();
-            List<Vector> refVector = new ArrayList<Vector>();
+            List<Object[]> refVector = new ArrayList<Object[]>();
             for (String p : refs) {
-                Vector v = new Vector();
-                v.add(p);
+                Object[] v = new Object[] {p};
                 refVector.add(v);
             }
             return refVector;
@@ -216,8 +216,8 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
         }
 
         @Override
-        public void setSelectedItem(Vector item) {
-            refName = (String) item.get(0);
+        public void setSelectedItem(Object[] item) {
+            refName = (String) item[0];
             setTitle(refName);
 
             details.removeAll();
@@ -248,7 +248,7 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
         }
 
         @Override
-        public void setMultipleSelections(List<Vector> selectedRows) {
+        public void setMultipleSelections(List<Object[]> selectedRows) {
             setTitle("Multiple references (" + selectedRows.size() + ")");
             details.removeAll();
             details.updateUI();
@@ -261,5 +261,6 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
 
     @Override
     public void viewDidUnload() {
+        ThreadController.getInstance().cancelWorkers(getName());
     }
 }
