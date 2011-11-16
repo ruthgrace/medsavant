@@ -33,6 +33,7 @@ import org.ut.biolab.medsavant.db.model.ProjectDetails;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.db.util.query.ProjectQueryUtil;
 import org.ut.biolab.medsavant.listener.ProjectListener;
+import org.ut.biolab.medsavant.util.MedSavantWorker;
 import org.ut.biolab.medsavant.view.list.DetailedListEditor;
 import org.ut.biolab.medsavant.view.subview.SectionView;
 import org.ut.biolab.medsavant.view.subview.SubSectionView;
@@ -208,14 +209,16 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
             sw.execute();
         }
 
-        private class ProjectDetailsSW extends SwingWorker {
+        private class ProjectDetailsSW extends MedSavantWorker {
 
             private String projectName;
+            Dimension buttonDim = new Dimension(100, 23);
 
             public ProjectDetailsSW(String projectName) {
+                super(getName());
                 this.projectName = projectName;
             }
-            Dimension buttonDim = new Dimension(100, 23);
+            
 
             @Override
             protected Object doInBackground() throws Exception {
@@ -302,7 +305,12 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
             }
 
             @Override
-            protected void done() {
+            protected void showProgress(double fraction) {
+                //
+            }
+
+            @Override
+            protected void showSuccess(Object result) {
                 try {
                     JPanel p = (JPanel) get();
                     updateDetails(p);
@@ -311,7 +319,6 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
                     ex.printStackTrace();
                     updateDetails(ViewUtil.getMessagePanel("Problem getting project details"));
                 }
-
             }
         }
 

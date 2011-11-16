@@ -33,13 +33,13 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="referenceLabel" pref="320" max="32767" attributes="0"/>
-                          <Component id="projectLabel" alignment="0" pref="320" max="32767" attributes="0"/>
+                          <Component id="referenceLabel" pref="333" max="32767" attributes="0"/>
+                          <Component id="projectLabel" alignment="0" pref="333" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="outputFileField" pref="333" max="32767" attributes="0"/>
+                      <Component id="outputFileField" pref="335" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chooseFileButton" min="-2" pref="55" max="-2" attributes="0"/>
                   </Group>
