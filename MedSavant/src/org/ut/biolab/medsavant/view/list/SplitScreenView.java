@@ -4,23 +4,17 @@
  */
 package org.ut.biolab.medsavant.view.list;
 
-import com.jidesoft.grid.SortableTable;
 import java.awt.event.ActionEvent;
 import org.ut.biolab.medsavant.view.util.WaitPanel;
 import com.jidesoft.utils.SwingWorker;
-import org.ut.biolab.medsavant.view.component.SearchableTablePanel;
 import org.ut.biolab.medsavant.view.component.Util;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.ut.biolab.medsavant.view.component.ListViewTablePanel;
