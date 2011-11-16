@@ -44,6 +44,7 @@ public class GeneticsTablePage extends SubSectionView {
             setPanel();
         }
         tablePanel.updateIfRequired();
+        gp.updateIfRequired();
         return panel;
     }
 

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.db.model.Cohort;
@@ -25,6 +26,7 @@ import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.log.ClientLogger;
 import org.ut.biolab.medsavant.view.component.CollapsablePanel;
 import org.ut.biolab.medsavant.view.dialog.ComboForm;
+import org.ut.biolab.medsavant.view.dialog.IndeterminateProgressDialog;
 import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
@@ -40,7 +42,7 @@ public class IndividualDetailedView extends DetailedView {
     private final JPanel content;
     private final JPanel details;
     private final JPanel menu;
-    private int[] patientIds;
+    private int[] patientIds; 
 
     private class IndividualDetailsSQ extends SwingWorker {
         private final int pid;
@@ -127,6 +129,8 @@ public class IndividualDetailedView extends DetailedView {
     @Override
     public void setSelectedItem(Object[] item) {
         int patientId = (Integer) item[0];
+        patientIds = new int[1];
+        patientIds[0] = patientId;
         String hospitalId = (String) item[3];
         
         setTitle(hospitalId);

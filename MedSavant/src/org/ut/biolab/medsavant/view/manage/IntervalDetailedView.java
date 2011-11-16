@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.ut.biolab.medsavant.db.model.RegionSet;
 import org.ut.biolab.medsavant.db.util.query.RegionQueryUtil;
+import org.ut.biolab.medsavant.util.MedSavantWorker;
 import org.ut.biolab.medsavant.view.list.DetailedView;
 import org.ut.biolab.medsavant.view.util.ViewUtil;
 
@@ -72,29 +73,33 @@ public class IntervalDetailedView extends DetailedView {
      * 
      */
     
-    private class RegionDetailsSW extends SwingWorker {
+    private class RegionDetailsSW extends MedSavantWorker<List<String>> {
         private final RegionSet regionSet;
         private final int limit;
 
         public RegionDetailsSW(RegionSet regionSet, int limit) {
+            super(getName());
             this.regionSet = regionSet;
             this.limit = limit;
         }
         
-        @Override
-        protected Object doInBackground() throws Exception {
+        protected List<String> doInBackground() throws Exception {
             //numRegionsInRegionList = QueryUtil.getNumRegionsInRegionSet(regionName);
             //List<Vector> regionList = QueryUtil.getRegionNamesInRegionSet(regionName,limit);
             numRegionsInRegionList = RegionQueryUtil.getNumberRegions(regionSet.getId());
             List<String> regionList = RegionQueryUtil.getRegionNamesInRegionSet(regionSet.getId(), limit);
             return regionList;
         }
-        
+
         @Override
-        protected void done() {
+        protected void showProgress(double fraction) {
+            //
+        }
+
+        @Override
+        protected void showSuccess(List<String> result) {
             try {
-                List<String> result = (List<String>) get();
-                setRegionList(result);
+                setRegionList(get());
                 
             } catch (Exception ex) {
                 return;

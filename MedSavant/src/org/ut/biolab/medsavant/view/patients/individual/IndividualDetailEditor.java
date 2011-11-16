@@ -12,6 +12,7 @@ import org.ut.biolab.medsavant.controller.ProjectController;
 import org.ut.biolab.medsavant.db.util.query.PatientQueryUtil;
 import org.ut.biolab.medsavant.view.MainFrame;
 import org.ut.biolab.medsavant.view.dialog.AddPatientsForm;
+import org.ut.biolab.medsavant.view.dialog.IndeterminateProgressDialog;
 import org.ut.biolab.medsavant.view.list.DetailedListEditor;
 import org.ut.biolab.medsavant.view.list.DetailedListModel;
 import org.ut.biolab.medsavant.view.util.DialogUtils;
@@ -36,7 +37,7 @@ class IndividualDetailEditor extends DetailedListEditor {
         new AddPatientsForm();
     }
 
-    public void deleteItems(List<Object[]> items) {
+    public void deleteItems(final List<Object[]> items) {
 
         int keyIndex = 0;
         int nameIndex = 3;
@@ -55,19 +56,34 @@ class IndividualDetailEditor extends DetailedListEditor {
         }
 
         if (result == JOptionPane.YES_OPTION) {
-            int[] patients = new int[items.size()];
+            final int[] patients = new int[items.size()];
             int index = 0;
             for (Object[] v : items) {
                 int id = (Integer) v[keyIndex];
                 System.out.println("Removing individual " + id);
                 patients[index++] = id;
             }
-            try {
-                PatientQueryUtil.removePatient(ProjectController.getInstance().getCurrentProjectId(), patients);
-                DialogUtils.displayMessage("Successfully removed " + (items.size()) + " individuals(s)");
-            } catch (SQLException ex) {
-                DialogUtils.displayErrorMessage("Couldn't remove patient(s)", ex);
-            }
+                      
+            final IndeterminateProgressDialog dialog = new IndeterminateProgressDialog(
+                    "Removing Patient(s)", 
+                    patients.length + " patient(s) being removed. Please wait.", 
+                    true);
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        PatientQueryUtil.removePatient(ProjectController.getInstance().getCurrentProjectId(), patients);
+                        dialog.close();  
+                        DialogUtils.displayMessage("Successfully removed " + (items.size()) + " individuals(s)");
+                    } catch (SQLException ex) {
+                        dialog.close();  
+                        DialogUtils.displayErrorMessage("Couldn't remove patient(s)", ex);
+                    }
+                    
+                }
+            };
+            thread.start(); 
+            dialog.setVisible(true);
         }
         
         

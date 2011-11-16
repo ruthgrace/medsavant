@@ -16,6 +16,7 @@ import org.ut.biolab.medsavant.importfile.FileFormat;
 import org.ut.biolab.medsavant.importfile.ImportDelimitedFile;
 import org.ut.biolab.medsavant.importfile.ImportFileView;
 import org.ut.biolab.medsavant.view.MainFrame;
+import org.ut.biolab.medsavant.view.dialog.IndeterminateProgressDialog;
 import org.ut.biolab.medsavant.view.list.DetailedListEditor;
 import org.ut.biolab.medsavant.view.util.DialogUtils;
 
@@ -86,7 +87,7 @@ class IntervalDetailedListEditor extends DetailedListEditor {
     }
 
     @Override
-    public void deleteItems(List<Object[]> items) {
+    public void deleteItems(final List<Object[]> items) {
 
         int result;
 
@@ -102,23 +103,34 @@ class IntervalDetailedListEditor extends DetailedListEditor {
         }
 
         if (result == JOptionPane.YES_OPTION) {
+            
+            final IndeterminateProgressDialog dialog = new IndeterminateProgressDialog(
+                    "Removing Region List(s)", 
+                    "Removing region list(s). Please wait.", 
+                    true);
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    int numCouldntRemove = 0;
 
-            int numCouldntRemove = 0;
-
-            for (Object[] v : items) {
-                String listName = ((RegionSet) v[0]).getName();
-                int listId = ((RegionSet) v[0]).getId();
-                try {
-                    RegionQueryUtil.removeRegionList(listId);
-                } catch (SQLException ex) {
-                    numCouldntRemove++;
-                    DialogUtils.displayErrorMessage("Could remove " + listName + ".", ex);
+                    for (Object[] v : items) {
+                        String listName = ((RegionSet) v[0]).getName();
+                        int listId = ((RegionSet) v[0]).getId();
+                        try {
+                            RegionQueryUtil.removeRegionList(listId);
+                        } catch (SQLException ex) {
+                            numCouldntRemove++;
+                            DialogUtils.displayErrorMessage("Could remove " + listName + ".", ex);
+                        }
+                    }
+                    dialog.close(); 
+                    if (numCouldntRemove != items.size()) {
+                        DialogUtils.displayMessage("Successfully removed " + (items.size()) + " list(s)");
+                    } 
                 }
-            }
-
-            if (numCouldntRemove != items.size()) {
-                DialogUtils.displayMessage("Successfully removed " + (items.size()) + " list(s)");
-            }
+            };
+            thread.start(); 
+            dialog.setVisible(true);
         }
     }
 

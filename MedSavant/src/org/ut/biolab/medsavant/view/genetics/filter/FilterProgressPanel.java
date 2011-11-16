@@ -32,6 +32,7 @@ import org.ut.biolab.medsavant.db.exception.FatalDatabaseException;
 import org.ut.biolab.medsavant.db.exception.NonFatalDatabaseException;
 import org.ut.biolab.medsavant.model.Filter;
 import org.ut.biolab.medsavant.model.event.FiltersChangedListener;
+import org.ut.biolab.medsavant.view.dialog.IndeterminateProgressDialog;
 
 /**
  * @author AndrewBrook
@@ -118,11 +119,27 @@ public class FilterProgressPanel extends JPanel implements FiltersChangedListene
         table.repaint();    
     }
     
-    public void filtersChanged() throws SQLException, FatalDatabaseException, NonFatalDatabaseException {
-        addFilterSet(VariantQueryUtil.getNumFilteredVariants(
-                        ProjectController.getInstance().getCurrentProjectId(), 
-                        ReferenceController.getInstance().getCurrentReferenceId(), 
-                        FilterController.getQueryFilterConditions()));
+    public void filtersChanged() {
+        final IndeterminateProgressDialog dialog = new IndeterminateProgressDialog(
+                "Applying Filter", 
+                "Filter is being applied. Please wait.", 
+                true);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    addFilterSet(VariantQueryUtil.getNumFilteredVariants(
+                            ProjectController.getInstance().getCurrentProjectId(), 
+                            ReferenceController.getInstance().getCurrentReferenceId(), 
+                            FilterController.getQueryFilterConditions()));
+                } catch (SQLException ex) {
+                    Logger.getLogger(FilterProgressPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                dialog.close();  
+            }
+        };
+        thread.start(); 
+        dialog.setVisible(true);     
     }
     
     private void addFilterSet(int numRecords){

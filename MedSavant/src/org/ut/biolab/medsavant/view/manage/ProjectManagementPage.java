@@ -439,18 +439,6 @@ public class ProjectManagementPage extends SubSectionView implements ProjectList
         return result;
     }
 
-    private JButton getAddPatientsButton() {
-        JButton button = new JButton("New Project");
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                new ProjectWizard();
-
-            }
-        });
-        return button;
-    }
-
     @Override
     public void viewDidLoad() {
     }

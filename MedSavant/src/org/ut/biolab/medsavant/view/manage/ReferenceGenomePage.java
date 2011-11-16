@@ -80,11 +80,7 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
                 int numCouldntRemove = 0;
                 for (Object[] v : items) {
                     String refName = (String) v[keyIndex];
-                    boolean refRemoved = ReferenceController.getInstance().removeReference(refName);
-                    if (!refRemoved) {
-                        JOptionPane.showMessageDialog(MainFrame.getInstance(), "Cannot remove " + refName + " because projects\nor annotations still refer to it.", "", JOptionPane.ERROR_MESSAGE);
-                        numCouldntRemove++;
-                    }
+                    ReferenceController.getInstance().removeReference(refName);
                 }
                 
                 if (items.size() != numCouldntRemove) {
@@ -237,10 +233,7 @@ public class ReferenceGenomePage extends SubSectionView implements ReferenceList
                             "Are you sure you want to delete " + refName + "?\nThis cannot be undone.",
                             "Confirm", JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
-                        boolean refRemoved = ReferenceController.getInstance().removeReference(refName);
-                        if (!refRemoved) {
-                            JOptionPane.showMessageDialog(MainFrame.getInstance(), "Cannot remove this reference because projects\nor annotations still refer to it.", "", JOptionPane.ERROR_MESSAGE);
-                        }
+                        ReferenceController.getInstance().removeReference(refName);
                     }
                 }
             });

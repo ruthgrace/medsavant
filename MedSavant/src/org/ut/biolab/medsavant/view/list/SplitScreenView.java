@@ -215,6 +215,7 @@ public class SplitScreenView extends JPanel {
                     } else {
                         detailedView.setMultipleSelections(selectedItems);
                     }
+                    
                 }
             });
 

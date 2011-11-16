@@ -153,9 +153,6 @@ class TablePanel extends JPanel implements FiltersChangedListener {
         synchronized (updateLock){
             updateRequired = true;
         }
-        if(ViewController.getInstance().getCurrentSectionView() != null && ViewController.getInstance().getCurrentSectionView().getName().equals(pageName)){
-            updateIfRequired();
-        }
     }
     
     public boolean isInit(){
