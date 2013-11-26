@@ -209,6 +209,13 @@ public class VCFParser {
                 VariantRecord r2 = new VariantRecord(r);
                 r2.setDnaID(id);
 
+                // add patient information to custom fields
+                try {
+                    String format = line[VCFHeader.getNumMandatoryFields()].trim();
+                    String sampleInfo = line[numMandatoryFields + i + 1];
+                    r2.setSampleInformation(format,sampleInfo);
+                } catch (Exception e) {}
+
                 //add gt and zygosity;
                 if (indexGT != -1) {
 

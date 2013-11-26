@@ -433,6 +433,17 @@ public class VariantRecord implements Serializable {
         extractInfo(customInfo);
     }
 
+    public void setSampleInformation(String format, String info) {
+        String formatted = "FORMAT=" + format + ";SAMPLE_INFO=" + info;
+        String newCustomInfo;
+        if (customInfo == null) {
+            newCustomInfo = formatted;
+        } else {
+            newCustomInfo = customInfo + ";" + formatted;
+        }
+        setCustomInfo(newCustomInfo);
+    }
+
     public Object[] getCustomFields() {
         return customFields;
     }
