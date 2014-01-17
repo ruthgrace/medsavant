@@ -24,6 +24,7 @@ class Jannovar {
     private static HashMap<Byte, Chromosome> chromosomeMap;
     private static String dirPath;
     private static ArrayList<TranscriptModel> transcriptModelList = null;
+
     private static final String serializationFileName = "refseq_hg19.ser";
 
     /**
@@ -58,12 +59,31 @@ class Jannovar {
     /**
      * Initialize Jannovar
      */
-    private static boolean initialize() {
-        // download the serizalized files, if needed
-        if (!hasSerializedFile(serializationFileName)) {
-			String dir= getJannovarDirectoryPath() + File.separator + "data";
-			jannovar.Jannovar.main(new String[] {"-U", dir, "--create-refseq"});
-        }
+    private static synchronized boolean initialize() throws IOException {
+        // download the serizalized files, if needed                
+        if (!hasSerializedFile(serializationFileName)) {                        
+            File f = new File(getJannovarDirectoryPath());
+            if(!(f.exists() && f.isDirectory())){
+                if(!f.mkdirs()){                    
+                    LOG.error("Couldn't make jannovardirectorypath " + getJannovarDirectoryPath());
+                    return false;
+                }
+            }
+            
+            jannovar.Jannovar.main(new String[]{"-U", getJannovarDirectoryPath(), "--create-refseq"});            
+            String src = serializationFileName;
+            String dst = getJannovarDirectoryPath() + File.separator + serializationFileName;
+
+            File sf = new File(src);
+            File df = new File(dst);
+            if (sf.exists()) {            
+                if (!sf.renameTo(df)) {                    
+                    throw new IOException("Can't rename file " + src + " to " + dst);
+                }
+            } else {                
+                throw new IOException("Can't locate Jannovar serialization file " + src);
+            }
+        }        
         return true;
     }
 
@@ -75,7 +95,6 @@ class Jannovar {
         return serFile.exists();
     }
 
-	
     /**
      * Uses Jannovar to create a new VCF file and sends that file to server. The
      * Jannovar VCF file is subsequently removed (treated as temporary data)
@@ -94,19 +113,26 @@ class Jannovar {
         } else {
             outname = outname.substring(0, i) + "jv.vcf";
         }
-        
-		File outFile= new File(outname);
-		
-		jannovar.Jannovar.main(new String[] {"-D", Jannovar.getJannovarDirectoryPath() 
-			+ File.separator + serializationFileName, "-V", sourceVCF.getAbsolutePath()});
 
-		/* Since we can't seem to specify the output directory for Jannovar
-		 * VCF files, once the file is created, move it to the temp directory. */
-		outFile.renameTo(new File(DirectorySettings.generateDateStampDirectory(DirectorySettings.getTmpDirectory()),outname));
-		
-        LOG.info("[Jannovar] Wrote annotated VCF file to \"" + outFile.getAbsolutePath() + "\"");
+        try {
 
-        return outFile;
+            File outFile = new File(outname);
+
+            jannovar.Jannovar.main(new String[]{"-D", Jannovar.getJannovarDirectoryPath()
+                + File.separator + serializationFileName, "-V", sourceVCF.getAbsolutePath()});
+
+            /* Since we can't seem to specify the output directory for Jannovar
+             * VCF files, once the file is created, move it to the temp directory. */
+            outFile.renameTo(new File(DirectorySettings.generateDateStampDirectory(DirectorySettings.getTmpDirectory()), outname));
+            LOG.info("[Jannovar] Wrote annotated VCF file to \"" + outFile.getAbsolutePath() + "\"");
+
+            return outFile;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LOG.error(ex);
+            throw new IOException(ex.getLocalizedMessage());
+        }
+
     }
 
 }
