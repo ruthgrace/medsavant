@@ -358,7 +358,7 @@ public class VariantManager extends MedSavantServerUnicastRemoteObject implement
                         + " AND " + FILE_ID.getColumnName() + "=" + files.get(i).getFileId() + ")";
                 if (i != files.size() - 1) {
                     conditions += " AND ";
-                }
+                }                
             }
             VariantManagerUtils.variantTableToTSVFile(backgroundSessionID, existingTableName, existingVariantsFile, conditions, true, 0);
 
@@ -428,6 +428,15 @@ public class VariantManager extends MedSavantServerUnicastRemoteObject implement
             EmailLogger.logByEmail("Removal failed", "Removal failed with error: " + MiscUtils.getStackTrace(e), email);
             throw e;
         } finally {
+            //remove VCF files.
+            for(SimpleVariantFile svf : files){
+                File f = new File(svf.getName());                
+                if(f.exists()){
+                    f.delete();
+                }else{
+                    LOG.error("WARNING: Cannot remove .vcf file "+svf.getName()+" -- does not exist.");
+                }
+            }
             SessionController.getInstance().unregisterSession(backgroundSessionID);
         }
     }
